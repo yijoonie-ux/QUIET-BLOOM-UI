@@ -1,0 +1,291 @@
+/* Bloom Details 아래쪽: 구매처 · 연출 소재 · 관리 정보 */
+/* .bd__section(BloomDetails.css)보다 나중에 적용되게 두 클래스로 */
+.bd__section.bi-sec {
+  margin-top: 36px;
+}
+
+.bi-desc {
+  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.2px;
+  color: #8a9387;
+}
+
+/* 작은 식물 사진 칸 */
+.bi-thumb {
+  position: relative;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #d9e4c8;
+}
+
+.bi-thumb__photo {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  overflow: hidden;
+  translate: -50% 0;
+}
+
+.bi-thumb__photo img {
+  position: absolute;
+  max-width: none;
+  pointer-events: none;
+}
+
+/* 구매처: 줄로 나눈 연두 회색 판 — 식물 줄을 누르면 그 아래로 구매처가 펼쳐짐 */
+.bi-group {
+  margin: 13.6px 0 0;
+  padding: 2px 0;
+  border-radius: 18px;
+  background: #f5f8f0;
+  list-style: none;
+}
+
+.bi-group > li {
+  position: relative;
+}
+
+/* 줄 사이 가는 선 */
+.bi-group > li + li::before {
+  position: absolute;
+  top: 0;
+  right: 16px;
+  left: 68px;
+  height: 1px;
+  background: #e6ecde;
+  content: '';
+}
+
+.bi-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 14px 10px 12px;
+  text-align: left;
+}
+
+.bi-row__chev {
+  flex: none;
+  color: #a3ab9f;
+  transition: rotate 0.3s var(--ease-smooth);
+}
+
+.bi-item[data-open='true'] .bi-row__chev {
+  rotate: 180deg;
+}
+
+.bi-row__text {
+  display: grid;
+  flex: 1;
+  gap: 2px;
+  min-width: 0;
+}
+
+.bi-row__name {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  color: #2a2a2a;
+}
+
+.bi-row__name span {
+  font-size: 13px;
+  font-weight: 500;
+  color: #8a9387;
+}
+
+/* 대체한 식물: 원래 식물 이름 (품절 표시 대신) */
+.bi-row__sub {
+  font-size: 12px;
+  font-weight: 500;
+  color: #8a9387;
+}
+
+/* 펼친 내용: 높이 0 ↔ 내용 높이로 부드럽게 */
+.bi-more {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s var(--ease-smooth);
+}
+
+.bi-item[data-open='true'] .bi-more {
+  grid-template-rows: 1fr;
+}
+
+.bi-more__inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* 흰 상자 안에 구매처 줄 (사진 오른쪽 선에 맞춰 들여씀) */
+.bi-more__box {
+  margin: 0 12px 12px 68px;
+  padding: 2px 0;
+  border-radius: 14px;
+  background: #fff;
+  opacity: 0;
+  translate: 0 -4px;
+  transition:
+    opacity 0.25s ease,
+    translate 0.3s var(--ease-smooth);
+}
+
+.bi-item[data-open='true'] .bi-more__box {
+  opacity: 1;
+  translate: 0 0;
+  transition-delay: 0.08s;
+}
+
+.bi-more__label {
+  display: block;
+  padding: 10px 14px 4px;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #c0643a;
+  word-break: keep-all;
+}
+
+.bi-line {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.bi-line + .bi-line::before {
+  position: absolute;
+  top: 0;
+  right: 14px;
+  left: 14px;
+  height: 1px;
+  background: #f0f3eb;
+  content: '';
+}
+
+.bi-line .bi-row__name {
+  font-size: 14px;
+}
+
+.bi-line__note {
+  font-size: 12px;
+  font-weight: 500;
+  color: #8a9387;
+}
+
+.bi-line svg {
+  flex: none;
+  color: #9aa597;
+}
+
+/* 연출 소재 (식물 목록 아래 작은 라벨 + 같은 판) */
+.bi-sublabel {
+  margin: 18px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  color: var(--qb-text-sub);
+}
+
+.bi-styling {
+  margin-top: 8px;
+}
+
+.bi-line--styling {
+  min-height: 56px;
+  padding: 10px 16px;
+}
+
+.bi-styling > li + li::before {
+  left: 16px;
+}
+
+/* 상태: 색 점 + 짧은 글 (Make This Bloom과 같은 표시) */
+.bi-status {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #6f8a4c;
+  white-space: nowrap;
+}
+
+.bi-status::before {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #a8cf6a;
+  content: '';
+}
+
+.bi-status[data-tone='bad'] {
+  color: #c0643a;
+}
+
+.bi-status[data-tone='bad']::before {
+  background: #ec9a72;
+}
+
+/* 관리 정보: 구매처와 같은 판, 줄마다 번호 · 짧은 제목 · 설명 */
+.bi-tip {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 13px 16px;
+}
+
+.bi-tips > li + li::before {
+  left: 50px;
+}
+
+.bi-tip__num {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: #fff;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #6f8a4c;
+}
+
+.bi-tip__title {
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.2px;
+  color: #2a2a2a;
+}
+
+.bi-tip__desc {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: -0.2px;
+  color: var(--qb-text-sub);
+  word-break: keep-all;
+}
+
+/* 맨 아래 섹션 뒤 여유 */
+.bd__section.bi-sec:last-of-type {
+  margin-bottom: 24px;
+}

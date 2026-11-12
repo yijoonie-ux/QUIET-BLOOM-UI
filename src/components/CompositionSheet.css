@@ -1,0 +1,376 @@
+/* 부케 구성 하단 Composition 시트 (Figma 2268:19672)
+   시트는 항상 '펼친 크기'(화면 위 170px 아래 전부)로 두고, 접혀 있을 땐 위쪽 139px만 보이게 내려 둠 */
+.comp-sheet {
+  position: fixed;
+  top: 170px;
+  right: 0;
+  left: 0;
+  /* 화면 아래 끝까지 (+1px) — bottom 대신 앱 높이로 (appHeight.js) */
+  height: calc(var(--app-h, 100dvh) - 169px);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: var(--app-max-width);
+  margin: 0 auto;
+  background: #191919;
+  transform: translateY(calc(100% - 139px));
+  transition: transform 0.55s var(--ease-spring-gentle);
+  animation: comp-sheet-in 0.7s var(--ease-smooth) 0.3s backwards;
+}
+
+.comp-sheet[data-open='true'] {
+  transform: translateY(0);
+}
+
+/* 손으로 끄는 동안은 손가락을 그대로 따라감 */
+.comp-sheet[data-dragging='true'] {
+  transition: none;
+}
+
+@keyframes comp-sheet-in {
+  from {
+    translate: 0 100%;
+  }
+}
+
+/* 펼쳤을 때 뒤 화면을 살짝 어둡게 */
+.comp-backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  /* 화면 높이: iOS 홈 화면 앱 첫 실행 문제 방지 (appHeight.js) */
+  height: var(--app-h, 100dvh);
+  z-index: 3;
+  /* Figma: 펼쳐도 위쪽 헤더는 어둡게 덮지 않음 (바깥을 누르면 닫히는 영역만) */
+  background: transparent;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.comp-backdrop[data-open='true'] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 머리: 손잡이(top 8) · 제목(top 30) · 개수(top 60) */
+.comp-sheet__head {
+  position: relative;
+  flex: none;
+  height: 102px;
+  padding: 30px 20px 0;
+  cursor: grab;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.comp-sheet__head:focus-visible {
+  outline: 2px solid #606863;
+  outline-offset: -4px;
+}
+
+.comp-sheet__handle {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  width: 56px;
+  height: 4px;
+  border-radius: 100px;
+  background: #505050;
+  translate: -50% 0;
+}
+
+.comp-sheet__title {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.2px;
+  color: #fff;
+}
+
+.comp-sheet__count {
+  margin-top: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.2px;
+  color: #9e9e9e;
+}
+
+/* 목록 영역: top 102, 높이 312 고정 (Figma) — 넘치면 이 안에서만 스크롤 */
+.comp-sheet__body {
+  flex: none;
+  height: 312px;
+  max-height: calc(100% - 102px - 184px);
+  margin: 0 20px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  transition: opacity 0.3s ease;
+  --fade: 28px;
+
+  /* 얇고 둥근 스크롤 막대 (화살표·트랙 없이) */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+
+.comp-sheet__body::-webkit-scrollbar {
+  width: 3px;
+}
+
+.comp-sheet__body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.comp-sheet__body::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.comp-sheet__body::-webkit-scrollbar-button {
+  display: none;
+}
+
+/* 위·아래로 더 있을 때만 그쪽 끝을 부드럽게 흐림 */
+.comp-sheet__body[data-fade='bottom'] {
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - var(--fade)), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - var(--fade)), transparent);
+}
+
+.comp-sheet__body[data-fade='top'] {
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 var(--fade));
+  mask-image: linear-gradient(to bottom, transparent, #000 var(--fade));
+}
+
+.comp-sheet__body[data-fade='both'] {
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 var(--fade), #000 calc(100% - var(--fade)), transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 var(--fade), #000 calc(100% - var(--fade)), transparent);
+}
+
+.comp-sheet:not([data-open='true']) :is(.comp-sheet__body, .comp-sheet__foot) {
+  opacity: 0;
+}
+
+.comp-sheet__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* 한 줄: 썸네일 70 · 아래 20 띄우고 구분선 · 다음 줄까지 20 */
+.comp-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 26px;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #252725;
+}
+
+.comp-item__thumb {
+  position: relative;
+  flex: none;
+  width: 70px;
+  height: 70px;
+  overflow: hidden;
+  border-radius: 3.5px;
+  background: #272b1e;
+}
+
+.comp-item__photo {
+  position: absolute;
+  top: 3px;
+  left: 50%;
+  overflow: hidden;
+  translate: -50% 0;
+}
+
+.comp-item__photo img {
+  position: absolute;
+  max-width: none;
+}
+
+.comp-item__info {
+  flex: 1;
+  min-width: 0;
+  padding-top: 4px;
+  line-height: 1.3;
+  letter-spacing: -0.4px;
+}
+
+.comp-item__name {
+  overflow: hidden;
+  font-size: 16px;
+  font-weight: 500;
+  color: #fff;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.comp-item__price {
+  margin-top: 2.2px;
+  font-size: 12px;
+  font-weight: 300;
+  color: #fff;
+}
+
+.comp-item__category {
+  margin-top: 11.4px;
+  font-size: 12px;
+  font-weight: 300;
+  color: #606863;
+}
+
+/* 수량 조절 (− 32 · 숫자 · + 32), 썸네일 아래쪽에 맞춤 */
+.comp-item__qty {
+  display: flex;
+  flex: none;
+  align-items: center;
+  margin-top: 38px;
+}
+
+.comp-item__step {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #606863;
+  border-radius: 100px;
+  transition:
+    background 0.2s ease,
+    scale 0.2s ease;
+}
+
+.comp-item__step:active {
+  background: #252725;
+  scale: 0.92;
+}
+
+.comp-item__step img {
+  max-width: none;
+}
+
+.comp-item__count {
+  width: 34px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.4px;
+  text-align: center;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+
+.comp-sheet__empty {
+  padding-top: 60px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: -0.2px;
+  text-align: center;
+  color: #606863;
+}
+
+/* 하단: 총 금액 + 부케 제작하기 (높이 184, 버튼 아래 여백 42) */
+.comp-sheet__foot {
+  flex: none;
+  height: 184px;
+  /* 목록 아래 남는 공간은 비워 두고 하단에 붙임 */
+  margin-top: auto;
+  padding: 20px 20px 0;
+  transition: opacity 0.3s ease;
+}
+
+/* 추천 수량 적용: 펼쳤을 때 제목 줄 오른쪽 */
+.comp-sheet__recommend {
+  position: absolute;
+  top: 30px;
+  right: 20px;
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 100px;
+  background: #daffa9;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.2px;
+  color: #191919;
+  white-space: nowrap;
+  animation: comp-recommend-in 0.35s var(--ease-smooth) backwards;
+  transition: scale 0.2s ease;
+}
+
+.comp-sheet__recommend:active {
+  scale: 0.96;
+}
+
+@keyframes comp-recommend-in {
+  from {
+    opacity: 0;
+    translate: 0 4px;
+  }
+}
+
+.comp-sheet__total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.comp-sheet__total span {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.032px;
+}
+
+.comp-sheet__total strong {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.04px;
+}
+
+.comp-sheet__make {
+  width: 100%;
+  height: 56px;
+  margin-top: 40px;
+  border-radius: 200px;
+  background: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.036px;
+  color: #191919;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease,
+    scale 0.2s ease;
+}
+
+.comp-sheet__make:active:not(:disabled) {
+  scale: 0.98;
+}
+
+/* 아직 담은 식물이 없을 때 (Figma 상태) */
+.comp-sheet__make:disabled {
+  background: #252725;
+  color: #606863;
+  cursor: default;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .comp-sheet,
+  .comp-backdrop,
+  .comp-sheet * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

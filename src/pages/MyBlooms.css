@@ -1,0 +1,286 @@
+/* My Blooms (Figma 2268:20919) — 한 화면짜리라 화면 네 변에 고정 */
+.mb {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  /* 화면 높이: iOS 홈 화면 앱 첫 실행 문제 방지 (appHeight.js) */
+  height: var(--app-h, 100dvh);
+  overflow: hidden;
+  background: #fff;
+  /* 가운데 카드를 내린 정도 (0 ~ 1.4, MyBlooms.jsx가 기록) */
+  --pull: 0;
+}
+
+.mb__header {
+  position: absolute;
+  top: 84px;
+  right: 20px;
+  left: 52px;
+  animation: mb-rise 0.6s var(--ease-smooth) backwards;
+}
+
+.mb__back {
+  position: absolute;
+  top: 0;
+  left: -42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+}
+
+.mb__title {
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.068px;
+  color: var(--qb-text-strong);
+}
+
+.mb__desc {
+  margin-top: 1.8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.2px;
+  color: var(--qb-text-sub);
+  white-space: nowrap;
+}
+
+/* 카드 무대: 카드 268×397 (top 216). 카드 자리는 MyBlooms.jsx에서 손가락을 따라 매 프레임 계산.
+   아래 점(628) 줄까지 덮어서 카드 밑을 슥슥 밀어도 넘어감 */
+.mb__stage {
+  position: absolute;
+  z-index: 2;
+  top: 206px;
+  right: 0;
+  left: 0;
+  height: 466px;
+  /* 원근을 강하게: 원을 따라 뒤로 돌아갈수록 작아져 입체감 */
+  perspective: 820px;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  outline: none;
+  /* 들어올 때: 쌓인 카드 묶음이 아래에서 부드럽게 떠오름 → 이어서 펼쳐짐 */
+  animation: mb-stack-in 0.9s var(--ease-spring-gentle) 0.05s backwards;
+}
+
+.mb__stage:active {
+  cursor: grabbing;
+}
+
+.mb-card {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  width: 268px;
+  height: 397px;
+  margin-left: -134px;
+  overflow: hidden;
+  border-radius: 18px;
+  box-shadow: 0 10px 24px -8px rgba(80, 96, 66, 0.28);
+  transform-origin: 50% 50%;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* 사진 배치는 부케마다 다름 (blooms.js card) */
+.mb-card__image {
+  position: absolute;
+  max-width: none;
+  pointer-events: none;
+}
+
+/* Still  저자극 · 저향 (카드 기준 x20, y16)
+   밝은 사진에서도 윤곽만 잡히게 글자 바로 밑 아주 작은 그림자 (번짐 없이) */
+.mb-card__label {
+  position: absolute;
+  z-index: 2;
+  text-shadow: 0 1px 2px rgba(40, 36, 30, 0.18);
+  top: 20px;
+  left: 22px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.2282px;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.mb-card__label strong {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+/* 페이지 점 (top 628) */
+.mb__dots {
+  position: absolute;
+  top: 628px;
+  right: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+}
+
+.mb__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 100px;
+  background: #d9e4c8;
+  transition:
+    width 0.4s var(--ease-smooth),
+    background 0.4s ease;
+}
+
+.mb__dot[data-active='true'] {
+  width: 15px;
+  background: #7a9359;
+}
+
+/* 아래 입구 (예전 자세히 보기 버튼 자리): 아래 화살표 · 입구 · 안내 문구 */
+.mb__drop {
+  position: absolute;
+  right: 0;
+  bottom: 40px;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: mb-rise 0.6s var(--ease-smooth) 0.7s backwards;
+  /* 입구 안쪽 틈까지 이 층에 가둬, 차오르는 둥근 면(.mb__sweep) 아래로 덮이게 */
+  z-index: 0;
+}
+
+.mb__chevrons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 10px;
+  color: #7a9359;
+  opacity: calc(1 - var(--pull));
+  transition: opacity 0.2s ease;
+}
+
+.mb__chevrons svg {
+  display: block;
+  animation: mb-chevron 1.6s var(--ease-smooth) infinite;
+}
+
+.mb__chevrons svg + svg {
+  margin-top: -3px;
+  animation-delay: 0.16s;
+}
+
+@keyframes mb-chevron {
+  0%,
+  100% {
+    opacity: 0.25;
+    translate: 0 -2px;
+  }
+  45% {
+    opacity: 0.9;
+    translate: 0 2px;
+  }
+}
+
+/* 입구: 카드가 가까워질수록 흰 빛이 번지며 카드보다 넓게(260) 벌어짐.
+   카드는 이 입구의 가운데 선 아래로 내려간 부분이 안 보임 (MyBlooms.jsx clip-path) */
+.mb__slot {
+  position: relative;
+  width: calc(170px + min(var(--pull), 1) * 90px);
+  height: 10px;
+  border-radius: 10px;
+  background: #e3ebd7;
+  box-shadow:
+    inset 0 1.5px 3px rgba(80, 96, 66, 0.25),
+    0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.mb__slot::after {
+  position: absolute;
+  inset: -10px -24px;
+  border-radius: 40px;
+  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.95), rgba(236, 250, 214, 0.6) 55%, transparent);
+  opacity: calc(0.25 + var(--pull) * 0.75);
+  content: '';
+  filter: blur(4px);
+}
+
+.mb__hint {
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.2px;
+  color: #6d766c;
+  white-space: nowrap;
+}
+
+/* 자세히 보기로 넘어갈 때: 위가 둥근 넓은 면이 아래에서 차올라 화면을 덮음
+   (카드 무대보다 아래 층 — 카드는 그 위에서 작아지며 사라짐) */
+.mb__sweep {
+  position: absolute;
+  z-index: 1;
+  top: 100%;
+  left: -40%;
+  width: 180%;
+  height: 130%;
+  border-radius: 50% 50% 0 0 / 150px 150px 0 0;
+  background: linear-gradient(to bottom, #e9f0df, #fff 220px);
+  box-shadow: 0 -12px 40px rgba(122, 147, 89, 0.14);
+  pointer-events: none;
+}
+
+.mb[data-sweeping='true'] .mb__sweep {
+  animation: mb-sweep 0.78s cubic-bezier(0.65, 0, 0.25, 1) forwards;
+}
+
+@keyframes mb-sweep {
+  to {
+    translate: 0 -100%;
+    border-radius: 50% 50% 0 0 / 40px 40px 0 0;
+  }
+}
+
+/* 둥근 면은 다음 화면까지 덮은 채로 남김 */
+.mb[data-leaving='true'] > :not(.mb__sweep) {
+  animation: mb-leave 0.28s var(--ease-leave) both;
+}
+
+@keyframes mb-stack-in {
+  from {
+    opacity: 0;
+    translate: 0 70px;
+  }
+}
+
+@keyframes mb-rise {
+  from {
+    opacity: 0;
+    translate: 0 16px;
+  }
+}
+
+@keyframes mb-leave {
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mb,
+  .mb * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

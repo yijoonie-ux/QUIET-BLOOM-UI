@@ -1,0 +1,325 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #fff;
+}
+
+body {
+  font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
+  color: #191919;
+  -webkit-font-smoothing: antialiased;
+}
+
+.viewport {
+  position: fixed;
+  inset: 0;
+  cursor: pointer;
+}
+
+.stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  background: #fff;
+  transform: translate(-50%, -50%);
+  /* 이미지 준비 전 깜빡임 방지 — slide.js가 표시 */
+  visibility: hidden;
+}
+
+.stage > * {
+  position: absolute;
+}
+
+img {
+  display: block;
+}
+
+/* ---------- 로고 ---------- */
+.logo {
+  /* 왼→오 부드러운 와이프용 그라디언트 마스크 */
+  mask-image: linear-gradient(90deg, #000 0%, #000 33.3%, transparent 66.6%, transparent 100%);
+  mask-size: 300% 100%;
+  mask-repeat: no-repeat;
+  mask-position: 0% 0;
+}
+
+.logo svg {
+  display: block;
+  overflow: visible;
+}
+
+.logo--quiet {
+  left: 281px;
+  top: 78px;
+}
+
+.logo--bloom {
+  left: 929.11px;
+  top: 85.93px;
+}
+
+/* ---------- 하단 그린 패널 ---------- */
+.panel {
+  left: 30px;
+  top: 689px;
+  width: 1860px;
+  height: 361px;
+}
+
+/* ---------- 상단 라벨 ---------- */
+.label {
+  top: 373px;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: normal;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.label--foliage {
+  left: 70px;
+}
+
+.label--stimulus {
+  left: 195.22px;
+}
+
+.label--brand {
+  left: 1690px;
+}
+
+/* ---------- hush 화병 ---------- */
+.hush {
+  left: 668px;
+  top: 174px;
+  width: 583px;
+  height: 785px;
+}
+
+/* 회전 중심 = 화병 바닥 */
+.hush__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform-origin: 50% 96%;
+}
+
+/* ---------- 토글 메뉴 ---------- */
+.pill {
+  left: 1333px;
+  width: 373px;
+  height: 41px;
+  border-radius: 40px;
+}
+
+.pill--top {
+  top: 709px;
+  background: linear-gradient(to bottom, rgba(199, 219, 171, 0), #c7dbab);
+}
+
+.pill--bottom {
+  top: 990px;
+  background: linear-gradient(to top, rgba(199, 219, 171, 0), #c7dbab);
+}
+
+.card {
+  left: 1333px;
+  top: 770px;
+  width: 373px;
+  height: 200px;
+  border-radius: 40px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.card__item {
+  position: absolute;
+  inset: 0;
+}
+
+.card__item--hush {
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+.card__thumb {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  width: 160px;
+  height: 160px;
+  border-radius: 30px;
+  overflow: hidden;
+}
+
+.card__thumb--hush {
+  background: #fff;
+}
+
+.thumb-still {
+  width: 100%;
+  height: 100%;
+  object-position: bottom;
+}
+
+.thumb-hush {
+  position: absolute;
+  left: -45px;
+  top: -103px;
+  width: 237px;
+  height: 288px;
+  object-fit: cover;
+}
+
+.card__title {
+  position: absolute;
+  left: 200px;
+  top: 50px;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: normal;
+  letter-spacing: -0.3px;
+  white-space: nowrap;
+}
+
+.card__desc {
+  position: absolute;
+  left: 200px;
+  top: 95px;
+  width: 110px;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.2282px;
+  color: #6a6a6a;
+  white-space: nowrap;
+}
+
+.arrow {
+  left: 1718px;
+  top: 838px;
+  width: 22.237px;
+  height: 65px;
+  transform: scaleX(-1);
+}
+
+.arrow img {
+  position: absolute;
+  top: 11.74%;
+  bottom: 11.74%;
+  left: 0;
+  right: 4.88%;
+  width: calc(100% - 4.88%);
+  height: calc(100% - 23.48%);
+}
+
+/* ---------- 패널 텍스트 ---------- */
+.line {
+  display: block;
+  overflow: hidden;
+}
+
+.line > span {
+  display: block;
+}
+
+/* 단어 단위 리빌 — 블러가 잘리지 않도록 헤드라인은 overflow를 열어둠 */
+.headline .line {
+  overflow: visible;
+}
+
+.word {
+  display: inline-block;
+  white-space: pre;
+}
+
+.headline {
+  left: 70px;
+  top: 725px;
+  font-size: 54px;
+  font-weight: 700;
+  line-height: 56px;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.badge {
+  top: 736px;
+  width: 50px;
+  height: 50px;
+  border-radius: 40px;
+  background: #fff;
+}
+
+.badge--sprout {
+  left: 455px;
+}
+
+.badge--drop {
+  left: 515px;
+}
+
+.icon--sprout {
+  left: 468px;
+  top: 749px;
+  width: 24px;
+  height: 24px;
+}
+
+.icon--drop {
+  left: 530px;
+  top: 748px;
+  width: 20px;
+  height: 25px;
+}
+
+.desc {
+  left: 70px;
+  top: 923px;
+  font-size: 27px;
+  font-weight: 500;
+  line-height: 40px;
+  letter-spacing: -0.4px;
+  color: #f5ffe4;
+  white-space: nowrap;
+}
+
+/* ---------- 행잉 식물 ---------- */
+.hang {
+  left: 740px;
+  top: -271px;
+  width: 439px;
+  height: 1498px;
+  pointer-events: none;
+}
+
+.hang__drop,
+.hang__swing,
+.hang__idle {
+  position: absolute;
+  inset: 0;
+}
+
+/* 회전 중심 = 화면 위 줄 끝 (진자처럼 흔들리도록) */
+.hang__swing,
+.hang__idle {
+  transform-origin: 50% 0;
+}
+
+.hang__idle img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}

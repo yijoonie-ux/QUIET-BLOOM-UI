@@ -1,0 +1,107 @@
+.slide-to-start {
+  position: relative;
+  width: 288px;
+  height: 55px;
+  border-radius: 1000px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Figma에서 추출한 4x 이미지(글로우 여백 포함)를 알약(288×55) 기준으로 오프셋 */
+.slide-to-start__track {
+  position: absolute;
+  top: -39.25px;
+  left: -1.25px;
+  width: 311.75px;
+  max-width: none;
+  height: 132.25px;
+  pointer-events: none;
+}
+
+.slide-to-start__fill {
+  position: absolute;
+  top: 3.5px;
+  left: 4px;
+  width: 48px;
+  height: 48px;
+  border-radius: 1000px;
+  opacity: 0;
+  /* 트랙 이미지의 연두 → 손잡이 쪽으로 갈수록 빛나는 색 */
+  background: linear-gradient(90deg, #d4e3bd 0%, #e3f3c8 55%, #f7ffe0 100%);
+  box-shadow: inset 0 2px 6px 0 rgba(186, 208, 157, 0.75);
+  /* 오른쪽 끝 30px만 아주 옅게 사라짐 (글자는 거의 그대로, 경계만 부드럽게) */
+  -webkit-mask-image: linear-gradient(to left, transparent 0, rgba(0, 0, 0, 0.12) 14px, rgba(0, 0, 0, 0.4) 24px, #000 30px);
+  mask-image: linear-gradient(to left, transparent 0, rgba(0, 0, 0, 0.12) 14px, rgba(0, 0, 0, 0.4) 24px, #000 30px);
+  pointer-events: none;
+}
+
+/* 파티클은 슬라이더 알약 모양 안에서만 보이도록 잘라냄 */
+.slide-to-start__particles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 1000px;
+  pointer-events: none;
+}
+
+.slide-to-start__particles canvas {
+  width: 288px;
+  height: 55px;
+}
+
+.slide-to-start__knob {
+  position: absolute;
+  top: 7px;
+  left: 8px;
+  width: 40px;
+  height: 40px;
+  border-radius: 100px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4), #fff);
+  box-shadow: 0 1.843px 9.215px 0 rgba(122, 147, 89, 0.4);
+  touch-action: none;
+  cursor: grab;
+}
+
+/* 손잡이 속 아이콘: 미는 만큼(--p 0~1) 반 바퀴 돌며 화살표가 사라지고 로고가 스르륵 나타남 */
+.slide-to-start__knob {
+  --p: 0;
+}
+
+.slide-to-start__icon {
+  position: absolute;
+  inset: 10px;
+  rotate: calc(var(--p) * 180deg);
+  pointer-events: none;
+}
+
+.slide-to-start__arrow,
+.slide-to-start__logo {
+  position: absolute;
+  inset: 0;
+  width: 20px;
+  height: 20px;
+  /* 이미지 기본 드래그가 pointercancel을 일으키지 않도록 */
+  pointer-events: none;
+}
+
+/* 화살표: 앞쪽 절반 동안 작아지며 사라짐 */
+.slide-to-start__arrow {
+  opacity: clamp(0, calc(1 - var(--p) * 2.2), 1);
+  scale: calc(1 - var(--p) * 0.45);
+}
+
+/* 로고: 뒤쪽 절반 동안 커지며 또렷해짐 (반 바퀴 끝에서 바로 선 모양) */
+.slide-to-start__logo {
+  background: #9cb976;
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  opacity: clamp(0, calc((var(--p) - 0.3) * 2.2), 1);
+  scale: calc(0.55 + var(--p) * 0.45);
+}
+
+/* 손잡이·채움 위치는 JS가 매 프레임 직접 갱신 (파티클과 동기화) */
+.slide-to-start[data-dragging='true'] .slide-to-start__knob {
+  cursor: grabbing;
+}

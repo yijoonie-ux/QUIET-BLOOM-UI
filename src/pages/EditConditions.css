@@ -1,0 +1,492 @@
+/* Figma 2845:21199 (390×935, 스크롤) */
+.edit {
+  display: flex;
+  flex-direction: column;
+  min-height: var(--app-h, 100dvh);
+  padding: 84px 20px 42px;
+  background:
+    linear-gradient(to bottom, rgba(217, 228, 200, 0) 0%, #d9e4c8 89.423%) bottom / 100% 757px no-repeat,
+    #fff;
+}
+
+/* 헤더 */
+.edit__header {
+  position: relative;
+  padding-left: 32px;
+}
+
+.edit__back {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  width: 24px;
+  height: 24px;
+}
+
+.edit__back::before {
+  /* 터치 영역 44px로 확장 */
+  content: '';
+  position: absolute;
+  inset: -10px;
+}
+
+.edit__title {
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.068px;
+  color: var(--qb-text-strong);
+}
+
+.edit__desc {
+  margin-top: 1.8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.2px;
+  color: var(--qb-text-sub);
+}
+
+.edit__section-title {
+  padding-left: 17px;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.8px;
+  color: var(--qb-text-strong);
+}
+
+.edit__section--sensitivity {
+  margin-top: 29.8px;
+}
+
+.edit__section:not(.edit__section--sensitivity) {
+  margin-top: 32px;
+}
+
+/* Sensitivity: 두 줄이 가운데 홈으로 이어진 카드 */
+.sensitivity {
+  /* 초록 카드 위에서는 세이지 그레이가 배경에 묻혀서, 꺼짐 트랙을 밝은 반투명 흰색으로 */
+  --qb-toggle-off: rgba(96, 124, 62, 0.14);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 350px;
+  margin-top: 12px;
+  /* 화면이 390보다 좁으면(갤럭시 360 등) 카드 모양 그대로 폭에 맞게 줄임 (--narrow: appHeight.js) */
+  zoom: var(--narrow, 1);
+}
+
+.sensitivity__shape {
+  position: absolute;
+  inset: 0;
+  max-width: none;
+  pointer-events: none;
+}
+
+/* 유리 광택: 왼쪽 위에서 흘러내리는 흰 빛 + 오른쪽 아래 연두 번짐 + 아주 옅은 그레인 */
+.sensitivity__sheen {
+  position: absolute;
+  inset: 0;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.22 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E"),
+    /* 색은 그대로 두고 깊이만: 위쪽 가는 빛 + 오른쪽 아래로 살짝 깊어지는 세이지 */
+    linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 22%),
+    radial-gradient(70% 140% at 100% 100%, rgba(95, 122, 60, 0.22), rgba(95, 122, 60, 0) 70%),
+    radial-gradient(45% 120% at 0% 0%, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 70%);
+  background-size: 140px 140px, auto, auto, auto;
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.sensitivity__row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 66px;
+  padding-left: 17px;
+}
+
+.sensitivity__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 95.253px;
+  /* 유리 구슬: 연두 위에 가는 흰 테두리와 위쪽 빛 */
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 60%), #afc590;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+}
+
+.sensitivity__icon img {
+  max-width: none;
+}
+
+.sensitivity__text {
+  display: flex;
+  flex-direction: column;
+}
+
+.sensitivity__label {
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.036px;
+  color: var(--qb-text-strong);
+}
+
+/* 이름 아래 상태 문구 (바뀔 때 살짝 떠오르며 교체) */
+.sensitivity__caption {
+  margin-top: 1.6px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.2px;
+  color: var(--qb-text-sub);
+  animation: caption-in 0.35s var(--ease-smooth) backwards;
+}
+
+@keyframes caption-in {
+  from {
+    opacity: 0;
+    translate: 0 3px;
+  }
+}
+
+.sensitivity__range {
+  position: absolute;
+  top: 17px;
+  left: 226.07px;
+  width: 105.066px;
+  height: 32px;
+  border-radius: 100px;
+}
+
+.sensitivity__range .scent-range {
+  position: absolute;
+  top: -7.74px;
+  left: -10.93px;
+}
+
+/* 저자극 토글 */
+.edit-toggle {
+  position: absolute;
+  top: 17px;
+  right: 19px;
+  width: 60px;
+  height: 32px;
+  padding: 5px;
+  border-radius: 133.333px;
+  background: var(--qb-toggle-off);
+  transition: background 0.3s ease;
+}
+
+.edit-toggle[aria-checked='true'] {
+  background:
+    linear-gradient(115.32deg, rgba(201, 217, 180, 0.5) 4.72%, rgba(218, 232, 178, 0.5) 102.17%),
+    #afc590;
+}
+
+.edit-toggle__knob {
+  display: block;
+  width: 22px;
+  height: 22px;
+  border-radius: 23.287px;
+  background: linear-gradient(138.03deg, #fff 13.49%, #daffa9 113.09%);
+  box-shadow: 0 2.911px 14.555px 0 rgba(124, 159, 51, 0.4);
+  transition: translate 0.5s var(--ease-spring-soft);
+}
+
+.edit-toggle[aria-checked='false'] .edit-toggle__knob {
+  background: #fff;
+  box-shadow: 0 2px 8px 0 rgba(109, 118, 108, 0.25);
+}
+
+.edit-toggle[aria-checked='true'] .edit-toggle__knob {
+  translate: 28px 0;
+}
+
+/* Preferences 카드 */
+.pref-card {
+  display: flex;
+  flex-direction: column;
+  /* 좁은 화면에서는 폭에 맞게 (최대 350) */
+  width: 100%;
+  max-width: 350px;
+  padding: 17px;
+  border-radius: 20px;
+  background: #fff;
+}
+
+.pref-card--exclude {
+  margin-top: 12px;
+}
+
+.pref-card--criteria {
+  min-height: 119px;
+  margin-top: 12px;
+}
+
+.pref-card__title {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.036px;
+  color: var(--qb-text-strong);
+}
+
+.pref-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 30.2px;
+  margin-top: 13.8px;
+}
+
+.pref-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 12px;
+  border-radius: 1000px;
+  background: #f5f8ee;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.2px;
+  color: var(--qb-text-sub);
+  white-space: nowrap;
+  animation: pref-chip-in 0.45s var(--ease-spring-soft) backwards;
+}
+
+/* 글자 박스를 대문자 높이~기준선으로 잘라 칩(30.2px) 세로 정중앙에 둠 — 폰트가 바뀌어도 어긋나지 않음 */
+@supports (text-box: trim-both cap alphabetic) {
+  .pref-chip {
+    height: 30.2px;
+    padding-block: 0;
+  }
+
+  .pref-chip__label {
+    text-box: trim-both cap alphabetic;
+  }
+}
+
+@keyframes pref-chip-in {
+  from {
+    opacity: 0;
+    scale: 0.8;
+  }
+}
+
+.pref-chip__remove {
+  display: flex;
+  width: 18px;
+  height: 18px;
+}
+
+/* 입력칸 + 오른쪽 작은 추가 버튼 (한 줄, 그림자 없이 평평하게) */
+.pref-field {
+  position: relative;
+  margin-top: 16.8px;
+}
+
+/* 제외 식물이 하나도 없으면 칩 줄이 사라지고 제목 바로 아래 14px */
+.pref-card__title + .pref-field {
+  margin-top: 14px;
+}
+
+.pref-input {
+  width: 100%;
+  height: 52px;
+  padding: 0 84px 0 16px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  outline: none;
+  background: #f5f8ee;
+  font: inherit;
+  font-size: 16px;
+  line-height: 1.4;
+  letter-spacing: -0.2px;
+  color: var(--qb-text-strong);
+  transition: border-color 0.2s ease;
+}
+
+.pref-input::placeholder {
+  color: rgba(109, 118, 108, 0.6);
+}
+
+.pref-input:focus {
+  border-color: rgba(122, 147, 89, 0.45);
+}
+
+.pref-add {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 100px;
+  background: #434c42;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* 아무것도 안 쓰면 옅게 */
+.pref-add:disabled {
+  background: #e3e9da;
+  color: #9aa396;
+  cursor: default;
+}
+
+/* 추천 기준 */
+.criteria {
+  display: flex;
+  gap: 12px;
+  margin-top: 13.8px;
+}
+
+.criteria__option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 40px;
+  padding: 5px 20px 5px 5px;
+  border-radius: 100px;
+  /* 고르지 않은 기준: 회색 대신 이 카드의 칩·입력창과 같은 옅은 세이지 */
+  background: #f5f8ee;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.2px;
+  color: #9aa396;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
+}
+
+.criteria__option[aria-checked='true'] {
+  background:
+    linear-gradient(120.4deg, rgba(201, 217, 180, 0.95) 4.72%, rgba(218, 232, 178, 0.95) 102.17%),
+    #fff;
+  color: #424242;
+}
+
+.criteria__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 100px;
+  background: rgba(96, 124, 62, 0.08);
+  transition: background 0.3s ease;
+}
+
+.criteria__option[aria-checked='true'] .criteria__icon {
+  background: #afc590;
+}
+
+.criteria__icon {
+  position: relative;
+}
+
+/* 선택 시 회색 아이콘 → 흰색 발광 아이콘으로 부드럽게 교체 */
+.criteria__icon img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  max-width: none;
+  translate: -50% -50%;
+  transition:
+    opacity 0.3s ease,
+    scale 0.45s var(--ease-spring-soft);
+}
+
+.criteria__icon-on {
+  opacity: 0;
+  scale: 0.7;
+}
+
+.criteria__option[aria-checked='true'] .criteria__icon-on {
+  opacity: 1;
+  scale: 1;
+}
+
+.criteria__option[aria-checked='true'] .criteria__icon-off {
+  opacity: 0;
+}
+
+/* 적용 버튼 */
+.edit__apply {
+  width: 100%;
+  max-width: 350px;
+  height: 56px;
+  /* 스크롤 중에도 화면 맨 아래(여백 42)에 떠 있음 — 온보딩 다음 버튼과 같은 자리 */
+  position: sticky;
+  z-index: 3;
+  bottom: 42px;
+  margin-top: auto;
+  border-radius: 200px;
+  background: #191919;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.0036px;
+  color: #fff;
+}
+
+/* 버튼 바로 위 내용과는 최소 30 띄움 */
+.edit > :nth-last-child(2) {
+  margin-bottom: 30px;
+}
+
+/* 진입: 위에서부터 차례로 부드럽게 떠오름 */
+.edit__header,
+.edit__section,
+.pref-card,
+.edit__apply {
+  animation: edit-rise 0.9s var(--ease-spring-gentle) backwards;
+}
+
+.edit__header { animation-delay: 0.04s; }
+.edit__section--sensitivity { animation-delay: 0.1s; }
+.edit__section:not(.edit__section--sensitivity) { animation-delay: 0.16s; }
+.pref-card--exclude { animation-delay: 0.22s; }
+.pref-card--criteria { animation-delay: 0.28s; }
+.edit__apply { animation-delay: 0.34s; }
+
+@keyframes edit-rise {
+  from {
+    opacity: 0;
+    translate: 0 24px;
+  }
+}
+
+/* 퇴장: 살짝 가라앉으며 사라짐 */
+.edit[data-leaving='true'] > * {
+  animation: edit-leave 0.28s var(--ease-leave) both;
+}
+
+@keyframes edit-leave {
+  to {
+    opacity: 0;
+    translate: 0 18px;
+    scale: 0.97;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .edit * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -1,0 +1,189 @@
+:root {
+  /* 기준 기기: iPhone 13 (390×844) */
+  --app-max-width: 390px;
+  --text: #1a1a1a;
+  --bg: #ffffff;
+  --outer-bg: #f2f2f2;
+
+  /* Quiet Bloom 디자인 토큰 */
+  --qb-text-strong: #434c42;
+  --qb-text-sub: #6d766c;
+  --qb-text-accent: #586649;
+  --qb-bg-end: #d5e1c2;
+  /* 토글·슬라이더 꺼짐(비활성) 트랙: 초록빛이 도는 세이지 그레이
+     (반투명이면 흰 카드 위에서 회색과 구분이 안 돼 불투명으로) */
+  --qb-toggle-off: #dce3d5;
+
+
+  /* 모션: 감쇠 스프링 곡선 (linear() 미지원 브라우저는 기본 ease로 동작) */
+  --ease-spring-soft: linear(0, 0.0378, 0.1326, 0.2604, 0.402, 0.5432, 0.6739, 0.7881, 0.8827, 0.9568, 1.0115, 1.0487, 1.0712, 1.0817, 1.0832, 1.0783, 1.0693, 1.0582, 1.0462, 1.0346, 1.0241, 1.0151, 1.0077, 1.002, 0.9979, 0.9952, 0.9937, 0.9931, 0.9931, 0.9937, 0.9945, 0.9954, 0.9964, 0.9974, 0.9982, 0.9989, 0.9995, 1, 1.0003, 1.0004, 1);
+  --ease-spring-gentle: linear(0, 0.0493, 0.1643, 0.3072, 0.4536, 0.5887, 0.7049, 0.7997, 0.8732, 0.9277, 0.9662, 0.9917, 1.0074, 1.0159, 1.0194, 1.0198, 1.0181, 1.0156, 1.0126, 1.0098, 1.0072, 1.0051, 1.0034, 1.0021, 1.0011, 1.0004, 1, 0.9998, 0.9996, 0.9996, 0.9996, 0.9997, 1);
+  --ease-leave: cubic-bezier(0.4, 0, 0.9, 0.6);
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+
+  font-family: 'Pretendard Variable', Pretendard, -apple-system, system-ui,
+    'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--outer-bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: var(--app-h, 100dvh);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 폰에서는 기기 폭(390보다 넓은 기종 포함)을 꽉 채움 — 양옆 회색 여백 방지.
+   데스크톱(600px 이상)에서만 390px로 가운데 고정 */
+@media (max-width: 599px) {
+  :root {
+    --app-max-width: 100%;
+  }
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* 프로토타입처럼 "다음에 누를 곳" 안내: 은은한 연두 빛이 바깥으로 퍼지며 깜빡임 */
+.qb-hint {
+  animation: qb-hint 1.6s ease-out infinite !important;
+}
+
+/* 넓은 영역(시트 머리 등)은 안쪽 테두리로 */
+.qb-hint--inset {
+  animation-name: qb-hint-inset !important;
+}
+
+@keyframes qb-hint {
+  0% {
+    box-shadow:
+      0 0 0 0 rgba(196, 240, 106, 0.85),
+      0 0 0 0 rgba(255, 255, 255, 0.9);
+  }
+  70% {
+    box-shadow:
+      0 0 0 12px rgba(196, 240, 106, 0),
+      0 0 0 4px rgba(255, 255, 255, 0);
+  }
+  100% {
+    box-shadow:
+      0 0 0 12px rgba(196, 240, 106, 0),
+      0 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+@keyframes qb-hint-inset {
+  0%,
+  100% {
+    box-shadow: inset 0 0 0 2px rgba(196, 240, 106, 0.15);
+  }
+  50% {
+    box-shadow: inset 0 0 0 2px rgba(196, 240, 106, 0.9);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qb-hint {
+    animation: none !important;
+    outline: 2px solid #c4f06a;
+    outline-offset: 3px;
+  }
+}
+
+/* 한 화면짜리 페이지: 쓸 수 있는 높이가 디자인(844)보다 짧으면 배치는 그대로 두고 화면에 맞게 통째로 줄임.
+   (--fit은 appHeight.js가 계산, 1이면 그대로). 원래 크기로 배치한 뒤 왼쪽 위 기준으로 축소 */
+:root .fit-screen {
+  right: auto;
+  width: calc(100% / var(--fit, 1));
+  height: calc(var(--app-h, 100dvh) / var(--fit, 1));
+  transform: scale(var(--fit, 1));
+  transform-origin: 0 0;
+}
+
+/* 모바일 화면 폭으로 고정된 앱 컨테이너 (데스크톱에서는 가운데 정렬) */
+#root {
+  width: 100%;
+  max-width: var(--app-max-width);
+  min-height: var(--app-h, 100dvh);
+  margin: 0 auto;
+  background: var(--bg);
+  /* safe-area 여백은 두지 않음: 디자인(844)이 상태바·홈 인디케이터 영역까지 포함하므로
+     페이지 배경이 화면 끝까지 그대로 깔리게 함 (탭바는 자체적으로 inset 반영) */
+}
+
+/* 선택 카드: 고르기 전엔 반투명 유리, 고르면 흰색 (추천 기준·구매처 카드는 세이지 테두리) */
+.glass-card {
+  position: relative;
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(18px) saturate(1.25);
+  backdrop-filter: blur(18px) saturate(1.25);
+  /* 유리 가장자리: 안쪽 1px 흰 선 */
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+  transition:
+    background-color 0.35s ease,
+    box-shadow 0.35s ease,
+    scale 0.2s ease;
+}
+
+.glass-card:has([aria-checked='true']) {
+  background-color: #fff;
+}
+
+.glass-card[aria-checked='true'],
+.glass-card[aria-pressed='true'] {
+  background-color: #fff;
+  box-shadow: inset 0 0 0 1.5px #afc590;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-card {
+    transition: none;
+  }
+}

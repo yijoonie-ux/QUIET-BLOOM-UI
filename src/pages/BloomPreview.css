@@ -1,0 +1,711 @@
+/* Bloom Preview / Bloom AI Preview (Figma 2268:21089 / 21057 / 20786)
+   한 화면짜리라 화면 네 변에 고정 (iOS 홈 화면 앱의 첫 높이 계산 문제 회피) */
+.bp {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  /* 화면 높이: iOS 홈 화면 앱 첫 실행 문제 방지 (appHeight.js) */
+  height: var(--app-h, 100dvh);
+  overflow: hidden;
+  background: #fff;
+}
+
+/* 아래에서 올라오는 연두 그라데이션: 평소 348px, 입력 중엔 화면 전체로 번짐 */
+.bp__glow {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 348px;
+  background: linear-gradient(to bottom, rgba(217, 228, 200, 0), #d9e4c8 89.423%);
+  transition: height 0.8s var(--ease-smooth);
+}
+
+.bp[data-active='true'] .bp__glow {
+  height: 100%;
+}
+
+/* ───── 생성 결과 (Figma 2376:36036 / 2268:20856) ───── */
+.bp-result {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  /* 생성 화면이 걷히는 동안 그 뒤에서 천천히 또렷해지며 자리 잡음 */
+  animation: bp-result-in 1.6s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+.bp-result__image {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  max-width: none;
+  /* 844보다 긴 화면에서도 사진이 화면 아래 끝까지 닿게 (모자라면 비율 유지하며 양옆을 잘라 늘림) */
+  min-height: calc(100% - var(--top, 0px));
+  object-fit: cover;
+  translate: -50% 0;
+}
+
+/* 위쪽 짙은 그라데이션 (흰 제목이 잘 보이게) — 높이·색은 results.js shade */
+.bp-result__shade {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  /* Figma: 화면 위로 넘친 그라데이션의 보이는 부분 → 맨 위 진하기에서(일정 구간 유지 후) 투명으로 */
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--shade), var(--shade-alpha, 0.52)) 0%,
+    rgba(var(--shade), var(--shade-alpha, 0.52)) var(--shade-solid, 0%),
+    rgba(var(--shade), 0) 100%
+  );
+}
+
+/* 아래 그라데이션 — 높이·색·진하기는 results.js fade */
+.bp-result__fade {
+  position: absolute;
+  right: 0;
+  left: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--fade), 0),
+    rgba(var(--fade), var(--fade-alpha)) var(--fade-end, 100%)
+  );
+}
+
+.bp[data-mode='result'] .bp__glow {
+  display: none;
+}
+
+.bp__header--result {
+  color: #fff;
+}
+
+/* 결과 사진이 피어나고 생성 화면 글자가 다 사라진 뒤 제목이 이어서 떠오름
+   (.bp__header의 animation보다 우선하도록 .bp를 붙임) */
+.bp .bp__header--result {
+  animation-duration: 0.8s;
+  animation-delay: 0.65s;
+}
+
+.bp__header--result .bp__title {
+  color: #fff;
+}
+
+.bp__header--result .bp__desc {
+  color: #efefef;
+}
+
+/* 하단 바: 완성하기(흰 알약, 마이크 자리만큼 파임) + 작은 마이크 50 */
+/* 인상 다듬기: 완성하기 바 위 가운데, 사진 위에 뜨는 반투명 알약 */
+.bp-tune {
+  position: absolute;
+  bottom: 114px;
+  left: 50%;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 17px 0 15px;
+  /* 사진 위 유리 알약 (Saved to My Blooms · 인상 요약 칩과 같은 재질): 그림자 없이 뒤 사진이 흐리게 비침 */
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 100px;
+  background: rgba(46, 42, 36, 0.18);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  backdrop-filter: blur(16px) saturate(1.3);
+  translate: -50% 0;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.1px;
+  color: #fff;
+  white-space: nowrap;
+  animation: bp-tune-in 0.7s var(--ease-smooth) 0.85s backwards;
+  transition: scale 0.2s ease;
+}
+
+.bp-tune:active {
+  scale: 0.96;
+}
+
+@keyframes bp-tune-in {
+  from {
+    opacity: 0;
+    translate: -50% 10px;
+  }
+}
+
+/* 적용한 인상 (제목 설명 아래 작은 칩) */
+/* 적용한 인상 한 줄 요약: 사진 위 반투명 유리 칩 (흰 글씨 · 가는 흰 테두리) */
+.bp__tuned {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 7px 13px;
+  /* 사진 위 유리 알약 (인상 다듬기 버튼 · Saved to My Blooms와 같은 재질) */
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 100px;
+  background: rgba(46, 42, 36, 0.18);
+  backdrop-filter: blur(16px) saturate(1.3);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.2px;
+  color: rgba(255, 255, 255, 0.96);
+}
+
+.bp-result__bar {
+  position: absolute;
+  right: 0;
+  bottom: 42px;
+  left: 0;
+  width: 350px;
+  height: 56px;
+  margin: 0 auto;
+  /* 생성 화면이 거의 걷힌 뒤 떠오름 */
+  animation: bp-rise 0.7s var(--ease-smooth) 0.75s backwards;
+}
+
+.bp-result__bar-shape {
+  position: absolute;
+  inset: 0;
+  width: 350px;
+  height: 56px;
+  max-width: none;
+  pointer-events: none;
+}
+
+.bp-result__done {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 287px;
+  height: 56px;
+  border-radius: 200px 0 0 200px;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.0036px;
+  color: #424242;
+  transition: opacity 0.2s ease;
+}
+
+.bp-result__done:active {
+  opacity: 0.6;
+}
+
+.bp-result__mic {
+  position: absolute;
+  top: 3px;
+  left: 297px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(172, 179, 170, 0.3);
+  box-shadow:
+    0 2.304px 11.518px rgba(122, 147, 89, 0.2),
+    inset 0 5.188px 4.151px rgba(255, 255, 255, 0.25);
+  transition: scale 0.2s ease;
+}
+
+.bp-result__mic img {
+  width: 25.714px;
+  height: 25.714px;
+  max-width: none;
+}
+
+.bp-result__mic:active {
+  scale: 0.94;
+}
+
+@keyframes bp-result-in {
+  from {
+    opacity: 0;
+    scale: 1.06;
+    filter: blur(10px);
+  }
+}
+
+/* 헤더: 제목 top 84, 설명 top 130 */
+.bp__header {
+  position: absolute;
+  top: 84px;
+  right: 20px;
+  left: 20px;
+  /* 화면이 바뀔 때 아래에서 살짝 떠오르며 또렷해짐 */
+  animation: bp-enter 0.6s var(--ease-smooth) 0.04s backwards;
+}
+
+.bp__header--preview {
+  padding-left: 32px;
+}
+
+.bp__title {
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.068px;
+  color: var(--qb-text-strong);
+  white-space: nowrap;
+}
+
+.bp__desc {
+  margin-top: 1.8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.2px;
+  color: var(--qb-text-sub);
+  white-space: nowrap;
+}
+
+/* 아이콘(24px)은 디자인 위치(x20, y94) 그대로, 터치 영역만 44px */
+.bp__back,
+.bp__close {
+  position: absolute;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+}
+
+.bp__back {
+  left: -10px;
+}
+
+.bp__close {
+  right: -10px;
+}
+
+/* 부케 이미지 246×448 (top 197, Figma 2357:35876), 입력 중엔 224×406 */
+/* 부케 사진 자리 — 부케 유형마다 다름 (bouquets.js preview.box, 예: Still 234×417 x+10 top 214) */
+.bp__bouquet {
+  position: absolute;
+  top: var(--by, 214px);
+  left: calc(50% + var(--bx, 10px));
+  width: var(--bw, 234px);
+  height: var(--bh, 417px);
+  overflow: hidden;
+  translate: -50% 0;
+  /* 입력 중엔 preview.listen 크기로 줄어듦 (기준점은 그 위치에 맞춰 계산) */
+  transform-origin: 50% var(--lo, 65px);
+  transition: scale 0.8s var(--ease-smooth);
+  animation: bp-bouquet-in 1s var(--ease-smooth) backwards;
+}
+
+/* 로딩에서 넘어오면 부케는 이미 그 자리에 있으므로 등장 모션 없음 */
+.bp[data-from-loader='true'] .bp__bouquet {
+  animation: none;
+}
+
+/* 이미지를 상자(246×448)에 꽉 맞춤 (Figma와 동일) */
+/* 상자를 꽉 채움 (부케마다 크롭이 있으면 bouquets.js preview.crop 값으로 덮어씀) */
+.bp__bouquet img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+
+.bp[data-active='true'] .bp__bouquet {
+  scale: var(--ls, 0.893);
+}
+
+/* Bloom Preview 버튼: AI 프리뷰 만들기(top 695) · 이대로 완성하기(top 761) */
+.bp__actions {
+  position: absolute;
+  right: 20px;
+  bottom: 27px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: bp-rise 0.6s var(--ease-smooth) 0.15s backwards;
+}
+
+.bp__ai,
+.bp__done {
+  height: 56px;
+  border-radius: 200px;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.0036px;
+  color: #424242;
+  transition: scale 0.2s ease;
+}
+
+.bp__ai {
+  background: #fff;
+}
+
+.bp__done {
+  text-decoration: underline;
+  text-decoration-thickness: from-font;
+  text-underline-position: from-font;
+}
+
+.bp__ai:active,
+.bp__done:active {
+  scale: 0.98;
+}
+
+/* 말한 내용 / 입력창 (top 650, 28px) */
+.bp__prompt {
+  position: absolute;
+  right: 20px;
+  bottom: 157.6px;
+  left: 20px;
+  text-align: center;
+}
+
+/* Bloom AI Preview(결과 전): 말한 내용(top 630)·마이크·키보드(top 690)가 20px 위 (Figma 2845:25293 · 24527)
+   결과 위에서 다시 요청할 땐 그대로 */
+.bp[data-mode='ai'] .bp__prompt {
+  bottom: 177.6px;
+}
+
+.bp[data-mode='ai'] .bp__controls {
+  bottom: 119px;
+}
+
+/* 말한 내용: 가로 한 줄. 넘치면 줄 전체가 왼쪽으로 부드럽게 흘러가고 왼쪽 끝은 흐려짐 */
+.bp__said {
+  height: calc(28px * 1.3);
+  overflow: hidden;
+  text-align: left;
+}
+
+.bp__said[data-overflow='true'] {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 22%);
+  mask-image: linear-gradient(to right, transparent, #000 22%);
+}
+
+.bp__said-text {
+  width: max-content;
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.2px;
+  /* 사진·연두 바탕 위에서도 묻히지 않게 조금 진하게 */
+  color: #56614f;
+  white-space: pre;
+  transition: transform 0.9s var(--ease-smooth);
+}
+
+/* 글자가 하나씩 타이핑되듯 써짐: 커서 자리에서 은은하게 나타남.
+   듣는 중(아직 확정 전)인 글자는 조금 옅게, 인식이 확정되면 진하게 */
+.bp-char {
+  display: inline-block;
+  white-space: pre;
+  opacity: 0.6;
+  transition: opacity 0.5s ease;
+  animation: bp-char-in 0.24s ease-out backwards;
+}
+
+.bp-char[data-final='true'] {
+  opacity: 1;
+}
+
+/* 출렁임 없이 제자리에서 살짝만 떠오르며 나타남 */
+@keyframes bp-char-in {
+  from {
+    opacity: 0;
+    translate: 0 0.05em;
+    filter: blur(1px);
+  }
+}
+
+/* 말하는 중 깜빡이는 커서 */
+.bp__caret {
+  display: inline-block;
+  width: 2px;
+  height: 0.95em;
+  margin-left: 2px;
+  vertical-align: -0.12em;
+  background: #56614f;
+  /* 글자를 따라 움직임 */
+  animation: bp-blink 1s steps(1) infinite;
+}
+
+.bp__input {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.2px;
+  text-align: center;
+  color: #788476;
+  caret-color: #788476;
+  animation: bp-rise 0.4s var(--ease-smooth) backwards;
+}
+
+.bp__input::placeholder {
+  color: rgba(120, 132, 118, 0.45);
+}
+
+/* 결과 사진 위에서 다시 요청할 때: 배경에 묻히지 않게 흰 글자 (Figma 2845:24984) */
+.bp[data-mode='result'] .bp__said-text,
+.bp[data-mode='result'] .bp__input {
+  color: #fff;
+  text-shadow: 0 1px 8px rgba(40, 40, 36, 0.35);
+}
+
+.bp[data-mode='result'] .bp__caret {
+  background: #fff;
+}
+
+.bp[data-mode='result'] .bp__input {
+  caret-color: #fff;
+}
+
+.bp[data-mode='result'] .bp__input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* 동그란 유리 버튼: 가운데 높이(y 745)는 고정, 위치·크기만 상태에 따라 미끄러짐
+   기본: 마이크(x154)·키보드(x236) 70px / 입력 중: 마이크 가운데 70px · 키보드 오른쪽(x282) 56px */
+.bp__controls {
+  position: absolute;
+  right: 0;
+  bottom: 99px;
+  left: 0;
+  height: 0;
+}
+
+.bp-orb {
+  --x: 0px;
+  --size: 70px;
+  position: absolute;
+  top: 0;
+  left: calc(50% + var(--x));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size);
+  height: var(--size);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  background: rgba(172, 179, 170, 0.3);
+  box-shadow:
+    0 3.225px 16.126px rgba(122, 147, 89, 0.2),
+    inset 0 7.264px 5.811px rgba(255, 255, 255, 0.25);
+  translate: -50% -50%;
+  transition:
+    left 0.6s var(--ease-spring-gentle),
+    width 0.6s var(--ease-spring-gentle),
+    height 0.6s var(--ease-spring-gentle),
+    background 0.4s ease,
+    border-color 0.4s ease;
+  /* 튀지 않고 아래에서 미끄러지듯 떠오름 (위치는 translate, 등장은 transform으로 분리) */
+  animation: bp-orb-in 0.65s var(--ease-smooth) 0.14s backwards;
+}
+
+.bp-orb:active {
+  scale: 0.95;
+}
+
+.bp-orb--mic {
+  --x: -41px;
+}
+
+.bp-orb--keyboard {
+  --x: 41px;
+  animation-delay: 0.21s;
+}
+
+.bp[data-active='true'] .bp-orb--mic {
+  --x: 0px;
+}
+
+.bp[data-active='true'] .bp-orb--keyboard {
+  --x: 87px;
+  --size: 56px;
+}
+
+.bp-orb__icon {
+  width: 36px;
+  height: 36px;
+  max-width: none;
+  transition:
+    opacity 0.3s ease,
+    width 0.6s var(--ease-spring-gentle),
+    height 0.6s var(--ease-spring-gentle);
+}
+
+.bp[data-active='true'] .bp-orb--keyboard .bp-orb__icon {
+  width: 28.8px;
+  height: 28.8px;
+}
+
+/* 켜진 버튼: 연두 빛이 도는 유리 */
+.bp-orb[data-on='true'] {
+  border: 2.98px solid rgba(255, 255, 255, 0.3);
+  background:
+    linear-gradient(219.17deg, rgba(255, 234, 0, 0.2) 28.821%, rgba(255, 234, 0, 0) 53.4%),
+    radial-gradient(
+      circle closest-side,
+      rgba(122, 147, 89, 0.3),
+      rgba(170, 201, 129, 0.3) 50%,
+      rgba(218, 255, 169, 0.3)
+    ),
+    linear-gradient(222.36deg, rgba(255, 255, 255, 0.2) 16.108%, #daffa9 83.699%);
+}
+
+/* 마이크 아이콘: 평소엔 흰 아이콘, 켜지면 은은히 빛나는 아이콘 */
+.bp-orb--mic {
+  display: grid;
+  place-items: center;
+}
+
+.bp-orb--mic .bp-orb__icon {
+  grid-area: 1 / 1;
+}
+
+.bp-orb__icon--on {
+  width: 35.007px;
+  height: 44.652px;
+  opacity: 0;
+}
+
+.bp-orb--mic[data-on='true'] .bp-orb__icon--idle {
+  opacity: 0;
+}
+
+.bp-orb--mic[data-on='true'] .bp-orb__icon--on {
+  opacity: 1;
+}
+
+/* 듣는 중: 버튼이 말소리처럼 숨 쉬듯 살짝 커졌다 작아지고, 둘레에 연두 빛이 은은하게 번짐 */
+.bp-orb--mic[data-listening='true'] {
+  animation: bp-speak 1.8s ease-in-out infinite;
+}
+
+.bp-orb--mic::before {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(218, 255, 169, 0.55) 40%, rgba(218, 255, 169, 0) 72%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+
+.bp-orb--mic[data-listening='true']::before {
+  opacity: 1;
+  animation: bp-halo 1.8s ease-in-out infinite;
+}
+
+@keyframes bp-speak {
+  0%,
+  100% {
+    scale: 1;
+  }
+  30% {
+    scale: 1.045;
+  }
+  55% {
+    scale: 1.01;
+  }
+  75% {
+    scale: 1.035;
+  }
+}
+
+@keyframes bp-halo {
+  0%,
+  100% {
+    opacity: 0.55;
+    scale: 1;
+  }
+  35% {
+    opacity: 1;
+    scale: 1.12;
+  }
+  75% {
+    opacity: 0.8;
+    scale: 1.06;
+  }
+}
+
+.bp[data-leaving='true'] > * {
+  animation: bp-leave 0.28s var(--ease-leave) both;
+}
+
+@keyframes bp-rise {
+  from {
+    opacity: 0;
+    translate: 0 12px;
+  }
+}
+
+@keyframes bp-bouquet-in {
+  from {
+    opacity: 0;
+    scale: 0.96;
+  }
+}
+
+@keyframes bp-orb-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+    filter: blur(4px);
+  }
+}
+
+@keyframes bp-enter {
+  from {
+    opacity: 0;
+    translate: 0 14px;
+    filter: blur(4px);
+  }
+}
+
+/* 다음 화면으로 넘어가기 직전: 지금 제목·버튼이 살짝 위로 흐려지며 사라짐 (부케는 그대로) */
+.bp[data-switching='true'] :is(.bp__header, .bp__actions, .bp__prompt, .bp__controls) {
+  animation: bp-switch-out 0.32s var(--ease-leave) both;
+}
+
+@keyframes bp-switch-out {
+  to {
+    opacity: 0;
+    translate: 0 -10px;
+    filter: blur(3px);
+  }
+}
+
+@keyframes bp-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes bp-leave {
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bp,
+  .bp * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

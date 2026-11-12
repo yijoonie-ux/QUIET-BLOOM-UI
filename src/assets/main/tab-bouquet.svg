@@ -1,0 +1,11 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Group 2085671227">
+<path id="Exclude" d="M16 9C16 13.4183 12.4183 17 8 17C3.58172 17 1.61069e-08 13.4183 0 9V8.5C0 3.80558 3.80558 0 8.5 0H16V9ZM10.6807 5.69629C10.2843 5.31174 9.65115 5.32136 9.2666 5.71777L3.69629 11.46C3.31179 11.8564 3.32138 12.4895 3.71777 12.874C4.11417 13.2585 4.7473 13.2489 5.13184 12.8525L10.7021 7.11035C11.0867 6.71394 11.0771 6.08084 10.6807 5.69629Z" fill="white"/>
+<g id="Rectangle 240655817">
+</g>
+<mask id="stroke0_0_7" fill="white">
+<path d="M0 8.5C0 3.80558 3.80558 0 8.5 0H16V9C16 13.4183 12.4183 17 8 17V17C3.58172 17 0 13.4183 0 9V8.5Z"/>
+</mask>
+<path id="Rectangle 240655819" d="M16 0H8.5C3.80558 0 0 3.80558 0 8.5V9C0 13.4183 3.58172 17 8 17V17C12.4183 17 16 13.4183 16 9V0Z" stroke-width="0.6" stroke="white" mask="url(#stroke0_0_7)"/>
+</g>
+</svg>

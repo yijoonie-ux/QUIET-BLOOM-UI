@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+    />
+    <title>Quiet Bloom — Slide 01</title>
+    <link rel="stylesheet" href="./slide.css" />
+  </head>
+  <body>
+    <!-- 1920×1080 기준 스테이지. 창 크기에 맞춰 slide.js가 스케일 -->
+    <div class="viewport">
+      <main class="stage" id="stage">
+        <!-- 로고: PNG 알파를 마스크로 쓰는 원본 구조 그대로 (file://에서도 동작하도록 인라인 SVG 마스크) -->
+        <div class="logo logo--quiet">
+          <svg width="634.324" height="357.715" viewBox="0 0 634.324 357.715">
+            <defs>
+              <mask id="mask-quiet" maskUnits="userSpaceOnUse" style="mask-type: alpha">
+                <image href="./assets/logo-mask-left.png" width="635.649" height="281" preserveAspectRatio="none" />
+              </mask>
+            </defs>
+            <image href="./assets/logo-left.svg" width="634.324" height="357.715" preserveAspectRatio="none" mask="url(#mask-quiet)" />
+          </svg>
+        </div>
+        <div class="logo logo--bloom">
+          <svg width="708.375" height="239.076" viewBox="0 0 708.375 239.076">
+            <defs>
+              <mask id="mask-bloom" maskUnits="userSpaceOnUse" style="mask-type: alpha">
+                <image href="./assets/logo-mask-right.png" width="709.64" height="239.076" preserveAspectRatio="none" />
+              </mask>
+            </defs>
+            <image href="./assets/logo-right.svg" width="708.375" height="239.076" preserveAspectRatio="none" mask="url(#mask-bloom)" />
+          </svg>
+        </div>
+
+        <img class="panel" src="./assets/panel.svg" alt="" />
+
+        <p class="label label--foliage">FOLIAGE +</p>
+        <p class="label label--stimulus">LOW-STIMULUS →</p>
+        <p class="label label--brand">QUIET BLOOM</p>
+
+        <!-- 2단계: hush 화병 -->
+        <div class="hush">
+          <img class="hush__img" src="./assets/plant-hush.png" alt="" />
+        </div>
+
+        <!-- 토글 메뉴 -->
+        <div class="pill pill--top"></div>
+        <div class="card">
+          <div class="card__item card__item--still">
+            <div class="card__thumb"><img src="./assets/thumb-still.png" alt="" class="thumb-still" /></div>
+            <p class="card__title">Still</p>
+            <p class="card__desc">저자극 · 저향 ·<br />유지력 순</p>
+          </div>
+          <div class="card__item card__item--hush">
+            <div class="card__thumb card__thumb--hush"><img src="./assets/thumb-hush.png" alt="" class="thumb-hush" /></div>
+            <p class="card__title">Hush</p>
+            <p class="card__desc">저자극 · 저향 ·<br />예산 순</p>
+          </div>
+        </div>
+        <div class="pill pill--bottom"></div>
+        <div class="arrow"><img src="./assets/arrow.svg" alt="" /></div>
+
+        <h1 class="headline">
+          <span class="line"><span>Just Greenery,</span></span>
+          <span class="line"><span>Make Your Own</span></span>
+          <span class="line"><span>Quiet Bloom</span></span>
+        </h1>
+        <div class="badge badge--sprout"></div>
+        <div class="badge badge--drop"></div>
+        <img class="icon icon--sprout" src="./assets/icon-sprout.svg" alt="" />
+        <img class="icon icon--drop" src="./assets/icon-drop.svg" alt="" />
+        <p class="desc">
+          <span class="line"><span>향과 자극의 부담은 줄이고, 나만의 조건에 맞춰</span></span>
+          <span class="line"><span>완성하는 맞춤형 풀부케 경험을 제공합니다</span></span>
+        </p>
+
+        <!-- 1단계: 행잉 식물 (drop = 낙하, swing = 착지 후 감쇠 진자, idle = 상시 미세 흔들림) -->
+        <div class="hang">
+          <div class="hang__drop">
+            <div class="hang__swing">
+              <div class="hang__idle">
+                <img src="./assets/plant-hanging.png" alt="" />
+                <img src="./assets/plant-hanging.png" alt="" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script src="./slide.js"></script>
+  </body>
+</html>

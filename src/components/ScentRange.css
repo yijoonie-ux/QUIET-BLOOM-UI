@@ -1,0 +1,56 @@
+.scent-range {
+  display: block;
+  max-width: none;
+}
+
+/* 이어지는 선: 왼쪽에서 오른쪽으로 그어짐 */
+.scent-range__line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.45s var(--ease-smooth);
+}
+
+/* 오른쪽 연두 점: 선이 닿을 즈음 톡 나타남 */
+.scent-range__knob-on {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  scale: 0.4;
+  transition:
+    opacity 0.2s ease,
+    scale 0.2s ease;
+}
+
+.scent-range[data-on='true'] .scent-range__line {
+  stroke-dashoffset: 0;
+}
+
+.scent-range[data-on='true'] .scent-range__knob-on {
+  opacity: 1;
+  scale: 1;
+  transition:
+    opacity 0.25s ease 0.22s,
+    scale 0.55s var(--ease-spring-soft) 0.22s;
+}
+
+/* 꺼진 상태를 회색 트랙으로 보여주는 모드 (켜지면 연두로 물듦) */
+.scent-range__track,
+.scent-range__track-tint {
+  transition:
+    fill 0.35s ease,
+    fill-opacity 0.35s ease;
+}
+
+.scent-range[data-off-tone='neutral'][data-on='false'] .scent-range__track {
+  fill: var(--qb-toggle-off);
+}
+
+.scent-range[data-off-tone='neutral'][data-on='false'] .scent-range__track-tint {
+  fill-opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scent-range * {
+    transition: none !important;
+  }
+}

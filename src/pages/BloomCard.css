@@ -1,0 +1,262 @@
+/* Bloom Card (Figma 2268:20892) — 한 화면짜리라 화면 네 변에 고정 */
+.bc {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  /* 화면 높이: iOS 홈 화면 앱 첫 실행 문제 방지 (appHeight.js) */
+  height: var(--app-h, 100dvh);
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(120, 132, 118, 0.94) 0%, #d9e4c8 89.423%),
+    #fff;
+  animation: bc-fade 0.6s var(--ease-smooth) backwards;
+}
+
+.bc__header {
+  position: absolute;
+  top: 84px;
+  right: 20px;
+  left: 20px;
+  color: #fff;
+  animation: bc-rise 0.6s var(--ease-smooth) 0.1s backwards;
+}
+
+.bc__title {
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.068px;
+}
+
+.bc__desc {
+  margin-top: 1.8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.2px;
+  color: #efefef;
+  white-space: nowrap;
+}
+
+/* 카드 307×454 (top 203, 가운데) */
+.bc__card-wrap {
+  position: absolute;
+  top: 203px;
+  left: 50%;
+  width: 307px;
+  height: 454px;
+  margin-left: -153px;
+  perspective: 1100px;
+}
+
+/* 카드(앞·뒷면을 가진 3D 상자): 뒷면에서 반 바퀴 돌며 커지고 → 살짝 크게 왔다가 쫀득하게 자리를 잡음 */
+.bc__card {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  animation: bc-card-spin 1.3s 0.35s both;
+
+  --tilt-x: 0;
+  --tilt-y: 0;
+  --tilt-lift: 0;
+}
+
+.bc__card[data-settled='true'] {
+  animation: none;
+}
+
+.bc__card:active {
+  cursor: grabbing;
+}
+
+/* 등장 후 끌면 기울어짐 (Make Quiet Bloom 카드와 같은 방식) */
+.bc__card[data-tilting='true'] {
+  transform: translate3d(var(--tilt-tx, 0px), var(--tilt-ty, 0px), 0) rotateX(var(--tilt-rx, 0deg))
+    rotateY(var(--tilt-ry, 0deg));
+}
+
+.bc__face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 20px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  box-shadow: 0 12px 30px -10px rgba(60, 72, 48, calc(0.25 + var(--tilt-lift) * 0.2));
+}
+
+.bc__face img {
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+.bc__face--front[data-plain='true'] {
+  background: linear-gradient(to bottom, #b8c6a6, #dfe8d2);
+}
+
+/* 뒷면: 세이지 바탕 가운데 흰 네 잎 심볼 로고 */
+.bc__face--back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #a9b796, #7f8f6c);
+  transform: rotateY(180deg);
+}
+
+/* 네 잎 심볼 로고 (번짐 포함 SVG) */
+.bc__logo {
+  width: 110px;
+  height: 110px;
+  background: #fff;
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  opacity: 0.9;
+}
+
+@keyframes bc-card-spin {
+  0% {
+    opacity: 0;
+    translate: 0 70px;
+    scale: 0.55;
+    rotate: y -180deg;
+    animation-timing-function: cubic-bezier(0.2, 0.7, 0.3, 1);
+  }
+  12% {
+    opacity: 1;
+  }
+  /* 다 돌고 살짝 크게 */
+  72% {
+    translate: 0 -6px;
+    scale: 1.06;
+    rotate: y 0deg;
+    animation-timing-function: cubic-bezier(0.5, 0, 0.3, 1);
+  }
+  /* 자리를 잡으며 살짝 눌림 */
+  86% {
+    translate: 0 2px;
+    scale: 0.985;
+  }
+  100% {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+    rotate: y 0deg;
+  }
+}
+
+/* 부케 이름표: My Blooms 카드(268 기준 top 20 · left 22 · 16/20px)를 카드 너비 307에 맞춰 키움 */
+.bc__label {
+  position: absolute;
+  z-index: 1;
+  top: 23px;
+  left: 25px;
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  font-size: 18.3px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.26px;
+  color: #fff;
+  white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(40, 36, 30, 0.18);
+  pointer-events: none;
+}
+
+.bc__label strong {
+  font-size: 22.9px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.bc__image {
+  position: absolute;
+  max-width: none;
+}
+
+.bc__image[data-cover='true'] {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bc__face--front[data-plain='true'] .bc__image {
+  object-fit: contain;
+}
+
+/* 카드 출력하기(top 695) · 홈으로 돌아가기(top 761) */
+.bc__actions {
+  position: absolute;
+  right: 20px;
+  bottom: 27px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: bc-rise 0.6s var(--ease-smooth) 0.35s backwards;
+}
+
+.bc__print,
+.bc__home {
+  height: 56px;
+  border-radius: 200px;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.0036px;
+  color: #424242;
+  transition: scale 0.2s ease;
+}
+
+.bc__print {
+  background: #fff;
+}
+
+.bc__home {
+  text-decoration: underline;
+  text-decoration-thickness: from-font;
+  text-underline-position: from-font;
+}
+
+.bc__print:active,
+.bc__home:active {
+  scale: 0.98;
+}
+
+.bc[data-leaving='true'] > * {
+  animation: bc-leave 0.28s var(--ease-leave) both;
+}
+
+@keyframes bc-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes bc-rise {
+  from {
+    opacity: 0;
+    translate: 0 14px;
+  }
+}
+
+@keyframes bc-leave {
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bc,
+  .bc * {
+    animation: none !important;
+  }
+}

@@ -1,0 +1,12 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Group 2085671284">
+<g id="Rectangle 240655849">
+<path d="M0 13C0 10.7909 1.79086 9 4 9H12C14.2091 9 16 10.7909 16 13V16H0V13Z" fill="white"/>
+<mask id="stroke0_0_4" fill="white">
+<path d="M0 13C0 10.7909 1.79086 9 4 9H12C14.2091 9 16 10.7909 16 13V16H0V13Z"/>
+</mask>
+<path d="M16 16V13C16 10.7909 14.2091 9 12 9H4C1.79086 9 0 10.7909 0 13V16H16Z" stroke-width="0.6" stroke="white" mask="url(#stroke0_0_4)"/>
+</g>
+<path id="Ellipse 8369" d="M11.85 4C11.85 6.1263 10.1263 7.85 8 7.85C5.8737 7.85 4.15 6.1263 4.15 4C4.15 1.8737 5.8737 0.15 8 0.15C10.1263 0.15 11.85 1.8737 11.85 4Z" fill="white" stroke-width="0.3" stroke="white"/>
+</g>
+</svg>

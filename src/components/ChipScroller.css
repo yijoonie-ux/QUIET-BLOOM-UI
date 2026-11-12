@@ -1,0 +1,40 @@
+.chip-scroller {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  --fade: 24px;
+}
+
+.chip-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.chip-scroller > * {
+  flex: none;
+}
+
+/* 잘리는 쪽에만 부드럽게 사라지는 그라데이션 */
+.chip-scroller[data-fade-right='true'] {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - var(--fade)), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - var(--fade)), transparent);
+}
+
+.chip-scroller[data-fade-left='true'] {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--fade));
+  mask-image: linear-gradient(to right, transparent, #000 var(--fade));
+}
+
+.chip-scroller[data-fade-left='true'][data-fade-right='true'] {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 var(--fade),
+    #000 calc(100% - var(--fade)),
+    transparent
+  );
+  mask-image: linear-gradient(to right, transparent, #000 var(--fade), #000 calc(100% - var(--fade)), transparent);
+}

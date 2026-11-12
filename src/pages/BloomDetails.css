@@ -1,0 +1,411 @@
+/* Bloom Details (Figma 2268:20476) */
+.bd {
+  min-height: var(--app-h, 100dvh);
+  padding-bottom: 41px;
+  background: #fff;
+}
+
+/* 위쪽 사진 390×403, 아래 모서리 60 */
+.bd__hero {
+  position: relative;
+  height: 400.5px;
+  overflow: hidden;
+  border-radius: 0 0 60px 60px;
+  animation: bd-hero-in 0.9s var(--ease-smooth) backwards;
+}
+
+.bd__hero-image {
+  position: absolute;
+  top: -75.5px;
+  left: 50%;
+  width: 541px;
+  height: 676px;
+  max-width: none;
+  object-fit: cover;
+  translate: calc(-50% + 0.5px) 0;
+}
+
+/* 생성 결과 없이 완성한 경우: 배경 없는 부케 사진을 연한 세이지 위에 */
+.bd__hero[data-plain='true'] {
+  background: linear-gradient(to bottom, #b8c6a6, #dfe8d2);
+}
+
+.bd__hero[data-plain='true'] .bd__hero-image {
+  object-fit: contain;
+}
+
+/* 완성 화면: 위쪽 짙은 그라데이션 293 */
+.bd__hero-shade {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 293px;
+  background: linear-gradient(to top, rgba(136, 143, 103, 0) 24.206%, #888f67);
+  pointer-events: none;
+}
+
+/* 완성 화면(AI 결과 사진): 사진 톤에 맞춘 위쪽 그라데이션 (Figma 2845:23849) — 높이·색은 results.js heroShade */
+.bd__hero-shade[data-warm='true'] {
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--shade), var(--shade-alpha, 0.52)) 0%,
+    rgba(var(--shade), var(--shade-alpha, 0.52)) var(--shade-solid, 0%),
+    rgba(var(--shade), 0) 100%
+  );
+}
+
+.bd__header[data-complete='true'] {
+  left: 20px;
+}
+
+/* 카드로 만들기 350×56 (아래 여백 41) → 바로 카드 출력 */
+.bd__next {
+  display: block;
+  width: calc(100% - 40px);
+  max-width: 350px;
+  height: 56px;
+  margin: 30px auto 0;
+  border-radius: 200px;
+  background: #191919;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.0036px;
+  color: #fff;
+  transition: scale 0.2s ease;
+  animation: bd-rise 0.6s var(--ease-smooth) 0.55s backwards;
+}
+
+.bd__next:active {
+  scale: 0.98;
+}
+
+/* 사진 위 흰 제목 (top 84) */
+.bd__header {
+  position: absolute;
+  top: 84px;
+  right: 20px;
+  left: 52px;
+  color: #fff;
+  animation: bd-rise 0.6s var(--ease-smooth) 0.15s backwards;
+}
+
+.bd__back {
+  position: absolute;
+  top: 0;
+  left: -42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+}
+
+/* 공유: 제목 줄 오른쪽 끝, 사진 위 유리 원 */
+.bd__share {
+  position: absolute;
+  top: 2px;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 50%;
+  background: rgba(46, 42, 36, 0.18);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  backdrop-filter: blur(16px) saturate(1.3);
+  color: #fff;
+}
+
+.bd__share:active {
+  scale: 0.94;
+}
+
+.bd-toast {
+  position: fixed;
+  bottom: calc(40px + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  z-index: 6;
+  padding: 10px 16px;
+  border-radius: 100px;
+  background: rgba(25, 25, 25, 0.88);
+  translate: -50% 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  animation: bd-rise 0.4s var(--ease-smooth) backwards;
+}
+
+.bd__title {
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.068px;
+}
+
+.bd__desc {
+  margin-top: 1.8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.2px;
+  /* 밝은 사진 위에서도 윤곽만 잡히게: 흰 글자 + 글자 바로 밑 아주 작은 그림자 (번짐 없이) */
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(40, 36, 30, 0.18);
+  white-space: nowrap;
+}
+
+/* 이름 (top 430) + 연필 (오른쪽 7) */
+.bd__name {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 29.5px;
+  padding-left: 25px;
+  animation: bd-rise 0.6s var(--ease-smooth) 0.25s backwards;
+}
+
+.bd__name h2 {
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 30px;
+  color: #2a2a2a;
+}
+
+.bd__edit {
+  display: flex;
+  width: 18px;
+  height: 18px;
+}
+
+/* 유지기간 · 물교체 · 가격 (원 40 top 484, 글자 top 530) */
+.bd__stats {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  justify-content: center;
+  margin: 24px 0 0;
+  animation: bd-rise 0.6s var(--ease-smooth) 0.32s backwards;
+}
+
+.bd__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.bd__stat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 119.118px;
+  background: linear-gradient(104.16deg, rgba(201, 217, 180, 0.95) 4.72%, rgba(218, 232, 178, 0.95) 102.17%);
+}
+
+.bd__stat-icon img {
+  max-width: none;
+}
+
+.bd__stat dd {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.2px;
+  color: var(--qb-text-sub);
+  white-space: nowrap;
+}
+
+/* 가격 내역 (식물 + 연출 소재) */
+.bd__cost {
+  margin-top: 18px;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+  color: #8a9387;
+  animation: bd-rise 0.6s var(--ease-smooth) 0.36s backwards;
+}
+
+/* 점선 (top 578) */
+.bd__divider {
+  display: block;
+  width: 350px;
+  max-width: calc(100% - 40px);
+  height: 1px;
+  margin: 29.8px auto 0;
+}
+
+/* 가격 내역 줄이 있으면 점선까지 조금 좁게 (위아래 균형) */
+.bd__cost + .bd__divider {
+  margin-top: 26px;
+}
+
+/* Bouquet Details (top 608) / Composition (top 753) */
+.bd__section {
+  margin-top: 29.5px;
+  padding: 0 20px;
+  animation: bd-rise 0.6s var(--ease-smooth) 0.4s backwards;
+}
+
+.bd__heading {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.2px;
+  color: #2a2a2a;
+}
+
+.bd__text {
+  margin-top: 11.6px;
+  font-size: 14px;
+  line-height: 1.4;
+  letter-spacing: 0.16px;
+  color: var(--qb-text-sub);
+  word-break: keep-all;
+}
+
+/* 줄 단위로 자간을 정한 설명 (Figma 그대로 줄바꿈) */
+.bd__text-line {
+  display: block;
+}
+
+/* 390보다 좁은 화면에서는 Figma 줄바꿈이 맞지 않으므로 이어서 자연스럽게 줄바꿈 */
+@media (max-width: 389px) {
+  .bd__text-line {
+    display: inline;
+    letter-spacing: inherit !important;
+  }
+
+  .bd__text-line + .bd__text-line::before {
+    content: ' ';
+  }
+}
+
+.bd__text-lead {
+  display: block;
+  font-weight: 500;
+  letter-spacing: -0.028px;
+  color: #2a2a2a;
+}
+
+.bd__section--composition {
+  margin-top: 31px;
+  padding: 0;
+  animation-delay: 0.48s;
+}
+
+.bd__section--composition .bd__heading {
+  padding: 0 19px;
+}
+
+/* 식물 칸 106×106, 간격 12, 옆으로 넘김 */
+.bd__thumbs {
+  display: flex;
+  gap: 12px;
+  margin: 13.6px 0 0;
+  padding: 0 20px;
+  overflow-x: auto;
+  list-style: none;
+  scroll-snap-type: x proximity;
+  /* 넘김 위치를 왼쪽 여백(20) 안쪽에 맞춤 — 처음부터 밀려 보이지 않게 */
+  scroll-padding-inline: 20px;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  /* PC에서는 마우스로 끌어서 넘김 (useDragScroll) */
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.bd__thumbs::-webkit-scrollbar {
+  display: none;
+}
+
+.bd-thumb {
+  position: relative;
+  flex: none;
+  width: 106px;
+  height: 106px;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #d9e4c8;
+  scroll-snap-align: start;
+}
+
+/* 상세 정보가 있는 식물: 칸 전체가 눌림 영역 */
+.bd-thumb__open {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.bd-thumb__open:active {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.bd-thumb__photo {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  overflow: hidden;
+  translate: -50% 0;
+}
+
+.bd-thumb__photo img {
+  position: absolute;
+  max-width: none;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+.bd[data-leaving='true'] > * {
+  animation: bd-leave 0.28s var(--ease-leave) both;
+}
+
+/* My Blooms에서 카드를 내려 들어올 때: 둥근 아래 모서리의 사진이 위에서 쓱 내려와 자리 잡음 */
+.bd[data-enter='pull'] .bd__hero {
+  animation: bd-hero-drop 0.9s var(--ease-spring-gentle) backwards;
+}
+
+@keyframes bd-hero-drop {
+  from {
+    translate: 0 -105%;
+  }
+}
+
+@keyframes bd-hero-in {
+  from {
+    opacity: 0;
+    scale: 1.03;
+  }
+}
+
+@keyframes bd-rise {
+  from {
+    opacity: 0;
+    translate: 0 14px;
+  }
+}
+
+@keyframes bd-leave {
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bd,
+  .bd * {
+    animation: none !important;
+  }
+}

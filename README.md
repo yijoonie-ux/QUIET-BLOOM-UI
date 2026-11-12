@@ -3,6 +3,8 @@
 향과 자극에 민감한 사람을 위한 풀부케 구성 서비스 **Quiet Bloom**의 모바일 웹 UI입니다.
 Figma 시안(파일 `urkl2deJCcXjkLjYasrSDG`)을 바탕으로 만들었고, iPhone 13(390×844)을 기준 화면으로 합니다.
 
+**새 컴퓨터에서 실행 · GitHub 올리기 · 배포 방법은 [GUIDE.md](GUIDE.md)를 먼저 보세요.**
+
 남은 작업은 [TODO.md](TODO.md), 화면 캡처는 [docs/SCREENS.md](docs/SCREENS.md), 작업 기록은 [docs/CHANGELOG.md](docs/CHANGELOG.md)에 있습니다.
 
 ## 실행
@@ -33,9 +35,10 @@ npm run build           # dist/ 에 빌드
 | `/edit` | 조건 수정 / Bloom Profile | 2268:17827 · 2268:17735 · 2350:35711 |
 | `/compose` | 부케 구성 (Structure · Volume · Line · Texture, Composition 시트) | 2268:18886 · 19129 · 20043 · 19399 · 19672 |
 | `/preview` | Bloom Preview → AI 프리뷰 → 생성 중 → 생성 결과 | 2268:21089 · 21057 · 20786 · 20983 · 2376:36036 · 36115 · 2268:20856 |
-| `/complete` | Bloom Complete | 2268:20344 |
+| `/realize` | Make This Bloom (예상 제작비 · 구매처 추천 · 대체 식물 · 연출 소재) — AI 프리뷰 "실제 제작 준비하기"에서 이어짐 | (Figma 없음) |
+| `/complete` | Bloom Complete (Make This Bloom "완성하기"에서 이어짐) | 2268:20344 |
 | `/card` | Bloom Card (현재 흐름에서는 건너뜀) | 2268:20892 |
-| `/print` | 카드 출력 모션 → 출력 완료 (Bloom Complete "카드로 만들기"에서 이어짐) | (Figma 없음) |
+| `/saved` | 카드 생성 모션 → Bloom Card 저장 완료 (Bloom Complete "Bloom Card로 저장하기"에서 이어짐, `/print`도 여기로) | (Figma 없음) |
 | `/blooms` | My Blooms (3D 캐러셀 — 좌우로 넘기기, 가운데 카드를 아래로 내려 자세히 보기) | 2268:20919 |
 | `/blooms/:id` | Bloom Details (`still` · `calm` · `airy`) | Still 2268:20476 · Calm 2268:20410 · Airy 없음 |
 | `/mypage` | 마이페이지 | 2168:2678 |
@@ -47,15 +50,18 @@ npm run build           # dist/ 에 빌드
 ```
 온보딩 ─▶ 홈 ─▶ Make Quiet Bloom ─▶ 부케 구성 ─▶ (로딩) ─▶ Bloom Preview
                     │                                         │
-                    └▶ 조건 수정                    ┌─ 이대로 완성하기 ─┤
-                                                    │                   └▶ AI 프리뷰 ─▶ 말하기/입력 ─▶ 생성 중 ─▶ 결과
-                                                    │                                                      │ (다시 요청 가능)
-                                                    └────────────────▶ Bloom Complete ◀── 완성하기 ─────────┘
-                                                                            │ 카드로 만들기
-                                                                            ▼
-                                                                   카드 출력 → 출력 완료 ─▶ 홈 / My Blooms
-홈 ─▶ My Blooms ─(카드를 아래로)─▶ Bloom Details
-홈 ↔ 마이페이지 (하단 탭)
+                    └▶ 조건 수정                ┌─ 이대로 제작 준비하기 ─┤
+                                                │                        └▶ AI 프리뷰 ─▶ 말하기/입력 ─▶ 생성 중 ─▶ 결과
+                                                │                                     (인상 다듬기 · 다시 요청 가능) │
+                                                └──────────▶ Make This Bloom ◀── 실제 제작 준비하기 ─────────────────┘
+                                                                  │ 완성하기 (대체 식물을 고르면 활성)
+                                                                  ▼
+                                                            Bloom Complete
+                                                                  │ Bloom Card로 저장하기
+                                                                  ▼
+                                                     카드 생성 → 저장 완료 ─▶ 홈 / My Blooms
+홈 ─▶ My Blooms ─(카드를 아래로)─▶ Bloom Details (공유 링크 복사)
+홈 ↔ 부케구성 ↔ 마이페이지 (하단 탭)
 ```
 
 - **온보딩**은 앱을 새로 열거나 새로고침할 때마다 처음에 한 번 나옵니다. 홈이 아닌 주소로 바로 들어오면 건너뜁니다.

@@ -2,8 +2,6 @@ import { useState } from 'react'
 import { useLocation } from 'react-router'
 import backIcon from '../assets/edit/back.svg'
 import sensitivityCard from '../assets/edit/sensitivity-card.svg'
-import leafIcon from '../assets/edit/icon-leaf.svg'
-import scentIcon from '../assets/edit/icon-scent.svg'
 import chipClose from '../assets/edit/chip-close.svg'
 import budgetIcon from '../assets/edit/icon-budget.svg'
 import budgetIconInactive from '../assets/edit/icon-budget-inactive.svg'
@@ -80,9 +78,6 @@ function EditConditions() {
           />
 
           <div className="sensitivity__row">
-            <span className="sensitivity__icon">
-              <img src={leafIcon} alt="" />
-            </span>
             <span className="sensitivity__text">
               <span className="sensitivity__label">저자극</span>
               <span key={String(lowIrritant)} className="sensitivity__caption">
@@ -102,9 +97,6 @@ function EditConditions() {
           </div>
 
           <div className="sensitivity__row">
-            <span className="sensitivity__icon">
-              <img src={scentIcon} alt="" />
-            </span>
             <span className="sensitivity__text">
               <span className="sensitivity__label">저향</span>
               <span key={String(lowScent)} className="sensitivity__caption">

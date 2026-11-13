@@ -110,23 +110,7 @@
   align-items: center;
   gap: 12px;
   height: 66px;
-  padding-left: 17px;
-}
-
-.sensitivity__icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 95.253px;
-  /* 유리 구슬: 연두 위에 가는 흰 테두리와 위쪽 빛 */
-  background: linear-gradient(160deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 60%), #afc590;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
-}
-
-.sensitivity__icon img {
-  max-width: none;
+  padding-left: 24px;
 }
 
 .sensitivity__text {

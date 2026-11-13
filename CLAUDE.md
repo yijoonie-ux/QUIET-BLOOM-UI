@@ -50,4 +50,7 @@ Last updated 2026-11-13 (office PC session).
 - Owner asked about switching the repo from private to public. Only needed for GitHub Pages; not needed for Vercel. Not yet confirmed whether it was changed. Commit history was scanned on 2026-11-13: no `.env` files, API keys, tokens or passwords, so it is safe to make public.
 - `gh` CLI is not installed on the office PC, so repo settings were changed through the GitHub web UI.
 
+- UI changes this session (details in `docs/CHANGELOG.md`, 2026-11-13): new app icons (gradient clover on white, cache version `?v=5`); 저향 is now an on/off toggle like 저자극 on onboarding, Edit Conditions and the Home profile card (`ScentRange` removed); Edit Conditions no longer shows icons before 저자극/저향 (the owner's professor said the wind icon looked like a bone; after comparing alternatives the owner chose to drop both icons for consistency).
+- The app icon was made from a 208×208 image, so it is slightly soft at 512px. If the owner provides a 1024px+ original, regenerate the four icons in `public/` and bump `?v=` in `index.html` and `public/manifest.webmanifest`.
+
 Next step: continue with `TODO.md` or whatever UI change the owner asks for.

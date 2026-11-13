@@ -75,7 +75,7 @@ npm run build           # dist/ 에 빌드
 src/
   pages/        화면 (주소 하나당 하나)
   components/   여러 화면에서 쓰거나 독립된 UI
-                TabBar, SlideToStart, ScentRange, ChipScroller,
+                TabBar, SlideToStart, ChipScroller,
                 ComposeGuide(안내 딤), CompositionSheet, PlantDetail, ExitConfirm,
                 BouquetLoader(파티클 로딩), BloomGenerating(생성 중), CardSparkles(카드 파티클), ...
   data/         메모리 저장소와 예시 데이터

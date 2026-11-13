@@ -12,7 +12,6 @@ import arrowGreen from '../assets/main/arrow-up-right-green.svg'
 import bouquetImg from '../assets/preview/bouquet.png'
 import ChipScroller from '../components/ChipScroller'
 import ExitConfirm from '../components/ExitConfirm'
-import ScentRange from '../components/ScentRange'
 import SlideToStart from '../components/SlideToStart'
 import TabBar from '../components/TabBar'
 import { useMadeBloom } from '../data/blooms'
@@ -127,8 +126,8 @@ function Home() {
               </div>
               <div className="profile-card__cell profile-card__cell--inline">
                 <dt className="profile-card__label">저향</dt>
-                <dd className="profile-card__range">
-                  <ScentRange on={profile.lowScent} offTone="neutral" width={86.4124} height={36.4164} />
+                <dd className="mini-toggle mini-toggle--scent" data-on={profile.lowScent}>
+                  <span className="mini-toggle__knob" />
                 </dd>
               </div>
               <div className="profile-card__cell">

@@ -9,7 +9,6 @@ import budgetIcon from '../assets/edit/icon-budget.svg'
 import budgetIconInactive from '../assets/edit/icon-budget-inactive.svg'
 import sproutIcon from '../assets/edit/icon-sprout-active.svg'
 import sproutIconInactive from '../assets/edit/icon-sprout.svg'
-import ScentRange from '../components/ScentRange'
 import { updateProfile, useProfile } from '../data/profile'
 import { usePageBackground } from '../hooks/usePageBackground'
 import { usePageLeave } from '../hooks/usePageLeave'
@@ -112,16 +111,15 @@ function EditConditions() {
                 향 노출 제어 {lowScent ? 'on' : 'off'}
               </span>
             </span>
-            {/* 흰 점만: 향 노출 상관없음(제어 off) / 연두 점까지: 향 노출 제어 on */}
             <button
               type="button"
               role="switch"
               aria-checked={lowScent}
               aria-label="저향"
-              className="sensitivity__range"
+              className="edit-toggle"
               onClick={() => setLowScent(!lowScent)}
             >
-              <ScentRange on={lowScent} offTone="neutral" />
+              <span className="edit-toggle__knob" />
             </button>
           </div>
         </div>

@@ -10,7 +10,6 @@ import bulb from '../assets/make/bulb.svg'
 import glow from '../assets/onboarding/glow.svg'
 import budgetIcon from '../assets/onboarding/icon-budget.svg'
 import sproutIcon from '../assets/onboarding/icon-sprout.svg'
-import ScentRange from '../components/ScentRange'
 import { markOnboarded } from '../data/onboarding'
 import { getRecommendedPlants } from '../data/plants'
 import { getBloomType, getProfileSummary, updateProfile } from '../data/profile'
@@ -339,10 +338,10 @@ function Onboarding() {
                 role="switch"
                 aria-checked={lowScent}
                 aria-label="저향"
-                className="ob-range"
+                className="ob-toggle"
                 onClick={() => setLowScent(!lowScent)}
               >
-                <ScentRange on={lowScent} offTone="neutral" />
+                <span className="ob-toggle__knob" />
               </button>
             </div>
           </div>

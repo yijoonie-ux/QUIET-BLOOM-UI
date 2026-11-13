@@ -384,19 +384,6 @@
     0 2.835px 7.088px 0 rgba(124, 159, 51, 0.4);
 }
 
-/* 향 슬라이더: 트랙(105×32)이 버튼 영역에 맞도록 그림자 여백만큼 당김 */
-.ob-range {
-  position: relative;
-  width: 105.06px;
-  height: 32px;
-}
-
-.ob-range .scent-range {
-  position: absolute;
-  top: -7.74px;
-  left: -10.93px;
-}
-
 /* 2단계: 피하고 싶은 식물 */
 .ob-exclude {
   margin-top: 39.8px;

@@ -160,22 +160,7 @@
   }
 }
 
-.sensitivity__range {
-  position: absolute;
-  top: 17px;
-  left: 226.07px;
-  width: 105.066px;
-  height: 32px;
-  border-radius: 100px;
-}
-
-.sensitivity__range .scent-range {
-  position: absolute;
-  top: -7.74px;
-  left: -10.93px;
-}
-
-/* 저자극 토글 */
+/* 저자극 · 저향 토글 */
 .edit-toggle {
   position: absolute;
   top: 17px;

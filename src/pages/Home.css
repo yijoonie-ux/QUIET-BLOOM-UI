@@ -317,18 +317,9 @@
   left: 47px;
 }
 
-.profile-card__range {
-  position: absolute;
+/* 저향 토글: 둘째 칸(180px) + 라벨 폭 */
+.profile-card__cell--inline .mini-toggle--scent {
   left: 214px;
-  width: 72px;
-  height: 22px;
-}
-
-.profile-card__range .scent-range {
-  position: absolute;
-  top: -5.124px;
-  left: -7.207px;
-  max-width: none;
 }
 
 /* 읽기 전용 미니 토글 */

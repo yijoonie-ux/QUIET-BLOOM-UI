@@ -46,8 +46,8 @@ npm run build           # outputs dist/
 Last updated 2026-11-13 (office PC session).
 
 - Confirmed the project builds cleanly with `npm run build`. The only output is a warning that the main JS chunk is 514 kB (over 500 kB); harmless for now.
-- Owner wants an external URL. Recommended Vercel and gave the steps above; not yet confirmed whether it was deployed. If a `*.vercel.app` URL exists, record it here.
+- Deployed on Vercel (team `yijoon`, project `quiet-bloom-ui`). Public URL: https://quiet-bloom-ui.vercel.app (verified 200, deep links like `/compose` also 200). Per-deployment URLs (`quiet-bloom-<hash>-yijoon.vercel.app`) redirect to a Vercel login because of deployment protection, so always share the production URL above. Pushing to `main` redeploys automatically.
 - Owner asked about switching the repo from private to public. Only needed for GitHub Pages; not needed for Vercel. Not yet confirmed whether it was changed. Commit history was scanned on 2026-11-13: no `.env` files, API keys, tokens or passwords, so it is safe to make public.
 - `gh` CLI is not installed on the office PC, so repo settings were changed through the GitHub web UI.
 
-Next step: ask the owner whether the Vercel deploy is done, then continue with `TODO.md`.
+Next step: continue with `TODO.md` or whatever UI change the owner asks for.

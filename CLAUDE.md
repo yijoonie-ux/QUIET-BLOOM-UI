@@ -33,6 +33,24 @@ npm run build           # outputs dist/
 - Code identifiers and commit messages follow the existing style in the repo (Korean commit messages like `안내 문서 추가` are fine).
 - The owner syncs with GitHub Desktop: Pull before starting, Commit + Push when done. Do not create a second repository.
 
+## Design preferences (from the home PC sessions)
+
+The owner rejects anything that looks "AI-made". Aim for refined, minimal, sensory. Reference: rondesignlab (Instagram): large light numerals, generous whitespace, hairline dividers, few boxes, small uppercase English labels.
+
+- Do not use: vague drop shadows, gradients on selected states, orange text, decorative leaf shapes / leaf line art / lime dots / leaf-shaped knobs or icons (all tried and rejected).
+- Inactive cards may use translucent glass only (`.glass-card` in `src/index.css`); selected = white with a sage inset border.
+- The brand logo (four-leaf silhouette) appears only as icons: Compose tab icon (`tab-logo.png`), the Home slider knob (arrow turns 180° into the line logo `logo-line.svg`), and the empty My Blooms icon (`empty-icon.svg`).
+- When the owner says "기능은 빼", change wording only, not behavior.
+
+Product decisions to keep:
+
+- Flow: AI preview → "실제 제작 준비하기" → Make This Bloom (`/realize`: cost, store recommendation, substitutes, styling materials) → "완성하기" → Bloom Complete → "Bloom Card로 저장하기" → `/saved`.
+- No profile type names (e.g. "고요한 오래감상형"); show conditions like "저자극 · 저향" and "조건에 맞는 식물 N종".
+- Fine-tune sheet can be dragged by its handle. "더 풍성하게" adds one volume plant; "더 가볍게" removes one structure plant (Grove has none, so 트리펀 3→2).
+- Stores (`src/data/sourcing.js`, sample data): 양재 꽃시장 / 고속터미널 꽃시장 / 온라인 꽃 도매몰. Plants the chosen store lacks must be substituted before "완성하기" is enabled. Substitutes carry through to Complete and Details as "OO 대신" and never show "이번 주 품절".
+- Share buttons (Details, Complete) always toast "링크를 복사했어요".
+- Sway uses 베어그라스 (not 스틸그라스). Grove has 트리펀 2.
+
 ## Deployment
 
 `index.html` loads `/src/main.jsx` directly, so the raw repo cannot be served as a static site. Only the built `dist/` works.

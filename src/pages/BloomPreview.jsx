@@ -18,20 +18,9 @@ import { usePageBackground } from '../hooks/usePageBackground'
 import { usePageLeave } from '../hooks/usePageLeave'
 import './BloomPreview.css'
 
-const SpeechRecognition = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition)
-
-// 음성 인식을 쓸 수 없는 환경(일부 브라우저·홈 화면 앱)에서도 같은 흐름이 이어지도록 쓰는 예시 문장은 results.js의 demo
+// 마이크는 실제 음성 인식 없이, 누르면 정해 둔 예시 문장(bouquets.js의 demo)이 말하듯 써짐
+// (시연에서 늘 같은 요청 → 같은 결과가 나오도록)
 const WORD_GAP = 800 // 단어가 하나씩 나오는 간격
-
-// 인식 결과를 띄어쓰기 단위 단어로 (확정된 결과는 final, 아직 듣는 중인 결과는 흐리게)
-const toWords = (results) =>
-  Array.from(results).flatMap((r) =>
-    r[0].transcript
-      .trim()
-      .split(/\s+/)
-      .filter(Boolean)
-      .map((w) => ({ w, final: r.isFinal })),
-  )
 
 // 부케 제작하기 다음 화면
 // preview: Bloom Preview (Figma 2268:21089) → ai: Bloom AI Preview (2268:21057)
@@ -64,8 +53,7 @@ function BloomPreview() {
   const [input, setInput] = useState(null) // null | 'voice' | 'keyboard'
   const [listening, setListening] = useState(false)
   const [text, setText] = useState('') // 키보드 입력
-  const [words, setWords] = useState([]) // 음성 인식 단어 [{ w, final }]
-  const recognition = useRef(null)
+  const [words, setWords] = useState([]) // 말한 단어 [{ w, final }]
   const demoTimers = useRef([])
   const inputRef = useRef(null)
 
@@ -113,31 +101,18 @@ function BloomPreview() {
     demoTimers.current = []
   }
 
-  // 사용자가 마이크를 눌러 끈 것인지 (인식이 스스로 멈춘 것과 구분)
-  const userStopped = useRef(false)
   const [generating, setGenerating] = useState(false)
   const generateTimer = useRef(0)
   useEffect(() => () => clearTimeout(generateTimer.current), [])
 
   const stopListening = () => {
     clearDemo()
-    userStopped.current = true
-    recognition.current?.stop()
-    recognition.current = null
     setListening(false)
   }
 
-  useEffect(
-    () => () => {
-      demoTimers.current.forEach(clearTimeout)
-      // 화면을 떠날 땐 인식이 다시 켜지지 않게
-      userStopped.current = true
-      recognition.current?.abort()
-    },
-    [],
-  )
+  useEffect(() => () => demoTimers.current.forEach(clearTimeout), [])
 
-  // 인식을 쓸 수 없을 때: 예시 문장을 단어 단위로 '듣는 중 → 확정' 순서로 이어 붙임
+  // 예시 문장을 단어 단위로 '듣는 중 → 확정' 순서로 이어 붙임
   const runDemo = () => {
     // 다음에 만들 결과에 맞는 예시 문장
     const DEMO_WORDS = RESULTS[Math.min(resultIndex + 1, RESULTS.length - 1)].demo
@@ -170,50 +145,8 @@ function BloomPreview() {
       generateTimer.current = setTimeout(() => setGenerating(true), 600)
       return
     }
-    userStopped.current = false
     setInput('voice')
-    if (!SpeechRecognition) {
-      runDemo()
-      return
-    }
-    const rec = new SpeechRecognition()
-    let heard = false
-    let failed = false
-    rec.lang = 'ko-KR'
-    rec.interimResults = true
-    rec.continuous = true
-    rec.onresult = (e) => {
-      heard = true
-      setWords(toWords(e.results))
-    }
-    // 인식이 막히거나 아무것도 못 들으면 문구 없이 예시 흐름으로 이어감
-    rec.onerror = () => {
-      failed = true
-    }
-    rec.onend = () => {
-      if (userStopped.current) return
-      if (!heard && failed) {
-        recognition.current = null
-        runDemo()
-        return
-      }
-      // 말이 잠깐 끊겨 인식이 스스로 멈춰도, 마이크를 끌 때까지 계속 들음
-      try {
-        rec.start()
-      } catch {
-        recognition.current = null
-        setListening(false)
-      }
-    }
-    recognition.current = rec
-    setWords([])
-    setListening(true)
-    try {
-      rec.start()
-    } catch {
-      recognition.current = null
-      runDemo()
-    }
+    runDemo()
   }
 
   const startKeyboard = () => {

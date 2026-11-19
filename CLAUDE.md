@@ -49,6 +49,7 @@ Product decisions to keep:
 - Fine-tune sheet can be dragged by its handle. "더 풍성하게" adds one volume plant; "더 가볍게" removes one structure plant (Grove has none, so 트리펀 3→2).
 - Stores (`src/data/sourcing.js`, sample data): 양재 꽃시장 / 고속터미널 꽃시장 / 온라인 꽃 도매몰. Plants the chosen store lacks must be substituted before "완성하기" is enabled. Substitutes carry through to Complete and Details as "OO 대신" and never show "이번 주 품절".
 - Share buttons (Details, Complete) always toast "링크를 복사했어요".
+- The AI preview mic never uses real speech recognition: tapping it always types the preset demo sentence (`demo` in `src/data/bouquets.js`, e.g. "진주랑 큐빅으로 꾸며서…") so the demo is predictable.
 - Refreshing any screen restarts at `/onboarding` (`src/data/onboarding.js`); opening a link fresh (e.g. a shared `/blooms/still`) keeps that screen.
 - Sway uses 베어그라스 (not 스틸그라스). Grove has 트리펀 2.
 

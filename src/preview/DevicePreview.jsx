@@ -42,7 +42,6 @@ function DevicePreview({ src }) {
         <div className="device__screen">
           <iframe className="device__app" src={src} title="Quiet Bloom 앱 미리보기" />
           <div className="device__notch" aria-hidden="true">
-            <span className="device__speaker" />
             <span className="device__camera" />
           </div>
         </div>

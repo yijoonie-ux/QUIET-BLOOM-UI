@@ -11,7 +11,6 @@ import glow from '../assets/onboarding/glow.svg'
 import budgetIcon from '../assets/onboarding/icon-budget.svg'
 import sproutIcon from '../assets/onboarding/icon-sprout.svg'
 import { markOnboarded } from '../data/onboarding'
-import { getRecommendedPlants } from '../data/plants'
 import { getBloomType, getProfileSummary, updateProfile } from '../data/profile'
 import { usePageBackground } from '../hooks/usePageBackground'
 import { useTilt } from '../hooks/useTilt'
@@ -49,10 +48,14 @@ const BAR_COLORS = ['#fff', '#f4ffe4', '#e9ffcc']
 // 나의 Bloom Profile 카드 — Make Quiet Bloom의 Bloom Profile 카드와 같은 모양, 끌어서 기울이기
 function BloomTypeCard({ type, criteria, lowIrritant, lowScent, excludedPlants }) {
   const ref = useTilt()
-  // 부케 구성 화면과 같은 필터로 센 식물 수
-  const plantCount = getRecommendedPlants({ lowIrritant, lowScent, excludedPlants, criteria: [criteria] }).length
   // 설명은 Make Quiet Bloom 카드와 같은 조건 문장
   const desc = getProfileSummary({ lowIrritant, lowScent, criteria: [criteria] }).description
+  // 제외 식물: 두 개까지 이름, 더 많으면 "외 N종"
+  const excludedText = excludedPlants.length === 0
+    ? '없음'
+    : excludedPlants.length > 2
+      ? `${excludedPlants.slice(0, 2).join(' · ')} 외 ${excludedPlants.length - 2}종`
+      : excludedPlants.join(' · ')
   return (
     <section ref={ref} className="ob-type" aria-label="나의 Bloom Profile">
       <img className="ob-type__frame" src={cardFrame} alt="" />
@@ -75,45 +78,19 @@ function BloomTypeCard({ type, criteria, lowIrritant, lowScent, excludedPlants }
           ))}
         </p>
 
-        {/* 민감도 4 × 추천 기준 2 — 두 줄 선택 바에서 고른 조건만 흰 탭으로 */}
-        <div className="ob-seg-group" role="img" aria-label={`선택한 조건: ${type.tags}`}>
+        {/* 카드 아래: 고른 조건을 이름 · 값 한 줄씩 (가는 선으로 구분) */}
+        <dl className="ob-type__facts">
           {[
-            { label: '민감도', options: TYPE_COLS.map((col) => col.label), active: TYPE_COLS.findIndex((col) => col.irritant === lowIrritant && col.scent === lowScent) },
-            { label: '추천 기준', options: ['유지력', '예산'], active: criteria === '예산' ? 1 : 0 },
-          ].map((row, r) => {
-            // 칸 너비 비율: 긴 이름(저자극·저향) 칸만 조금 넓게 → 흰 탭 자리·너비도 같은 비율로
-            const weights = row.options.map((opt) => (opt.length > 4 ? 1.4 : 1))
-            const sum = weights.reduce((a, b) => a + b, 0)
-            const before = weights.slice(0, row.active).reduce((a, b) => a + b, 0)
-            return (
-            <div key={row.label} className="ob-seg-row">
-              <span className="ob-seg-row__label">{row.label}</span>
-              <span
-                className="ob-seg"
-                style={{
-                  gridTemplateColumns: weights.map((w) => `${w}fr`).join(' '),
-                  '--left': before / sum,
-                  '--w': weights[row.active] / sum,
-                  '--d': `${0.85 + r * 0.12}s`,
-                }}
-              >
-                <span className="ob-seg__thumb" aria-hidden="true" />
-                {row.options.map((opt, i) => (
-                  <span key={opt} className="ob-seg__opt" data-active={i === row.active}>
-                    {opt}
-                  </span>
-                ))}
-              </span>
+            ['민감도', TYPE_COLS.find((col) => col.irritant === lowIrritant && col.scent === lowScent).label.replace('·', ' · ')],
+            ['추천 기준', criteria],
+            ['제외 식물', excludedText],
+          ].map(([name, value]) => (
+            <div key={name} className="ob-type__fact">
+              <dt>{name}</dt>
+              <dd data-empty={value === '없음'}>{value}</dd>
             </div>
-            )
-          })}
-        </div>
-
-        {/* 조건(저자극·저향·제외 식물)을 거친 뒤 고를 수 있는 식물 수 — 위 조건 배지와 같은 알약 */}
-        <p className="ob-type__budget">
-          <span>조건에 맞는 식물</span>
-          <strong>{plantCount}종</strong>
-        </p>
+          ))}
+        </dl>
       </div>
       {/* 기울일 때 따라 움직이는 빛 반사 */}
       <div className="ob-type__glare" aria-hidden="true" />

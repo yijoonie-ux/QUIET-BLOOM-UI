@@ -17,27 +17,38 @@ html.device-preview-mode #root {
   justify-content: center;
   padding: 48px;
   overflow: hidden;
-  background:
-    radial-gradient(ellipse 70% 60% at 50% 35%, #fbfcf8 0%, rgba(251, 252, 248, 0) 70%),
-    linear-gradient(180deg, #eef1ea 0%, #e2e7dc 100%);
+  background: #fff;
 }
 
-/* iPhone 13: 화면 390×844 + 베젤 14px, 화면 모서리 47px */
+/* iPhone 13: 화면 390×844 + 베젤 14px(은색 티타늄 테두리 5 + 검정 베젤 9), 화면 모서리 47px */
 .device {
   position: relative;
   flex: none;
   width: 418px;
   height: 872px;
-  padding: 14px;
+  padding: 9px;
+  border: 5px solid transparent;
   border-radius: 61px;
-  background: #121214;
-  /* 바깥 금속 테두리 + 안쪽 하이라이트 + 바닥 그림자 */
+  /* 안쪽은 검정 베젤, 테두리 칸에는 빛을 받은 은색 금속 */
+  background:
+    linear-gradient(#0d0d0f, #0d0d0f) padding-box,
+    linear-gradient(
+        145deg,
+        #f4f4f5 0%,
+        #c3c4c7 16%,
+        #e9eaeb 34%,
+        #a9abaf 52%,
+        #dcdddf 70%,
+        #b4b6b9 86%,
+        #eeeeef 100%
+      )
+      border-box;
+  /* 금속 바깥 가는 선 + 금속과 베젤 사이 어두운 선 + 바닥 그림자 */
   box-shadow:
-    0 0 0 2px #3a3a3e,
-    0 0 0 3px #1b1b1d,
-    inset 0 0 2px 1px rgba(255, 255, 255, 0.08),
-    0 50px 90px -20px rgba(45, 58, 35, 0.35),
-    0 24px 40px -12px rgba(0, 0, 0, 0.3);
+    0 0 0 1px rgba(110, 112, 116, 0.55),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.55),
+    0 50px 90px -20px rgba(45, 58, 35, 0.3),
+    0 24px 40px -12px rgba(0, 0, 0, 0.22);
   transform-origin: center center;
 }
 
@@ -48,7 +59,7 @@ html.device-preview-mode #root {
   overflow: hidden;
   border-radius: 47px;
   /* 축소 표시 시 iframe 가장자리의 반 픽셀 틈으로 비치지 않도록 베젤과 같은 색 */
-  background: #121214;
+  background: #0d0d0f;
   /* 둥근 모서리 클리핑이 iframe에도 확실히 적용되도록 */
   isolation: isolate;
   -webkit-mask-image: -webkit-radial-gradient(white, black);
@@ -61,59 +72,29 @@ html.device-preview-mode #root {
   border: 0;
 }
 
-/* 상단 노치 */
+/* 상단 다이내믹 아일랜드 (알약 모양) */
 .device__notch {
   position: absolute;
-  top: 0;
+  top: 11px;
   left: 50%;
   z-index: 1;
-  width: 162px;
-  height: 32px;
-  border-radius: 0 0 20px 20px;
-  background: #121214;
+  width: 120px;
+  height: 35px;
+  border-radius: 18px;
+  background: #0b0b0c;
   transform: translateX(-50%);
   pointer-events: none;
 }
 
-/* 노치 양쪽 위 모서리의 오목한 곡선 */
-.device__notch::before,
-.device__notch::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  width: 8px;
-  height: 8px;
-}
-
-.device__notch::before {
-  left: -8px;
-  background: radial-gradient(circle at 0 100%, transparent 7.5px, #121214 8px);
-}
-
-.device__notch::after {
-  right: -8px;
-  background: radial-gradient(circle at 100% 100%, transparent 7.5px, #121214 8px);
-}
-
-.device__speaker {
-  position: absolute;
-  top: 9px;
-  left: 50%;
-  width: 46px;
-  height: 5px;
-  border-radius: 3px;
-  background: #26262a;
-  transform: translateX(-50%);
-}
-
 .device__camera {
   position: absolute;
-  top: 6px;
-  left: calc(50% + 34px);
-  width: 10px;
-  height: 10px;
+  top: 50%;
+  right: 12px;
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #3a4660 0%, #151a26 55%, #0b0d12 100%);
+  background: radial-gradient(circle at 35% 35%, #3b4a6b 0%, #161b29 55%, #0a0c11 100%);
+  transform: translateY(-50%);
 }
 
 /* 측면 버튼 */
@@ -121,29 +102,30 @@ html.device-preview-mode #root {
   position: absolute;
   width: 4px;
   border-radius: 2px;
-  background: linear-gradient(90deg, #2c2c30, #1a1a1c);
+  /* 테두리와 같은 은색 금속 */
+  background: linear-gradient(90deg, #a5a7ab, #e6e7e8 45%, #b9bbbe);
 }
 
 .device__button--silent {
   top: 128px;
-  left: -5px;
+  left: -9px;
   height: 30px;
 }
 
 .device__button--vol-up {
   top: 186px;
-  left: -5px;
+  left: -9px;
   height: 58px;
 }
 
 .device__button--vol-down {
   top: 258px;
-  left: -5px;
+  left: -9px;
   height: 58px;
 }
 
 .device__button--power {
   top: 210px;
-  right: -5px;
+  right: -9px;
   height: 92px;
 }

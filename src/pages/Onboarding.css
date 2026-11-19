@@ -696,6 +696,9 @@
   top: 6px;
   left: 6px;
   z-index: -1;
+  width: 262px;
+  /* 카드 높이를 따라 늘어나는 안쪽 테두리 (위아래 6씩) */
+  height: calc(100% - 12px);
   max-width: none;
 }
 
@@ -767,8 +770,8 @@
   flex-direction: column;
   /* 점선(top 118)과 이름 사이 20 = 배지와 점선 사이 20 */
   margin-top: 41px;
-  /* 아래 구분선 줄(높이 32 + 아래 20) + 막대와의 간격 14 */
-  padding: 0 24px 66px;
+  /* 마지막 줄 아래 여백 (줄 안쪽 10 + 10) */
+  padding: 0 24px 10px;
 }
 
 .ob-type__name {
@@ -784,7 +787,7 @@
   margin-top: 8px;
   font-size: 14px;
   font-weight: 500;
-  line-height: 1.4;
+  line-height: 1.6;
   letter-spacing: -0.2282px;
   color: var(--qb-text-sub);
   word-break: keep-all;
@@ -796,99 +799,48 @@
   display: block;
 }
 
-/* 8가지 유형 = 민감도 4 × 추천 기준 2 — 두 줄 선택 바 (내 자리만 흰 탭이 미끄러져 들어옴) */
-.ob-seg-group {
+/* 고른 조건: 왼쪽 이름 · 오른쪽 값, 줄마다 가는 선 (카드 아래에 붙임) */
+.ob-type__facts {
   display: grid;
-  gap: 10px;
   margin-top: auto;
   padding-top: 16px;
   animation: ob-card-content 0.7s var(--ease-smooth) 0.8s backwards;
 }
 
-/* 민감도 · 추천 기준 모두 같은 구조: 이름 위, 막대 아래 */
-.ob-seg-row {
-  display: grid;
-  gap: 4px;
-}
-
-.ob-seg-row__label {
-  font-size: 12px;
-  line-height: 1.2;
-  font-weight: 600;
-  letter-spacing: -0.2px;
-  color: var(--qb-text-sub);
-}
-
-.ob-seg {
-  position: relative;
-  display: grid;
-  height: 32px;
-  padding: 4px;
-  border-radius: 100px;
-  background: rgba(255, 255, 255, 0.45);
-}
-
-/* 흰 탭: 내 자리로 옆에서 스르륵 */
-.ob-seg__thumb {
-  position: absolute;
-  top: 4px;
-  bottom: 4px;
-  left: calc(4px + (100% - 8px) * var(--left));
-  width: calc((100% - 8px) * var(--w));
-  border-radius: 100px;
-  background: #fff;
-  animation: ob-seg-in 0.7s var(--ease-smooth) var(--d, 0.85s) backwards;
-}
-
-.ob-seg__opt {
-  position: relative;
-  display: grid;
-  place-items: center;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: -0.3px;
-  color: #8a9387;
-  white-space: nowrap;
-  transition: color 0.3s ease;
-}
-
-.ob-seg__opt[data-active='true'] {
-  font-weight: 700;
-  color: #2f362e;
-}
-
-@keyframes ob-seg-in {
-  from {
-    opacity: 0;
-    scale: 0.85;
-  }
-}
-
-/* 기본 예산: 위 조건 배지와 같은 알약 */
-/* 카드 아래 한 줄: Make Quiet Bloom 카드와 같은 가는 구분선 + 왼쪽 이름 · 오른쪽 숫자 */
-.ob-type__budget {
-  position: absolute;
-  right: 24px;
-  bottom: 20px;
-  left: 24px;
+.ob-type__fact {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  padding-top: 11px;
+  gap: 12px;
+  padding: 10px 0;
+  white-space: nowrap;
+}
+
+/* 줄 사이에만 가는 선 (맨 위 줄 위에는 없음) */
+.ob-type__fact + .ob-type__fact {
   border-top: 1px solid rgba(67, 76, 66, 0.12);
+}
+
+.ob-type__fact dt {
   font-size: 13px;
   font-weight: 500;
   letter-spacing: -0.2px;
   color: var(--qb-text-sub);
-  white-space: nowrap;
-  animation: ob-card-content 0.7s var(--ease-smooth) 0.9s backwards;
 }
 
-.ob-type__budget strong {
+.ob-type__fact dd {
+  overflow: hidden;
   font-size: 15px;
   font-weight: 600;
   letter-spacing: -0.1px;
   color: var(--qb-text-strong);
+  text-overflow: ellipsis;
+}
+
+/* 제외 식물이 없을 때는 옅게 */
+.ob-type__fact dd[data-empty='true'] {
+  font-weight: 500;
+  color: #8a9387;
 }
 
 /* 하단 버튼: 버튼 하나짜리는 온보딩 다음 버튼과 같은 자리 (아래 여백 42) */

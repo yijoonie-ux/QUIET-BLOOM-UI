@@ -13,6 +13,9 @@ dist
 # 앱에 안 쓰는 목업·영상 (GitHub 용량 제한 넘음)
 /*.psd
 /*.mp4
+# 폴더 맨 위의 배너 이미지·GIF (발표용 결과물, 저장소에 안 올림)
+/*.png
+/*.gif
 dist-ssr
 *.local
 

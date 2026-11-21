@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import introBg from '../assets/onboarding/intro-bg.jpg'
 // 온보딩 인트로 로고: 뒤 번짐(레이어 블러) 3 — 다른 곳은 4 (logo-clover.svg)
 import logoMask from '../assets/logo-clover-intro.svg'
@@ -101,6 +101,7 @@ function BloomTypeCard({ type, criteria, lowIrritant, lowScent, excludedPlants }
 // 온보딩: 인트로 → 민감도 → 피하고 싶은 식물 → 추천 기준 → 완료 → 홈
 function Onboarding() {
   const navigate = useNavigate()
+  const location = useLocation()
   // -1: 인트로, 0~2: 조건 설정, 2.5: 유형 분석 로딩, 3: 완료
   const [step, setStep] = useState(-1)
   // 화면별 맨 아래 색 (인트로: 진한 연두 / 단계: 흰색 / 완료: 그라데이션 끝)
@@ -121,8 +122,11 @@ function Onboarding() {
   const [fromIntro, setFromIntro] = useState(false)
 
   // 현재 화면이 살짝 사라진 뒤 다음 화면으로 (인트로는 조금 더 천천히 사라짐)
+  // 이동 방향 (이전 단계로 갈 때는 내용이 반대쪽에서 들어옴)
+  const [dir, setDir] = useState('next')
   const goTo = (next) => {
     if (leaving) return
+    setDir(next < step ? 'back' : 'next')
     setLeaving(true)
     timer.current = setTimeout(
       () => {
@@ -133,6 +137,21 @@ function Onboarding() {
       reduceMotion() ? 0 : step === -1 ? 420 : 260,
     )
   }
+
+  // 조건 설정 단계(1/3~3/3)는 단계마다 기록을 남겨서,
+  // 아이폰 밀어서 뒤로가기·브라우저 뒤로가기도 온보딩 밖이 아니라 이전 단계로 감
+  const stepOf = (state) => state?.obStep ?? 0
+  const pushStep = (next) => navigate(location.pathname + location.search, { state: { obStep: next } })
+  const goBack = () => {
+    if (leaving) return
+    navigate(-1)
+  }
+  useEffect(() => {
+    if (step < 0 || step > 2) return
+    const target = stepOf(location.state)
+    if (target !== step) goTo(target)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.key])
 
   // 마지막 단계에서 다음: 설정한 조건을 프로필에 저장하고 완료 화면으로
   const finish = () => {
@@ -266,7 +285,7 @@ function Onboarding() {
   const canNext = step !== 2 || criteria
 
   return (
-    <div className="ob fit-screen" data-leaving={leaving} data-from-intro={fromIntro}>
+    <div className="ob fit-screen" data-leaving={leaving} data-from-intro={fromIntro} data-dir={dir}>
       <img className="ob__glow" src={glow} alt="" />
 
       <div className="ob__progress" aria-hidden="true">
@@ -276,9 +295,18 @@ function Onboarding() {
       </div>
 
       <div className="ob__content" key={step}>
-        <p className="ob__count">
-          <b>{step + 1}</b>/3
-        </p>
+        <div className="ob__count-row">
+          {step > 0 && (
+            <button type="button" className="ob__back" aria-label="이전 단계" onClick={goBack}>
+              <svg viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M10 3 5 8l5 5" />
+              </svg>
+            </button>
+          )}
+          <p className="ob__count">
+            <b>{step + 1}</b>/3
+          </p>
+        </div>
         <h1 className="ob__title">{title}</h1>
         <p className="ob__desc">{desc}</p>
 
@@ -393,7 +421,7 @@ function Onboarding() {
         )}
       </div>
 
-      <button type="button" className="ob__next" disabled={!canNext} onClick={() => (step === 2 ? finish() : goTo(step + 1))}>
+      <button type="button" className="ob__next" disabled={!canNext} onClick={() => (step === 2 ? finish() : pushStep(step + 1))}>
         다음
       </button>
     </div>

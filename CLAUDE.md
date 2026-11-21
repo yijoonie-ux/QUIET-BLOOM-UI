@@ -57,6 +57,7 @@ Product decisions to keep:
 - Bouquet styles (AI preview result): Still 화기→행잉, Lush 다발, Grove 화기, Sway 행잉, Hush 화기, Ramble 화기, Ember 다발, Glade 화기. Demo sentences mention only decorations actually visible in the photo (no 큐빅 anywhere; Grove has none: "잘 정돈해서 화기에 꽂아줘").
 - Use "화기" (not "화병") everywhere in Korean; English label is "Vessel Preview".
 - Fine-tune sheet has a fixed height (700px, max 90%); content scrolls inside and the apply button stays at the bottom.
+- Compose: plants outside the current bouquet's recipe are not added; tapping their + (or 추가하기 in the detail popup) softly shows "안내해 드린 식물부터 천천히 담아볼까요?" in the bottom hint for ~3s (no popup, + stays visible). A plant once added can always be removed and re-added.
 - Every plant opens the detail popup (`src/data/plantDetails.js`: two-line description, lasting days, water). 저자극/향 노출 come from the filter values in `plants.js`; lasting days follow the 유지력 order within each step (sample values). Air plants use "주 1회 분무".
 
 ## Deployment

@@ -33,8 +33,8 @@ const BAR_COLORS = ['#fff', '#f4ffe4', '#e9ffcc', '#daffa9']
 
 // 식물 카드 (170×160): 왼쪽 위 + 버튼 자리만큼 파인 카드 모양 위에 사진·이름·가격
 // + 버튼: 하나 담기 ↔ 빼기 (수량은 Composition에서 조절하거나 추천 수량으로 한 번에)
-// locked면 담기 막힘 (표시는 하단 안내 문구로만)
-function PlantCard({ plant, selected, onToggle, onOpen, index, cardRef, addRef, locked }) {
+// locked: 이번 부케 안내에 없는 식물 — + 는 그대로 보이고, 누르면 담는 대신 하단 안내로 부드럽게 알려줌(onLocked)
+function PlantCard({ plant, selected, onToggle, onOpen, index, cardRef, addRef, locked, onLocked }) {
   const { photo } = plant
   return (
     <li
@@ -90,8 +90,8 @@ function PlantCard({ plant, selected, onToggle, onOpen, index, cardRef, addRef, 
         className="plant-card__add"
         aria-pressed={selected}
         aria-label={`${plant.name} ${selected ? '빼기' : '담기'}`}
-        disabled={locked}
-        onClick={onToggle}
+        aria-disabled={locked || undefined}
+        onClick={locked ? onLocked : onToggle}
       >
         <img src={plusIcon} alt="" />
       </button>
@@ -159,6 +159,17 @@ function Compose() {
   // 카드의 + 버튼: 하나 담기 ↔ 빼기 (수량은 Composition에서 조절하거나 추천 수량으로 한 번에)
   // 한 번이라도 담았던 식물은 뺐다가 다시 담을 수 있게 기억 (레시피 밖 식물도 상세 창에서 담았다면 + 로 다시 담기 가능)
   const [addedOnce, setAddedOnce] = useState(() => new Set(cart.map((item) => item.name)))
+  // 이번 부케 안내에 없는 식물 (한 번 담았던 건 제외)
+  const isLocked = (name) => !recipeQty(name) && !inCart(name) && !addedOnce.has(name)
+  // 안내에 없는 식물을 담으려 하면: 막았다는 느낌 없이 하단 안내에 잠깐 이유를 보여줌
+  const [nudgeKey, setNudgeKey] = useState(0)
+  const nudgeTimer = useRef(0)
+  const nudge = () => {
+    setNudgeKey((k) => k + 1)
+    clearTimeout(nudgeTimer.current)
+    nudgeTimer.current = setTimeout(() => setNudgeKey(0), 2800)
+  }
+  useEffect(() => () => clearTimeout(nudgeTimer.current), [])
   const toggle = (name) => {
     if (!inCart(name)) setAddedOnce((prev) => new Set(prev).add(name))
     setQty(name, inCart(name) ? 0 : 1)
@@ -340,16 +351,23 @@ function Compose() {
             onOpen={plant.detail ? () => openDetail(plant) : undefined}
             cardRef={i === 0 ? firstCardRef : undefined}
             addRef={i === 0 ? firstAddRef : undefined}
-            locked={!recipeQty(plant.name) && !inCart(plant.name) && !addedOnce.has(plant.name)}
+            locked={isLocked(plant.name)}
+            onLocked={nudge}
           />
         ))}
       </ul>
 
       {/* 프로토타입처럼 다음에 누를 곳 안내 (누르면 그 자리로 이동) — 첫 안내 딤이 끝난 뒤에 나타남 */}
       {!guiding && !detailPlant && (
-        <button type="button" className="compose__hint" key={nextItem?.[0] ?? 'done'} onClick={goToHint}>
+        <button
+          type="button"
+          className="compose__hint"
+          key={nudgeKey ? `nudge-${nudgeKey}` : (nextItem?.[0] ?? 'done')}
+          data-nudge={nudgeKey > 0 || undefined}
+          onClick={goToHint}
+        >
           <span className="compose__hint-dot" aria-hidden="true" />
-          {nextItem
+          {nudgeKey ? '안내해 드린 식물부터 천천히 담아볼까요?' : nextItem
             ? nextStep !== step
               ? `${CATEGORIES[nextStep].title} 단계로 넘어가 주세요`
               : detailPrompt
@@ -399,7 +417,7 @@ function Compose() {
         <PlantDetail
           plant={detailPlant}
           selected={inCart(detailPlant.name)}
-          onToggle={() => toggle(detailPlant.name)}
+          onToggle={() => (isLocked(detailPlant.name) ? nudge() : toggle(detailPlant.name))}
           onClose={() => setDetailPlant(null)}
         />
       )}

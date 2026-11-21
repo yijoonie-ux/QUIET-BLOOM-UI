@@ -412,6 +412,19 @@
   animation: qb-hint 1.6s ease-out infinite;
 }
 
+/* 안내에 없는 식물을 담으려 할 때: 더 천천히, 거의 제자리에서 스며들듯 */
+.compose__hint[data-nudge] {
+  animation: compose-hint-soft 0.9s var(--ease-smooth) backwards;
+}
+
+@keyframes compose-hint-soft {
+  from {
+    opacity: 0;
+    translate: -50% 3px;
+    filter: blur(2px);
+  }
+}
+
 @keyframes compose-hint-in {
   from {
     opacity: 0;

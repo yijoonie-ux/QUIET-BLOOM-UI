@@ -4,8 +4,6 @@ import lastingIcon from '../assets/compose/icon-lasting.svg'
 import waterIcon from '../assets/compose/icon-water.svg'
 import './PlantDetail.css'
 
-// 식물 상세 팝업 (Figma 2268:18608). 배경을 누르면 닫힘.
-// onToggle이 없으면(완성한 부케의 Composition 등 보기만 하는 곳) 아래 버튼은 '닫기'
 // 사진 칸(236×176) 안에서 식물 사진 위치
 // - 디자인에서 따로 잡은 위치(detail.frame/crop)가 있으면 그대로
 // - 따로 상세 이미지(detail.image)가 있으면 null (그 이미지를 씀)
@@ -21,6 +19,8 @@ function cropOf(plant) {
   return { frame: [(236 - width) / 2, 176 - height, width, height], crop: photo.crop }
 }
 
+// 식물 상세 팝업 (Figma 2268:18608). 배경을 누르면 닫힘.
+// onToggle이 없으면(완성한 부케의 Composition 등 보기만 하는 곳) 아래 버튼은 '닫기'
 function PlantDetail({ plant, selected, onToggle, onClose }) {
   const [closing, setClosing] = useState(false)
   const { detail } = plant

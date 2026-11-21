@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useLocation } from 'react-router'
 import backIcon from '../assets/edit/back.svg'
 import sensitivityCard from '../assets/edit/sensitivity-card.svg'
+import sensitivityEdge from '../assets/edit/sensitivity-edge.svg'
 import chipClose from '../assets/edit/chip-close.svg'
 import budgetIcon from '../assets/edit/icon-budget.svg'
 import budgetIconInactive from '../assets/edit/icon-budget-inactive.svg'
@@ -69,11 +70,25 @@ function EditConditions() {
       <section className="edit__section edit__section--sensitivity">
         <h2 className="edit__section-title">Sensitivity</h2>
         <div className="sensitivity">
+          {/* 유리: 뒤 배경을 흐리게 비치는 층 (카드 모양으로 잘라냄) → 반투명 색 → 광택 → 가장자리 빛 */}
+          <span
+            className="sensitivity__frost"
+            style={{ maskImage: `url("${sensitivityCard}")`, WebkitMaskImage: `url("${sensitivityCard}")` }}
+            aria-hidden="true"
+          />
           <img className="sensitivity__shape" src={sensitivityCard} alt="" />
           {/* 카드 모양 그대로 덮는 유리 광택 + 옅은 질감 (모양은 SVG를 마스크로) */}
           <span
             className="sensitivity__sheen"
             style={{ maskImage: `url("${sensitivityCard}")`, WebkitMaskImage: `url("${sensitivityCard}")` }}
+            aria-hidden="true"
+          />
+
+          <img
+            className="sensitivity__edge"
+            src={sensitivityEdge}
+            style={{ maskImage: `url("${sensitivityCard}")`, WebkitMaskImage: `url("${sensitivityCard}")` }}
+            alt=""
             aria-hidden="true"
           />
 

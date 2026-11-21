@@ -110,9 +110,10 @@ function ComposeGuide({ targets, bouquet, delay = 1000, onClose }) {
         )}
         <p className="guide__intro-title">내 조건에 맞춘 부케를 만들어볼게요</p>
         <p className="guide__intro-sub">
-          네 가지 조형 역할 중 원하는 식물만 골라보세요.
+          {/* 실제로는 부케마다 담을 식물을 하나씩 짚어주므로 그 흐름대로 안내 */}
+          담을 식물을 차례대로 알려드릴게요.
           <br />
-          단계를 건너뛰거나 같은 역할을 여러 개 담아도 돼요.
+          안내를 따라 하나씩 담아보세요.
         </p>
         <p className="guide__intro-next">화면을 눌러 계속</p>
       </div>

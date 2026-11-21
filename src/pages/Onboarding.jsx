@@ -85,11 +85,10 @@ function BloomTypeCard({ type, criteria, lowIrritant, lowScent, excludedPlants }
           ))}
         </p>
 
-        {/* 카드 아래: 고른 조건을 이름 · 값 한 줄씩 (가는 선으로 구분) */}
+        {/* 카드 아래: 고른 조건을 이름 · 값 한 줄씩 (가는 선으로 구분). 추천 기준은 위 배지에 있어 생략 */}
         <dl className="ob-type__facts">
           {[
             ['민감도', TYPE_COLS.find((col) => col.irritant === lowIrritant && col.scent === lowScent).label.replace('·', ' · ')],
-            ['추천 기준', criteria],
             ['제외 식물', excludedText],
           ].map(([name, value]) => (
             <div key={name} className="ob-type__fact">

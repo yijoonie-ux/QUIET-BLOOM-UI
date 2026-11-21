@@ -1,0 +1,21 @@
+<svg preserveAspectRatio="none" width="350" height="142" viewBox="0 0 350 142" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<filter id="b" x="-10%" y="-20%" width="120%" height="140%"><feGaussianBlur stdDeviation="3"/></filter>
+<linearGradient id="s" x1="0" y1="0" x2="0" y2="142" gradientUnits="userSpaceOnUse">
+<stop stop-color="#4e6332" stop-opacity="0.09"/>
+<stop offset="0.25" stop-color="#4e6332" stop-opacity="0"/>
+<stop offset="0.535" stop-color="#4e6332" stop-opacity="0"/>
+<stop offset="0.536" stop-color="#4e6332" stop-opacity="0.09"/>
+<stop offset="0.785" stop-color="#4e6332" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="h" x1="0" y1="0" x2="0" y2="142" gradientUnits="userSpaceOnUse">
+<stop offset="0.25" stop-color="#fff" stop-opacity="0"/>
+<stop offset="0.465" stop-color="#fff" stop-opacity="0.95"/>
+<stop offset="0.466" stop-color="#fff" stop-opacity="0"/>
+<stop offset="0.785" stop-color="#fff" stop-opacity="0"/>
+<stop offset="1" stop-color="#fff" stop-opacity="0.95"/>
+</linearGradient>
+</defs>
+<path d="M317 76C335.225 76 350 90.7746 350 109C350 127.225 335.225 142 317 142H33C14.7746 142 0 127.225 0 109C0 90.7746 14.7746 76 33 76H120C122.761 76 125 73.7614 125 71C125 68.2386 122.761 66 120 66H33C14.7746 66 0 51.2254 0 33C0 14.7746 14.7746 0 33 0H317C335.225 2.31934e-06 350 14.7746 350 33C350 51.2254 335.225 66 317 66H230C227.239 66 225 68.2386 225 71C225 73.7614 227.239 76 230 76H317Z" stroke="url(#s)" stroke-width="10" filter="url(#b)"/>
+<path d="M317 76C335.225 76 350 90.7746 350 109C350 127.225 335.225 142 317 142H33C14.7746 142 0 127.225 0 109C0 90.7746 14.7746 76 33 76H120C122.761 76 125 73.7614 125 71C125 68.2386 122.761 66 120 66H33C14.7746 66 0 51.2254 0 33C0 14.7746 14.7746 0 33 0H317C335.225 2.31934e-06 350 14.7746 350 33C350 51.2254 335.225 66 317 66H230C227.239 66 225 68.2386 225 71C225 73.7614 227.239 76 230 76H317Z" stroke="url(#h)" stroke-width="3"/>
+</svg>

@@ -145,8 +145,13 @@ function Compose() {
   const cartQty = (name) => cart.find((item) => item.name === name)?.qty ?? 0
   // 아직 담지 않은 다음 식물 (단계 순서대로) — 담은 뒤 수량은 Composition에서 자유롭게 조절
   const stepOf = (name) => CATEGORIES.findIndex((c) => c.key === PLANTS.find((p) => p.name === name)?.category)
+  // 같은 단계 안에서는 지금 목록에 보이는 순서(위 → 아래)대로 안내
+  const shownAt = (name) => {
+    const i = plants.findIndex((p) => p.name === name)
+    return i === -1 ? Infinity : i
+  }
   const nextItem = [...bouquet.recipe]
-    .sort((a, b) => stepOf(a[0]) - stepOf(b[0]))
+    .sort((a, b) => stepOf(a[0]) - stepOf(b[0]) || shownAt(a[0]) - shownAt(b[0]))
     .find(([name]) => cartQty(name) === 0)
   const nextStep = nextItem ? stepOf(nextItem[0]) : -1
   const recipeDone = !nextItem

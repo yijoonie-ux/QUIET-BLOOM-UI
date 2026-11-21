@@ -1,6 +1,5 @@
 import closeIcon from '../assets/make/close.svg'
 import cardFrame from '../assets/make/profile-card.svg'
-import divider from '../assets/make/divider.svg'
 import bulb from '../assets/make/bulb.svg'
 import ChipScroller from '../components/ChipScroller'
 import { getRecommendedPlants } from '../data/plants'
@@ -41,7 +40,6 @@ function MakeBloom() {
           </span>
           {summary.badge}
         </div>
-        <img className="bloom-card__divider" src={divider} alt="" />
 
         <div className="bloom-card__body">
           {/* 온보딩에서 받은 Bloom Profile 카드와 같은 제목 (민감도 조건) */}

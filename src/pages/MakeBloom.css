@@ -64,13 +64,9 @@
 .bloom-card__line:nth-child(3) { animation-delay: 0.82s; }
 .bloom-card__label { animation-delay: 0.9s; }
 
-/* 배지·점선은 가운데에서 양옆으로 펼쳐짐 */
+/* 배지는 가운데에서 양옆으로 펼쳐짐 */
 .bloom-card__badge {
   animation: card-wipe-center 0.75s var(--ease-smooth) 0.44s backwards;
-}
-
-.bloom-card__divider {
-  animation: card-wipe-center 0.9s var(--ease-smooth) 0.54s backwards;
 }
 
 .bloom-card__badge-icon {
@@ -198,7 +194,7 @@
 .bloom-card {
   position: relative;
   width: 274px;
-  height: 431px;
+  height: 400px;
   margin: 47.8px auto 0;
   border-radius: 22px;
   isolation: isolate;
@@ -312,6 +308,9 @@
   position: absolute;
   top: 6px;
   left: 6px;
+  /* 카드 높이를 따라 늘어나는 안쪽 테두리 (위아래 6씩) */
+  width: 262px;
+  height: calc(100% - 12px);
   /* 카드 배경 위, 텍스트 아래에 깔리도록 (.bloom-card의 isolation 기준) */
   z-index: -1;
   max-width: none;
@@ -360,18 +359,9 @@
   max-width: none;
 }
 
-.bloom-card__divider {
-  /* 카드 기준 top 136px, 가운데 정렬 */
-  position: absolute;
-  top: 135.25px;
-  left: calc(50% - 227.398px / 2);
-  max-width: none;
-  transform: scaleY(-1);
-}
-
 .bloom-card__body {
   padding: 0 24px;
-  margin-top: 57px;
+  margin-top: 28px;
 }
 
 .bloom-card__title {

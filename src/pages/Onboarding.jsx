@@ -5,7 +5,6 @@ import introBg from '../assets/onboarding/intro-bg.jpg'
 import logoMask from '../assets/logo-clover-intro.svg'
 import logoMark from '../assets/logo-clover.svg'
 import cardFrame from '../assets/make/profile-card.svg'
-import divider from '../assets/make/divider.svg'
 import bulb from '../assets/make/bulb.svg'
 import glow from '../assets/onboarding/glow.svg'
 import budgetIcon from '../assets/onboarding/icon-budget.svg'
@@ -45,17 +44,26 @@ const ANALYZE_STEPS = ['민감도 조건을 확인하고 있어요', '피하고 
 // 단계별 진행 바 색 (Figma 2268:20554 / 20756 / 20710)
 const BAR_COLORS = ['#fff', '#f4ffe4', '#e9ffcc']
 
+// 카드 한 줄(값 자리 약 한글 11자)에 들어가는 만큼만 이름을 보여줌
+const textWidth = (text) =>
+  [...text].reduce((sum, ch) => sum + (/[가-힣]/.test(ch) ? 1 : /[\s·]/.test(ch) ? 0.4 : 0.6), 0)
+
+function excludedPlantsText(plants) {
+  if (plants.length === 0) return '없음'
+  for (let count = Math.min(2, plants.length); count >= 1; count--) {
+    const rest = plants.length - count
+    const text = plants.slice(0, count).join(' · ') + (rest ? ` 외 ${rest}종` : '')
+    if (count === 1 || textWidth(text) <= 11) return text
+  }
+}
+
 // 나의 Bloom Profile 카드 — Make Quiet Bloom의 Bloom Profile 카드와 같은 모양, 끌어서 기울이기
 function BloomTypeCard({ type, criteria, lowIrritant, lowScent, excludedPlants }) {
   const ref = useTilt()
   // 설명은 Make Quiet Bloom 카드와 같은 조건 문장
   const desc = getProfileSummary({ lowIrritant, lowScent, criteria: [criteria] }).description
-  // 제외 식물: 두 개까지 이름, 더 많으면 "외 N종"
-  const excludedText = excludedPlants.length === 0
-    ? '없음'
-    : excludedPlants.length > 2
-      ? `${excludedPlants.slice(0, 2).join(' · ')} 외 ${excludedPlants.length - 2}종`
-      : excludedPlants.join(' · ')
+  // 제외 식물: 두 개까지 이름, 더 많으면 "외 N종" (한 줄에 안 들어가면 이름을 하나만)
+  const excludedText = excludedPlantsText(excludedPlants)
   return (
     <section ref={ref} className="ob-type" aria-label="나의 Bloom Profile">
       <img className="ob-type__frame" src={cardFrame} alt="" />
@@ -66,7 +74,6 @@ function BloomTypeCard({ type, criteria, lowIrritant, lowScent, excludedPlants }
         </span>
         {type.badge}
       </div>
-      <img className="ob-type__divider" src={divider} alt="" />
 
       <div className="ob-type__body">
         <h3 className="ob-type__name">{type.title}</h3>

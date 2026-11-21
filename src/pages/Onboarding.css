@@ -623,6 +623,9 @@
   scrollbar-width: none;
   /* 아래 고정 버튼(42 + 56)에 카드가 가리지 않게 */
   padding: 84px 20px 122px;
+  /* 카드는 제목과 아래 버튼 사이 가운데에 (화면이 작으면 위에서부터 쌓이고 스크롤) */
+  display: flex;
+  flex-direction: column;
   background: #fff;
   animation: ob-fade 0.5s var(--ease-smooth) backwards;
 }
@@ -638,6 +641,8 @@
 }
 
 .ob-done__header {
+  flex: none;
+  margin-bottom: 32px;
   animation-delay: 0.04s;
 }
 
@@ -662,12 +667,13 @@
   color: var(--qb-text-sub);
 }
 
-/* 유형 카드 (Bloom Profile 카드와 같은 274×431) */
+/* 유형 카드 (Bloom Profile 카드와 같은 274×400) */
 .ob-type {
   position: relative;
   width: 274px;
-  height: 431px;
-  margin: 47.8px auto 0;
+  height: 400px;
+  flex: none;
+  margin: auto;
   border-radius: 22px;
   isolation: isolate;
   background: linear-gradient(158.35deg, rgba(193, 213, 166, 0.95) 4.72%, rgba(219, 233, 177, 0.95) 102.17%);
@@ -740,7 +746,7 @@
   max-width: none;
 }
 
-/* 카드 세로 리듬 (높이 431 고정): 위 28 · 제목 · 12 · 배지 32 · 20 · 점선 · 20 · 이름 · 8 · 설명 · 16↑ · 막대 두 줄 · 14 · 구분선 */
+/* 카드 세로 리듬 (높이 400 고정): 위 28 · 제목 · 12 · 배지 32 · 28 · 이름 · 8 · 설명 · 16↑ · 막대 두 줄 · 14 · 구분선 */
 .ob-type__heading {
   padding-top: 28px;
   font-size: 20px;
@@ -785,17 +791,8 @@
   max-width: none;
 }
 
-.ob-type__divider {
-  position: absolute;
-  top: 118px;
-  left: calc(50% - 227.398px / 2);
-  max-width: none;
-  transform: scaleY(-1);
-  animation: ob-wipe-center 0.9s var(--ease-smooth) 0.54s backwards;
-}
-
 /* 조건 막대·식물 수까지 들어가 카드 아래 여백이 남도록 위쪽 간격을 조금 줄임 */
-/* 카드 높이는 고정(431) — 위쪽(제목·설명)은 점선 아래에서 시작, 민감도·추천 기준 막대는 아래 구분선 위에 붙임
+/* 카드 높이는 고정(400) — 위쪽(제목·설명)은 배지 아래에서 시작, 민감도·추천 기준 막대는 아래 구분선 위에 붙임
    → 설명이 두 줄이든 세 줄이든 아래 여백이 늘 같고, 남는 공간은 설명과 막대 사이로 */
 .ob-type {
   display: flex;
@@ -806,8 +803,8 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  /* 점선(top 118)과 이름 사이 20 = 배지와 점선 사이 20 */
-  margin-top: 41px;
+  /* 배지와 이름 사이 28 */
+  margin-top: 28px;
   /* 마지막 줄 아래 여백 (줄 안쪽 10 + 10) */
   padding: 0 24px 10px;
 }
@@ -840,6 +837,8 @@
 /* 고른 조건: 왼쪽 이름 · 오른쪽 값, 줄마다 가는 선 (카드 아래에 붙임) */
 .ob-type__facts {
   display: grid;
+  /* 값이 길어도 카드 밖으로 넘치지 않게 (넘치면 말줄임) */
+  grid-template-columns: minmax(0, 1fr);
   margin-top: auto;
   padding-top: 16px;
   animation: ob-card-content 0.7s var(--ease-smooth) 0.8s backwards;

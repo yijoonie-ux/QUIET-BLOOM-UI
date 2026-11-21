@@ -45,7 +45,7 @@ The owner rejects anything that looks "AI-made". Aim for refined, minimal, senso
 Product decisions to keep:
 
 - Flow: AI preview → "실제 제작 준비하기" → Make This Bloom (`/realize`: cost, store recommendation, substitutes, styling materials) → "완성하기" → Bloom Complete → "Bloom Card로 저장하기" → `/saved`.
-- No profile type names (e.g. "고요한 오래감상형"); show conditions like "저자극 · 저향". The onboarding result card's bottom line shows "제외 식물" (names, "외 N종" past two, or "없음"), not the plant count.
+- No profile type names (e.g. "고요한 오래감상형"); show conditions like "저자극 · 저향". The onboarding result card's bottom line shows "제외 식물" (names, "외 N종" past two, only one name if two don't fit on the line, or "없음"), not the plant count.
 - Fine-tune sheet can be dragged by its handle. "더 풍성하게" adds one volume plant; "더 가볍게" removes one structure plant (Grove has none, so 트리펀 3→2).
 - Stores (`src/data/sourcing.js`, sample data): 양재 꽃시장 / 고속터미널 꽃시장 / 온라인 꽃 도매몰. Plants the chosen store lacks must be substituted before "완성하기" is enabled. Every bouquet has all its plants at one market (`FULL_STORE`, alternating 양재/고터: Still·Grove·Hush·Ember 양재, Lush·Sway·Ramble·Glade 고터), which becomes the recommended store, so no substitute is needed by default; substituting would require new bouquet photos. `SOLD_OUT` is empty. Substitutes carry through to Complete and Details as "OO 대신" and never show "이번 주 품절".
 - Share buttons (Details, Complete) always toast "링크를 복사했어요".

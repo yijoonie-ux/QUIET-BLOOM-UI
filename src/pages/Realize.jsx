@@ -5,7 +5,7 @@ import { replacePlant, setPlantQty, useCart } from '../data/bouquet'
 import { useActiveBouquet } from '../data/bouquets'
 import { PLANTS } from '../data/plants'
 import { getBloomType, useProfile } from '../data/profile'
-import { STORES, findSubstitutes, isAvailableAt, rankStores, recordSwap, storeUrl, useSwaps } from '../data/sourcing'
+import { findSubstitutes, isAvailableAt, rankStores, recordSwap, storeUrl, useSwaps } from '../data/sourcing'
 import { costOf, stylingFor } from '../data/styling'
 import { useAppliedTune } from '../data/tune'
 import { usePageBackground } from '../hooks/usePageBackground'
@@ -154,6 +154,18 @@ function Realize() {
 
   const current = items.find(({ plant }) => plant.name === selected)
 
+  // 시트가 열려 있는 동안 뒤 화면은 스크롤되지 않게 (스크롤 막대는 시트 안에만)
+  const sheetOpen = !!current
+  useEffect(() => {
+    if (!sheetOpen) return
+    const root = document.documentElement
+    const prev = root.style.overflow
+    root.style.overflow = 'hidden'
+    return () => {
+      root.style.overflow = prev
+    }
+  }, [sheetOpen])
+
   return (
     <div className="rz" data-leaving={leaving}>
       <header className="rz__header">
@@ -298,7 +310,7 @@ function Realize() {
           </section>
         )}
 
-        <p className="rz__info">소재를 누르면 구매처와 대체 소재를 볼 수 있어요. 재고는 시연용 예시예요.</p>
+        <p className="rz__info">소재를 누르면 구매처와 대체 소재를 볼 수 있어요.</p>
       </div>
 
       <div className="rz__actions">
@@ -341,29 +353,27 @@ function Realize() {
               </div>
             </div>
 
-            {/* 이 식물을 구할 수 있는 곳: 고른 구매처가 맨 위 */}
-            <h3 className="rz-sheet__label">Where to Buy</h3>
-            <ul className="rz-shops">
-              {[store, ...STORES.filter((s) => s.key !== store.key)].map((s) => {
-                const ok = isAvailableAt(s.key, bouquet.key, current.plant.name, recipeNames)
-                return (
-                  <li key={s.key}>
-                    <a className="rz-shop" href={storeUrl(s, current.plant.name)} target="_blank" rel="noreferrer">
-                      <span className="rz-shop__text">
-                        <span className="rz-shop__name">
-                          {s.name}
-                          {s.key === store.key && <span className="rz-shop__mine">고른 곳</span>}
-                        </span>
-                        <span className="rz-shop__note">{ok ? s.note : '이번 주 구하기 어려워요'}</span>
-                      </span>
-                      <span className="rz-pill" data-tone={ok ? 'ok' : 'bad'}>
-                        {ok ? '찾아보기' : '없음'}
-                      </span>
-                    </a>
-                  </li>
-                )
-              })}
-            </ul>
+            {/* 손잡이·식물 이름 아래부터는 흰 시트 안에서만 스크롤 */}
+            <div className="rz-sheet__body">
+              {/* 한 곳에서 다 사는 게 기준이라 고른 구매처만 보여줌
+                  (있으면 그곳 위치, 없으면 한 줄 안내 뒤 바로 대체 소재) */}
+              {availableHere(current.plant.name) ? (
+                <>
+                  <h3 className="rz-sheet__label">Where to Buy</h3>
+                  <a className="rz-shop" href={storeUrl(store, current.plant.name)} target="_blank" rel="noreferrer">
+                    <span className="rz-shop__text">
+                      <span className="rz-shop__name">{store.name}</span>
+                      <span className="rz-shop__note">{store.note}</span>
+                    </span>
+                    {/* 꽃시장은 지도에서 위치, 온라인은 그 식물 상품 목록 */}
+                    <span className="rz-pill" data-tone="ok">
+                      {store.url ? '위치 보기' : '상품 보기'}
+                    </span>
+                  </a>
+                </>
+              ) : (
+                <p className="rz-sheet__missing">{store.name}에서는 이번 주 구하기 어려워요.</p>
+              )}
 
             {!showSubs ? (
               <button type="button" className="rz-sheet__more" onClick={() => setShowSubs(true)}>
@@ -376,7 +386,7 @@ function Realize() {
                   {store.name}에서 구할 수 있는 소재 중, 같은 {roleOf(current.plant)} 역할과 민감도 조건을 지키는 것만 골랐어요.
                 </p>
                 {subsFor(current.plant.name).length === 0 && (
-                  <p className="rz-sheet__none">이 구매처에는 대신할 소재가 없어요. 위에서 다른 구매처를 골라보세요.</p>
+                  <p className="rz-sheet__none">이 구매처에는 대신할 소재가 없어요. 구매처를 다른 곳으로 바꿔보세요.</p>
                 )}
                 <ul className="rz-subs">
                   {subsFor(current.plant.name).map(({ plant, reasons }) => (
@@ -413,6 +423,7 @@ function Realize() {
                 </ul>
               </>
             )}
+            </div>
           </section>
         </div>
       )}

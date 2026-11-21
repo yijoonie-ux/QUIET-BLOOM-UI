@@ -67,10 +67,9 @@
 }
 
 .rz-budget__label {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
-  letter-spacing: 0.02em;
-  color: #8a9387;
+  color: var(--qb-text-sub);
 }
 
 .rz-budget__total {
@@ -81,7 +80,7 @@
   font-weight: 300;
   line-height: 1.05;
   letter-spacing: -1.6px;
-  color: #2a2f29;
+  color: var(--qb-text-strong);
 }
 
 .rz-budget__total small {
@@ -94,16 +93,16 @@
 /* 금액 내역: 식물 · 연출 소재 */
 .rz-budget__break {
   margin-top: 2px;
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 500;
-  color: #8a9387;
+  color: var(--qb-text-sub);
 }
 
 /* 예산 대비 (예산 기준인 사람만): 오른쪽 작은 글자 + 아래 가는 선 하나 */
 .rz-budget__state {
   flex: none;
   margin-bottom: 6px;
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 600;
   color: #5f7a3c;
   white-space: nowrap;
@@ -138,22 +137,22 @@
   justify-content: space-between;
   gap: 12px;
   margin-top: -6px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
-  color: #8a9387;
+  color: var(--qb-text-sub);
   white-space: nowrap;
 }
 
 .rz__info {
   margin-top: -2px;
-  font-size: 12px;
+  padding: 0 6px;
+  font-size: 13px;
   font-weight: 500;
   line-height: 1.4;
-  text-align: center;
-  color: #8a9387;
+  color: var(--qb-text-sub);
 }
 
-/* 섹션 이름: 작은 영문 라벨 + 오른쪽 옅은 보조 글 (판 바깥 위) */
+/* 섹션 이름: 다른 화면 소제목(About This Bloom·Composition)과 같은 18px + 오른쪽 옅은 보조 글 (판 바깥 위) */
 .rz-label {
   display: flex;
   align-items: baseline;
@@ -164,18 +163,19 @@
 
 .rz-label h2,
 .rz-group__head h2 {
-  font-size: 12px;
+  font-size: 18px;
   font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  line-height: 1.3;
+  letter-spacing: -0.2px;
+  /* 화면 제목(Make This Bloom)과 같은 색 */
   color: var(--qb-text-strong);
 }
 
 .rz-label span,
 .rz-group__head span {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
-  color: #8a9387;
+  color: var(--qb-text-sub);
 }
 
 /* 구매처: 흰 판 하나, 가는 선으로 나눈 세 줄 */
@@ -238,13 +238,13 @@
 
 .rz-store[aria-pressed='true'] .rz-store__name {
   font-weight: 600;
-  color: #2a2f29;
+  color: var(--qb-text-strong);
 }
 
 .rz-store__note {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
-  color: #9aa396;
+  color: var(--qb-text-sub);
 }
 
 /* 오른쪽 큰 숫자: 구할 수 있는 식물 수 / 전체 */
@@ -267,7 +267,7 @@
 }
 
 .rz-store[aria-pressed='true'] .rz-store__count {
-  color: #2a2f29;
+  color: var(--qb-text-strong);
 }
 
 /* 한 곳에서 다 준비되는지: 상자 없이 목록 아래 한 줄 */
@@ -275,10 +275,10 @@
   margin: 2px 18px 12px;
   padding-top: 12px;
   border-top: 1px solid rgba(67, 76, 66, 0.08);
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 500;
   line-height: 1.45;
-  color: #8a9387;
+  color: var(--qb-text-sub);
   word-break: keep-all;
 }
 
@@ -360,20 +360,20 @@
   font-weight: 600;
   line-height: 1.3;
   letter-spacing: -0.2px;
-  color: #2a2a2a;
+  color: var(--qb-text-strong);
 }
 
 .rz-item__qty {
   font-size: 13px;
   font-weight: 500;
-  color: #8a9387;
+  color: var(--qb-text-sub);
 }
 
 .rz-item__meta {
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 500;
   line-height: 1.3;
-  color: #8a9387;
+  color: var(--qb-text-sub);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -417,7 +417,7 @@
 
 .rz-item__out {
   flex: none;
-  color: #9aa597;
+  color: var(--qb-text-sub);
 }
 
 .rz__list li + li .rz-item--styling::before {
@@ -427,7 +427,7 @@
 .rz-item__more {
   flex: none;
   margin-left: -4px;
-  color: #c3cabd;
+  color: #b7beb1;
 }
 
 /* 상태: 색 점 + 짧은 글 */
@@ -436,9 +436,9 @@
   flex: none;
   align-items: center;
   gap: 5px;
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 600;
-  color: #6f8a4c;
+  color: #5f7a3c;
   white-space: nowrap;
 }
 
@@ -491,8 +491,8 @@
 
 .rz-pill[data-tone='bad'] {
   background: transparent;
-  color: #b5532f;
-  box-shadow: inset 0 0 0 1px rgba(181, 83, 47, 0.6);
+  color: var(--qb-text-sub);
+  box-shadow: inset 0 0 0 1px rgba(67, 76, 66, 0.25);
 }
 
 /* 썸네일 (Composition과 같은 연두 칸) */
@@ -546,7 +546,7 @@
 }
 
 .rz__hint {
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 500;
   text-align: center;
   color: var(--qb-text-sub);
@@ -565,7 +565,7 @@
 
 .rz__primary:disabled {
   background: #dfe5d8;
-  color: #9aa396;
+  color: var(--qb-text-sub);
   cursor: default;
 }
 
@@ -585,19 +585,22 @@
 }
 
 .rz-sheet__panel {
-  display: grid;
-  gap: 12px;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   max-height: 86%;
-  overflow-y: auto;
-  padding: 10px 20px calc(28px + env(safe-area-inset-bottom, 0px));
+  /* 둥근 흰 판은 그대로, 손잡이·식물 이름 아래(.rz-sheet__body)만 스크롤 */
+  overflow: hidden;
+  padding-top: 10px;
   border-radius: 28px 28px 0 0;
   background: #fff;
+  color: var(--qb-text-strong);
   animation: rz-sheet-in 0.5s var(--ease-smooth) backwards;
 }
 
 .rz-sheet__handle {
-  justify-self: center;
+  flex: none;
+  align-self: center;
   width: 56px;
   height: 4px;
   border-radius: 100px;
@@ -605,10 +608,42 @@
 }
 
 .rz-sheet__head {
+  flex: none;
   display: flex;
   align-items: center;
   gap: 14px;
-  padding-top: 6px;
+  padding: 18px 20px 4px;
+}
+
+.rz-sheet__body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  /* 스크롤 막대가 흰 판 가장자리에서 떨어져 안쪽에 오도록 (오른쪽 6 띄우고 안쪽 여백 14) */
+  margin-right: 6px;
+  padding: 16px 14px calc(28px + env(safe-area-inset-bottom, 0px)) 20px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  /* 위로 넘어간 내용은 식물 이름 아래에서 살짝 흐려지며 사라짐 */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 14px);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 14px);
+}
+
+/* 손잡이와 같은 색의 가는 막대, 위아래 끝은 둥근 모서리 안쪽에서 시작·끝 */
+.rz-sheet__body::-webkit-scrollbar {
+  width: 4px;
+}
+
+.rz-sheet__body::-webkit-scrollbar-track {
+  margin: 16px 0 28px;
+  background: transparent;
+}
+
+.rz-sheet__body::-webkit-scrollbar-thumb {
+  border-radius: 100px;
+  background: #cfd8c4;
 }
 
 .rz-sheet__title {
@@ -616,7 +651,6 @@
   font-weight: 600;
   line-height: 1.3;
   letter-spacing: -0.3px;
-  color: #2a2a2a;
 }
 
 .rz-sheet__title span {
@@ -631,22 +665,40 @@
   color: var(--qb-text-sub);
 }
 
+/* 시트 소제목: 화면 소제목과 같은 18px */
 .rz-sheet__label {
   margin-top: 8px;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
-  color: #2a2a2a;
+  line-height: 1.3;
+  letter-spacing: -0.2px;
+}
+
+.rz-sheet__label:first-child {
+  margin-top: 0;
+}
+
+/* 고른 구매처에 없을 때 한 줄 (대체 소재 바로 위) */
+.rz-sheet__missing {
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: #f3f6ed;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--qb-text-strong);
+  word-break: keep-all;
 }
 
 .rz-sheet__why {
-  margin-top: -6px;
-  font-size: 12px;
+  margin-top: -4px;
+  word-break: keep-all;
+  font-size: 13px;
   font-weight: 500;
   line-height: 1.4;
   color: var(--qb-text-sub);
 }
 
-.rz-shops,
 .rz-subs {
   display: grid;
   gap: 8px;
@@ -659,8 +711,8 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 14px;
-  border-radius: 14px;
+  padding: 14px 16px;
+  border-radius: 16px;
   background: #f3f6ed;
   color: inherit;
   text-decoration: none;
@@ -670,9 +722,9 @@
 .rz-shop .rz-pill[data-tone='ok'] {
   height: 36px;
   padding: 0 16px;
-  font-size: 13.5px;
+  font-size: 13px;
   background: #fff;
-  color: #434c42;
+  color: var(--qb-text-strong);
 }
 
 .rz-shop__text {
@@ -688,16 +740,6 @@
   gap: 6px;
   font-size: 15px;
   font-weight: 600;
-  color: #2a2a2a;
-}
-
-.rz-shop__mine {
-  padding: 1px 8px;
-  border-radius: 100px;
-  box-shadow: inset 0 0 0 1px rgba(156, 185, 118, 0.6);
-  font-size: 11px;
-  font-weight: 600;
-  color: #5f7a3c;
 }
 
 .rz-sheet__none {
@@ -708,7 +750,7 @@
 }
 
 .rz-shop__note {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--qb-text-sub);
 }
@@ -725,9 +767,9 @@
 
 /* 대체 소재 카드: 위 = 사진·이름·가격·바꾸기 / 아래 = 고른 이유 (점선 위) */
 .rz-sub {
-  padding: 12px 12px 12px;
+  padding: 14px 16px;
   border: 1px solid #e8eee0;
-  border-radius: 18px;
+  border-radius: 16px;
   background: #fff;
   animation: rz-rise 0.45s var(--ease-smooth) backwards;
 }
@@ -756,24 +798,23 @@
   font-size: 16px;
   font-weight: 600;
   letter-spacing: -0.2px;
-  color: #2a2a2a;
 }
 
 .rz-sub__price {
   font-size: 13px;
   font-weight: 500;
-  color: #8a9387;
+  color: var(--qb-text-sub);
 }
 
 .rz-sub__price strong {
-  font-weight: 700;
-  color: #2a2a2a;
+  font-weight: 600;
+  color: var(--qb-text-strong);
 }
 
 .rz-sub__from {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
-  color: #8a9387;
+  color: var(--qb-text-sub);
 }
 
 .rz-sub__pick {
@@ -782,7 +823,7 @@
   padding: 0 16px;
   border-radius: 100px;
   background: #191919;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 600;
   color: #fff;
   transition: scale 0.2s ease;
@@ -808,7 +849,7 @@
   gap: 4px;
   font-size: 12px;
   font-weight: 500;
-  color: #5f6b58;
+  color: var(--qb-text-sub);
   white-space: nowrap;
 }
 

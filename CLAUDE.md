@@ -35,7 +35,7 @@ npm run build           # outputs dist/
 
 ## Design preferences (from the home PC sessions)
 
-The owner rejects anything that looks "AI-made". Aim for refined, minimal, sensory. Reference: rondesignlab (Instagram): large light numerals, generous whitespace, hairline dividers, few boxes, small uppercase English labels.
+The owner rejects anything that looks "AI-made". Aim for refined, minimal, sensory. Reference: rondesignlab (Instagram): large light numerals, generous whitespace, hairline dividers, few boxes. English section headings follow the existing screens (18px semibold, title case like "About This Bloom"), not small uppercase letter-spaced labels (owner found them inconsistent).
 
 - Do not use: vague drop shadows, gradients on selected states, orange text, decorative leaf shapes / leaf line art / lime dots / leaf-shaped knobs or icons (all tried and rejected).
 - Inactive cards may use translucent glass only (`.glass-card` in `src/index.css`); selected = white with a sage inset border.
@@ -48,6 +48,7 @@ Product decisions to keep:
 - No profile type names (e.g. "고요한 오래감상형"); show conditions like "저자극 · 저향". The onboarding result card's bottom line shows "제외 식물" (names, "외 N종" past two, only one name if two don't fit on the line, or "없음"), not the plant count.
 - Fine-tune sheet can be dragged by its handle. "더 풍성하게" adds one volume plant; "더 가볍게" removes one structure plant (Grove has none, so 트리펀 3→2).
 - Stores (`src/data/sourcing.js`, sample data): 양재 꽃시장 / 고속터미널 꽃시장 / 온라인 꽃 도매몰. Plants the chosen store lacks must be substituted before "완성하기" is enabled. Every bouquet has all its plants at one market (`FULL_STORE`, alternating 양재/고터: Still·Grove·Hush·Ember 양재, Lush·Sway·Ramble·Glade 고터), which becomes the recommended store, so no substitute is needed by default; substituting would require new bouquet photos. `SOLD_OUT` is empty. Substitutes carry through to Complete and Details as "OO 대신" and never show "이번 주 품절".
+- Make This Bloom plant sheet shows only the chosen store (one-store shopping): if the plant is there, that store with "위치 보기" (markets, map) or "상품 보기" (online); if not, one line "OO에서는 이번 주 구하기 어려워요." then Alternatives. The sheet scrolls inside the white panel and locks the page behind.
 - Share buttons (Details, Complete) always toast "링크를 복사했어요".
 - The AI preview mic never uses real speech recognition: tapping it always types the preset demo sentence (`demo` in `src/data/bouquets.js`, e.g. "진주랑 큐빅으로 꾸며서…") so the demo is predictable.
 - Refreshing any screen restarts at `/onboarding` (`src/data/onboarding.js`); opening a link fresh (e.g. a shared `/blooms/still`) keeps that screen.

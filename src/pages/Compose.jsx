@@ -157,7 +157,12 @@ function Compose() {
   const recipeDone = !nextItem
 
   // 카드의 + 버튼: 하나 담기 ↔ 빼기 (수량은 Composition에서 조절하거나 추천 수량으로 한 번에)
-  const toggle = (name) => setQty(name, inCart(name) ? 0 : 1)
+  // 한 번이라도 담았던 식물은 뺐다가 다시 담을 수 있게 기억 (레시피 밖 식물도 상세 창에서 담았다면 + 로 다시 담기 가능)
+  const [addedOnce, setAddedOnce] = useState(() => new Set(cart.map((item) => item.name)))
+  const toggle = (name) => {
+    if (!inCart(name)) setAddedOnce((prev) => new Set(prev).add(name))
+    setQty(name, inCart(name) ? 0 : 1)
+  }
 
   // Composition의 "추천 수량 적용": 담은 식물 중 레시피에 있는 것은 레시피 수량으로 한 번에 맞춤
   const recommendable = cart.some(({ name, qty }) => recipeQty(name) > 0 && qty !== recipeQty(name))
@@ -335,7 +340,7 @@ function Compose() {
             onOpen={plant.detail ? () => openDetail(plant) : undefined}
             cardRef={i === 0 ? firstCardRef : undefined}
             addRef={i === 0 ? firstAddRef : undefined}
-            locked={!recipeQty(plant.name) && !inCart(plant.name)}
+            locked={!recipeQty(plant.name) && !inCart(plant.name) && !addedOnce.has(plant.name)}
           />
         ))}
       </ul>

@@ -6,9 +6,25 @@ import './PlantDetail.css'
 
 // 식물 상세 팝업 (Figma 2268:18608). 배경을 누르면 닫힘.
 // onToggle이 없으면(완성한 부케의 Composition 등 보기만 하는 곳) 아래 버튼은 '닫기'
+// 사진 칸(236×176) 안에서 식물 사진 위치
+// - 디자인에서 따로 잡은 위치(detail.frame/crop)가 있으면 그대로
+// - 따로 상세 이미지(detail.image)가 있으면 null (그 이미지를 씀)
+// - 없으면 카드 사진(170×160 기준 frame)을 키워 가운데·아래 맞춤 (높이 156까지, 너무 넓으면 폭 200까지)
+function cropOf(plant) {
+  const { detail, photo } = plant
+  if (detail.frame) return { frame: detail.frame, crop: detail.crop }
+  if (detail.image) return null
+  const [, , w, h] = photo.frame
+  const scale = Math.min(156 / h, 200 / w)
+  const width = w * scale
+  const height = h * scale
+  return { frame: [(236 - width) / 2, 176 - height, width, height], crop: photo.crop }
+}
+
 function PlantDetail({ plant, selected, onToggle, onClose }) {
   const [closing, setClosing] = useState(false)
   const { detail } = plant
+  const crop = cropOf(plant)
 
   const close = () => {
     if (closing) return
@@ -42,20 +58,20 @@ function PlantDetail({ plant, selected, onToggle, onClose }) {
         <img className="plant-detail__frame" src={frame} alt="" />
 
         <div className="plant-detail__visual">
-          {detail.frame ? (
+          {crop ? (
             // 카드 사진을 잘라 크게 보여줌 — frame: 사진 칸 [left, top, width, height] / crop: 원본 [width%, height%, left%, top%]
             <span
               className="plant-detail__image plant-detail__image--crop"
-              style={{ left: detail.frame[0], top: detail.frame[1], width: detail.frame[2], height: detail.frame[3] }}
+              style={{ left: crop.frame[0], top: crop.frame[1], width: crop.frame[2], height: crop.frame[3] }}
             >
               <img
                 src={plant.photo.src}
                 alt=""
                 style={{
-                  width: `${detail.crop[0]}%`,
-                  height: `${detail.crop[1]}%`,
-                  left: `${detail.crop[2]}%`,
-                  top: `${detail.crop[3]}%`,
+                  width: `${crop.crop[0]}%`,
+                  height: `${crop.crop[1]}%`,
+                  left: `${crop.crop[2]}%`,
+                  top: `${crop.crop[3]}%`,
                 }}
               />
             </span>

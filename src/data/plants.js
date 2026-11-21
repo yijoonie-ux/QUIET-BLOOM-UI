@@ -1,4 +1,5 @@
 import { useProfile } from './profile'
+import { PLANT_DETAILS } from './plantDetails'
 import yeonbapImg from '../assets/compose/plant-yeonbap.png'
 import ruscusImg from '../assets/compose/plant-ruscus.png'
 import fatsiaImg from '../assets/compose/plant-fatsia.png'
@@ -203,6 +204,23 @@ export const PLANTS = [
   { name: '냉이초', category: 'texture', price: 900, lowIrritant: false, photo: photo(naengichoImg, [86, 15, 58, 145], [169.33, 101.65, -45.33, -0.13]) },
   { name: '렉스 베고니아', category: 'texture', price: 2000, lowIrritant: false, photo: photo(rexBegoniaImg, [77, 27, 82, 133], [132.14, 108.03, -16.07, -3.28]) },
 ]
+
+// 모든 식물에 상세 팝업 내용 채우기 (설명·유지기간·물교체는 plantDetails.js)
+// 저자극 ON/OFF · 향 노출은 부케 구성 필터와 같은 값에서 가져와 서로 어긋나지 않게 함
+// 연밥·엽란처럼 디자인에서 따로 잡은 사진 위치(frame/crop/image)는 그대로 둠
+for (const plant of PLANTS) {
+  const info = PLANT_DETAILS[plant.name]
+  if (!info) continue
+  const [desc, days, water] = info
+  plant.detail = {
+    ...plant.detail,
+    desc,
+    lowIrritant: plant.lowIrritant !== false,
+    scent: plant.scent === 'high' ? 'HIGH' : 'LOW',
+    lasting: `${days} days`,
+    water,
+  }
+}
 
 // 유지력 순 정렬 순서 (Figma 부케 구성 화면 그대로 — 조건에 따라 카드 배치가 조금씩 다름)
 // all: 무필터 / lowIrritant: 저자극(저자극+저향도 같음) / lowScent: 저향만

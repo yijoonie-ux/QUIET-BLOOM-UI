@@ -139,7 +139,7 @@ function BloomInfo({ bouquetKey, resultKey, recipe, swaps = {}, decor, form, car
                       <a className="bi-line bi-line--styling" href={s.url} target="_blank" rel="noreferrer">
                         <span className="bi-row__text">
                           <span className="bi-row__name">{s.name}</span>
-                          <span className="bi-line__note">{s.note}</span>
+                          {s.note && <span className="bi-line__note">{s.note}</span>}
                         </span>
                         <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                           <path d="M3.5 8.5l5-5M4.5 3.5h4v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />

@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router'
 import backIcon from '../assets/edit/back.svg'
 import { replacePlant, setPlantQty, useCart } from '../data/bouquet'
 import { useActiveBouquet } from '../data/bouquets'
 import { PLANTS } from '../data/plants'
 import { getBloomType, useProfile } from '../data/profile'
-import { findSubstitutes, isAvailableAt, rankStores, recordSwap, storeUrl, useSwaps } from '../data/sourcing'
+import { clearSwaps, findSubstitutes, isAvailableAt, rankStores, recordSwap, storeUrl, useSwaps } from '../data/sourcing'
 import { costOf, stylingFor } from '../data/styling'
 import { useAppliedTune } from '../data/tune'
 import { usePageBackground } from '../hooks/usePageBackground'
@@ -114,12 +114,26 @@ function Realize() {
     styling,
   )
   const cartNames = items.map(({ plant }) => plant.name)
-  // 구매처 추천: 지금 구성 기준으로 구할 수 있는 식물이 많은 곳부터 — 처음엔 1순위를 골라 둠
   const recipeNames = bouquet.recipe.map(([name]) => name)
-  const ranked = rankStores(bouquet.key, cartNames, recipeNames)
+  // 구매처마다 바꾼 소재 { 새 소재: 원래 소재 } (구매처를 오가도 그곳에서 바꾼 건 기억)
+  const swapsByStore = useRef({})
+  // 바꾸기 전 구성 (지금 구매처에서 바꾼 소재를 원래 이름으로)
+  const baseNames = cartNames.map((name) => swaps[name] ?? name)
+  // 구매처 순서: 바꾸기 전 구성 기준으로 정해서, 소재를 바꿔도 줄이 자리를 옮기지 않음 — 처음엔 1순위를 골라 둠
+  const order = rankStores(bouquet.key, baseNames, recipeNames).map(({ store: s }) => s)
   const [storeKey, setStoreKey] = useState(null)
-  const chosen = ranked.find((r) => r.store.key === storeKey) ?? ranked[0]
-  const store = chosen.store
+  const store = order.find((s) => s.key === storeKey) ?? order[0]
+  // 구매처별 숫자: 그 구매처를 골랐을 때의 구성(지금 곳은 지금 구성, 다른 곳은 그곳에서 바꿨던 소재 반영) 기준
+  const namesAt = (key) => {
+    if (key === store.key) return cartNames
+    const saved = Object.entries(swapsByStore.current[key] ?? {})
+    return baseNames.map((name) => saved.find(([, origin]) => origin === name)?.[0] ?? name)
+  }
+  const ranked = order.map((s) => {
+    const names = namesAt(s.key)
+    const available = names.filter((name) => isAvailableAt(s.key, bouquet.key, name, recipeNames))
+    return { store: s, available, missing: names.filter((name) => !available.includes(name)) }
+  })
   const availableHere = (name) => isAvailableAt(store.key, bouquet.key, name, recipeNames)
   // 대체 소재: 고른 구매처에서 구할 수 있는 같은 역할 식물
   const subsFor = (name) =>
@@ -152,6 +166,25 @@ function Realize() {
     setToast(`${from} → ${to}로 바꿨어요`)
   }
 
+  // 구매처를 바꾸면 그 전 구매처 때문에 바꾼 소재는 처음 소재로 되돌림
+  // (대체는 고른 구매처에 없어서 한 것이므로, 구매처가 바뀌면 다시 판단)
+  // 구매처마다 바꾼 소재를 기억해 두고, 그 구매처로 돌아오면 다시 적용
+  const pickStore = (key) => {
+    if (key === store.key) return
+    const changed = Object.entries(swaps)
+    swapsByStore.current[store.key] = swaps
+    changed.forEach(([to, origin]) => replacePlant(to, origin))
+    clearSwaps()
+    const saved = Object.entries(swapsByStore.current[key] ?? {})
+    saved.forEach(([to, origin]) => {
+      replacePlant(origin, to)
+      recordSwap(origin, to)
+    })
+    if (saved.length) setToast('이 구매처에서 바꿨던 소재를 다시 적용했어요')
+    else if (changed.length) setToast('구매처를 바꿔서 바꾼 소재를 처음대로 돌렸어요')
+    setStoreKey(key)
+  }
+
   const current = items.find(({ plant }) => plant.name === selected)
 
   // 시트가 열려 있는 동안 뒤 화면은 스크롤되지 않게 (스크롤 막대는 시트 안에만)
@@ -167,7 +200,7 @@ function Realize() {
   }, [sheetOpen])
 
   return (
-    <div className="rz" data-leaving={leaving}>
+    <div className="rz" data-leaving={leaving} data-hint={blocked.length > 0}>
       <header className="rz__header">
         <button
           type="button"
@@ -200,7 +233,7 @@ function Realize() {
                   type="button"
                   className="rz-store"
                   aria-pressed={s.key === store.key}
-                  onClick={() => setStoreKey(s.key)}
+                  onClick={() => pickStore(s.key)}
                 >
                   <span className="rz-store__radio" aria-hidden="true" />
                   <span className="rz-store__text">
@@ -261,12 +294,6 @@ function Realize() {
               )
             })}
           </ul>
-          {/* 한 곳에서 다 준비되면 한 줄 (아직이면 버튼 위 안내가 대신 알려줌) */}
-          {blocked.length === 0 && (
-            <p className="rz-ready" data-done="true">
-              {store.name} 한 곳에서 {items.length}종 모두 준비할 수 있어요
-            </p>
-          )}
         </section>
 
         {/* 연출 소재: 누르면 바로 구할 수 있는 곳(온라인 검색)으로 */}
@@ -283,7 +310,7 @@ function Realize() {
                     <span className="rz-item__text">
                       <span className="rz-item__name">{s.name}</span>
                       <span className="rz-item__meta">
-                        {s.note} · {won(s.price)}
+                        {s.note ? `${s.note} · ` : ''}{won(s.price)}
                       </span>
                     </span>
                     <svg className="rz-item__out" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
@@ -309,8 +336,6 @@ function Realize() {
             </ul>
           </section>
         )}
-
-        <p className="rz__info">소재를 누르면 구매처와 대체 소재를 볼 수 있어요.</p>
       </div>
 
       <div className="rz__actions">
@@ -382,22 +407,18 @@ function Realize() {
             ) : (
               <>
                 <h3 className="rz-sheet__label">Alternatives</h3>
-                <p className="rz-sheet__why">
-                  {store.name}에서 구할 수 있는 소재 중, 같은 {roleOf(current.plant)} 역할과 민감도 조건을 지키는 것만 골랐어요.
-                </p>
+                {/* 한 줄 (구매처는 위 안내에 있으니 '여기서') */}
+                <p className="rz-sheet__why">여기서 구할 수 있고 조건도 맞는 같은 {roleOf(current.plant)} 소재예요.</p>
                 {subsFor(current.plant.name).length === 0 && (
                   <p className="rz-sheet__none">이 구매처에는 대신할 소재가 없어요. 구매처를 다른 곳으로 바꿔보세요.</p>
                 )}
                 <ul className="rz-subs">
-                  {subsFor(current.plant.name).map(({ plant, reasons }) => (
+                  {subsFor(current.plant.name).map(({ plant }) => (
                     <li key={plant.name} className="rz-sub">
                       <div className="rz-sub__main">
                         <Thumb plant={plant} size={52} />
                         <span className="rz-sub__text">
-                          <span className="rz-sub__name">
-                            {plant.name}
-                            <span className="rz-sub__from">{current.plant.name} 대신</span>
-                          </span>
+                          <span className="rz-sub__name">{plant.name}</span>
                           {/* 기존 소재와 가격 비교 (개당) */}
                           <span className="rz-sub__price">
                             개당 {won(current.plant.price)} → <strong>{won(plant.price)}</strong>
@@ -407,17 +428,6 @@ function Realize() {
                           바꾸기
                         </button>
                       </div>
-                      {/* 이 소재를 고른 이유: 체크 표시와 함께 한 줄로 */}
-                      <ul className="rz-sub__why">
-                        {reasons.map((r) => (
-                          <li key={r}>
-                            <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                              <path d="M2.5 6.2l2.3 2.3 4.7-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                            {r}
-                          </li>
-                        ))}
-                      </ul>
                     </li>
                   ))}
                 </ul>

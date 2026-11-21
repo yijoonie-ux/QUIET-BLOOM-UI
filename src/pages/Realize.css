@@ -2,10 +2,15 @@
    위: 헤더 / 예산 카드 / 소재 목록, 아래 고정: 확정 버튼, 위에 뜨는 구매처 시트 */
 .rz {
   min-height: var(--app-h, 100dvh);
-  /* 맨 아래 내용까지 아래 고정 영역(안내 문구 + 버튼)에 가리지 않고 올라옴 */
-  padding-bottom: 190px;
+  /* 맨 아래 내용이 아래 고정 버튼에 가리지 않을 만큼만 (버튼 56 + 아래 42 + 간격 32) */
+  padding-bottom: 130px;
   background: linear-gradient(180deg, #cad9b1 0%, #f3f6ed 260px);
   color: var(--qb-text-strong);
+}
+
+/* 버튼 위 안내 문구가 있을 때는 그만큼 더 (문구 한 줄 + 간격 10) */
+.rz[data-hint='true'] {
+  padding-bottom: 157px;
 }
 
 .rz__header {
@@ -143,15 +148,6 @@
   white-space: nowrap;
 }
 
-.rz__info {
-  margin-top: -2px;
-  padding: 0 6px;
-  font-size: 13px;
-  font-weight: 500;
-  line-height: 1.4;
-  color: var(--qb-text-sub);
-}
-
 /* 섹션 이름: 다른 화면 소제목(About This Bloom·Composition)과 같은 18px + 오른쪽 옅은 보조 글 (판 바깥 위) */
 .rz-label {
   display: flex;
@@ -270,22 +266,6 @@
   color: var(--qb-text-strong);
 }
 
-/* 한 곳에서 다 준비되는지: 상자 없이 목록 아래 한 줄 */
-.rz-ready {
-  margin: 2px 18px 12px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(67, 76, 66, 0.08);
-  font-size: 13px;
-  font-weight: 500;
-  line-height: 1.45;
-  color: var(--qb-text-sub);
-  word-break: keep-all;
-}
-
-.rz-ready[data-done='true'] {
-  color: var(--qb-text-strong);
-}
-
 /* 소재 · 연출 · 만드는 방법: 라벨은 판 바깥 위, 목록만 흰 판 (구매처와 같은 구성) */
 .rz-group {
   display: grid;
@@ -306,13 +286,6 @@
   list-style: none;
   border-radius: 22px;
   background: rgba(255, 255, 255, 0.88);
-}
-
-/* 목록 아래 한 줄 (판 바깥) */
-.rz-group .rz-ready {
-  margin: 10px 6px 0;
-  padding-top: 0;
-  border-top: 0;
 }
 
 /* 줄 사이 가는 선 (사진 오른쪽부터) */
@@ -765,7 +738,7 @@
   color: #fff;
 }
 
-/* 대체 소재 카드: 위 = 사진·이름·가격·바꾸기 / 아래 = 고른 이유 (점선 위) */
+/* 대체 소재 카드: 사진 · 이름 · 가격 · 바꾸기 한 줄 */
 .rz-sub {
   padding: 14px 16px;
   border: 1px solid #e8eee0;
@@ -811,12 +784,6 @@
   color: var(--qb-text-strong);
 }
 
-.rz-sub__from {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--qb-text-sub);
-}
-
 .rz-sub__pick {
   flex: none;
   height: 36px;
@@ -833,29 +800,6 @@
   scale: 0.96;
 }
 
-.rz-sub__why {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 12px;
-  margin: 10px 0 0;
-  padding: 10px 2px 0;
-  border-top: 1px dashed #e1e8d6;
-  list-style: none;
-}
-
-.rz-sub__why li {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--qb-text-sub);
-  white-space: nowrap;
-}
-
-.rz-sub__why svg {
-  color: #8db35a;
-}
 
 .rz-toast {
   position: fixed;

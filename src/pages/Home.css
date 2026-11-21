@@ -573,10 +573,10 @@
 /* 누끼(배경 없는 부케): 칸 아래에 붙여 가운데, 비율 그대로 — 위쪽은 이름 자리 */
 .blooms-card__photo[data-kind='cutout'] img {
   right: 0;
-  bottom: 4px;
+  bottom: 2px;
   left: 0;
-  /* 위쪽 이름(~32px)과 겹치지 않게 */
-  height: 106px;
+  /* 이름 아래부터 칸 아래까지 (가운데라 왼쪽 위 이름과는 겹치지 않음) */
+  height: 122px;
   margin: 0 auto;
   object-fit: contain;
 }
@@ -652,5 +652,44 @@
     opacity: 1;
     transform: none;
     animation: none;
+  }
+}
+
+/* 카드 저장 뒤 홈으로 오면 잠깐 뜨는 알림 (공유 '링크를 복사했어요'와 같은 유리 모양, 하단 탭 위) */
+.home-toast {
+  position: fixed;
+  bottom: calc(118px + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  z-index: 20;
+  margin: 0;
+  padding: 10px 16px;
+  border-radius: 100px;
+  /* 유리 알림: 홈 카드(.glass-card)와 같은 흰 반투명 + 흐림, 글씨는 진한 초록빛 회색 */
+  background: rgba(255, 255, 255, 0.88);
+  -webkit-backdrop-filter: blur(18px) saturate(1.25);
+  backdrop-filter: blur(18px) saturate(1.25);
+  /* 흰 화면 위에서도 경계가 보이게 연한 세이지 선 */
+  box-shadow: inset 0 0 0 1px rgba(175, 197, 144, 0.45);
+  translate: -50% 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #3f4a3c;
+  white-space: nowrap;
+  pointer-events: none;
+  animation:
+    home-toast-in 0.45s var(--ease-smooth) 0.5s backwards,
+    home-toast-out 0.4s ease 2.2s forwards;
+}
+
+@keyframes home-toast-in {
+  from {
+    opacity: 0;
+    translate: -50% 8px;
+  }
+}
+
+@keyframes home-toast-out {
+  to {
+    opacity: 0;
   }
 }

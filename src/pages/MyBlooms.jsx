@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router'
 import backIcon from '../assets/edit/back.svg'
-import { SAVED_BLOOMS } from '../data/blooms'
+import { SAVED_BLOOMS, useMadeBloom } from '../data/blooms'
 import { usePageBackground } from '../hooks/usePageBackground'
 import { usePageLeave } from '../hooks/usePageLeave'
 import './MyBlooms.css'
@@ -65,9 +65,11 @@ function springStep(state, target, stiffness, damping, dt) {
 function MyBlooms() {
   usePageBackground('#ffffff')
   const [leaving, leave] = usePageLeave(280)
-  // 상세 화면에서 돌아오면 보던 카드부터
+  // 상세 화면에서 돌아오면 보던 카드부터, 아니면 방금 만든 부케가 가장 앞(가운데)에
   const fromId = useLocation().state?.id
-  const startIndex = Math.max(0, SAVED_BLOOMS.findIndex((b) => b.id === fromId))
+  const madeBloom = useMadeBloom()
+  const firstId = fromId ?? madeBloom?.bouquet
+  const startIndex = Math.max(0, SAVED_BLOOMS.findIndex((b) => b.id === firstId))
   const [index, setIndex] = useState(startIndex)
   const [pulling, setPulling] = useState(false)
   const [sweeping, setSweeping] = useState(false)

@@ -22,7 +22,7 @@ const fromBouquet = (key) => {
     plants: b.recipe.map(([name]) => name),
     recipe: b.recipe,
     // 카드 사진은 이미 카드 비율(276×408)로 잘려 있어 꽉 채워 넣음
-    // AI Preview 결과 키 — 연출 소재(화병·행잉·포장·장식) 목록에 씀
+    // AI Preview 결과 키 — 연출 소재(화기·행잉·포장·장식) 목록에 씀
     result: result.key,
     image: result.card,
     card: [100, 100, 0, 0],
@@ -53,8 +53,13 @@ export const findBloom = (id) => SAVED_BLOOMS.find((bloom) => bloom.id === id)
 // items: 실제로 쓴 구성 (대체 식물로 바꾼 것 포함) · decor·form: 인상 다듬기에서 고른 장식·연출
 // TODO: 사용자 데이터 연동 전까지 이 탭(sessionStorage)에만 저장
 const STORAGE_KEY = 'qb-made-bloom'
+// 새로고침하면 온보딩부터 다시 시작하므로(onboarding.js) 만든 부케도 비움 → 홈은 "저장한 부케가 없어요"부터
 let madeBloom = (() => {
   try {
+    if (performance.getEntriesByType('navigation')[0]?.type === 'reload') {
+      sessionStorage.removeItem(STORAGE_KEY)
+      return null
+    }
     return JSON.parse(sessionStorage.getItem(STORAGE_KEY)) ?? null
   } catch {
     return null

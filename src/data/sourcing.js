@@ -15,17 +15,9 @@ const SHOPS = [
 // (네이버 쇼핑 페이지는 외부 링크로 들어오면 접속 제한·보안 확인이 떠서 쓰지 않음)
 const onlineUrl = (name) => `https://m.search.naver.com/search.naver?query=${encodeURIComponent(`${name} 생화`)}#shp_lis_root`
 
-// 시연용: 부케마다 이번 주 구하기 어려운 소재 하나
-const SOLD_OUT = {
-  still: '살랄',
-  grove: '하이포에스테스',
-  sway: '홍가시',
-  lush: '드라세나',
-  hush: '이오난사',
-  ember: '엽란',
-  glade: '보스턴펀',
-  ramble: '레몬버베나',
-}
+// 시연용: 이번 주 품절 소재 (부케 키: 식물 이름) — 지금은 없음
+// 대체하면 부케 사진도 새로 필요해서, 기본 구성은 늘 한 곳에서 다 준비되게 함 (FULL_STORE)
+const SOLD_OUT = {}
 
 export const isSoldOut = (bouquetKey, name) => SOLD_OUT[bouquetKey] === name
 
@@ -37,23 +29,34 @@ export const STORES = [
   { key: 'online', name: '온라인 꽃 도매몰', note: '택배 · 1~2일', url: null },
 ]
 
-// 부케 기본 구성 중 구매처별로 구하기 어려운 식물: 양재 1종 · 고터 2종 · 온라인 3종
-// (양재에서 어려운 1종 = 이번 주 품절 소재)
+// 부케마다 기본 구성을 모두 구할 수 있는 곳 (양재 · 고터 번갈아) — 이곳이 추천 구매처가 됨
+const FULL_STORE = {
+  still: 'yangjae',
+  lush: 'terminal',
+  grove: 'yangjae',
+  sway: 'terminal',
+  hush: 'yangjae',
+  ramble: 'terminal',
+  ember: 'yangjae',
+  glade: 'terminal',
+}
+const fullStoreOf = (bouquetKey) => FULL_STORE[bouquetKey] ?? 'yangjae'
+
+// 부케 기본 구성 중 구매처별로 구하기 어려운 식물: 다 있는 곳 0종 · 다른 꽃시장 1종 · 온라인 2종
+// (그 곳을 고르면 없는 소재만 대체)
 function storeMisses(storeKey, bouquetKey, recipeNames) {
-  const soldOut = SOLD_OUT[bouquetKey]
-  const others = recipeNames.filter((name) => name !== soldOut)
-  if (storeKey === 'yangjae') return [soldOut]
-  if (storeKey === 'terminal') return [soldOut, others[1]]
-  return [soldOut, others[0], others[2]]
+  if (storeKey === fullStoreOf(bouquetKey)) return []
+  const misses = storeKey === 'online' ? [recipeNames[0], recipeNames[2]] : [recipeNames[1]]
+  return misses.filter(Boolean)
 }
 
-// 기본 구성에 없는 식물(대체 후보)은 이름으로 정해지는 가상 재고 — 양재는 모두, 다른 곳은 약 3/4
+// 기본 구성에 없는 식물(대체 후보)은 이름으로 정해지는 가상 재고 — 다 있는 곳은 모두, 다른 곳은 약 3/4
 const hashOf = (text) => [...text].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 9973, 7)
 
 // recipeNames: 이 부케의 기본 구성 식물 이름
 export function isAvailableAt(storeKey, bouquetKey, name, recipeNames) {
   if (recipeNames.includes(name)) return !storeMisses(storeKey, bouquetKey, recipeNames).includes(name)
-  if (storeKey === 'yangjae') return true
+  if (storeKey === fullStoreOf(bouquetKey)) return true
   return hashOf(`${storeKey}:${name}`) % 4 !== 0
 }
 

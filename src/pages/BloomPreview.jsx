@@ -196,7 +196,7 @@ function BloomPreview() {
   const [tuneOpen, setTuneOpen] = useState(false)
   const [tuned, setTuned] = useState(restore?.tuned ?? null) // 지금 결과에 적용된 조정 { values, decor, form, words, changes, guides }
   const pendingTune = useRef(null)
-  // 연출(다발 · 화병 · 행잉): 원래 결과의 연출과, 사진이 준비된 연출
+  // 연출(다발 · 화기 · 행잉): 원래 결과의 연출과, 사진이 준비된 연출
   // 처음 결과(다듬기 전)의 키 — 연출·장식의 '처음 그대로' 기준
   const [tuneBaseResult, setTuneBaseResult] = useState(restore?.tuneBaseResult ?? null)
   const baseResultKey = tuneBaseResult ?? result?.key
@@ -466,6 +466,12 @@ function BloomPreview() {
           </div>
 
           <div className="bp__controls">
+            {/* 듣는 중: 다 말한 뒤 마이크를 한 번 더 눌러야 생성으로 넘어간다는 안내 */}
+            {input === 'voice' && listening && (
+              <p className="bp__mic-hint" role="status">
+                다 말했으면 마이크를 한 번 더 눌러주세요
+              </p>
+            )}
             <button
               type="button"
               className="bp-orb bp-orb--mic"

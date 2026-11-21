@@ -9,12 +9,12 @@ export function costOf(items, styling) {
   return { plants, styling: extra, total: plants + extra }
 }
 
-// 연출 소재: AI Preview에서 고른 연출(화병 · 행잉 · 다발 포장)과 장식(진주 · 큐빅 · 레이스)을
+// 연출 소재: AI Preview에서 고른 연출(화기 · 행잉 · 다발 포장)과 장식(진주 · 큐빅 · 레이스)을
 // 실제로 만들 때 필요한 물건으로 — 식물처럼 구할 수 있는 곳을 연결 (Quiet Bloom은 판매하지 않음)
 // TODO: 실제 상품·가격 데이터 연동 전까지 쓰는 예시 값
 // shop: 네이버 검색 결과 안 쇼핑 묶음 이름표 — 검색어마다 묶음 종류가 달라 따로 지정 (lis: 상품 목록 / tli: 인기상품)
 const ITEMS = {
-  vase: { name: '유리 화병', note: '입구가 좁은 투명 화병', price: 8000, query: '유리 화병 꽃', shop: 'shp_lis_root' },
+  vase: { name: '화기', note: '부케 높이에 맞는 화기', price: 8000, query: '꽃꽂이 화기', shop: 'shp_lis_root' },
   hanging: { name: '행잉 바구니', note: '마크라메 행거 + 작은 화분', price: 13000, query: '마크라메 행잉 화분', shop: 'shp_lis_root' },
   wrap: { name: '다발 포장지', note: '포장지 + 리본 끈', price: 3000, query: '꽃다발 포장지', shop: 'shp_tli_root' },
   pearl: { name: '진주 장식', note: '진주 스티커', price: 1000, query: '진주 스티커', shop: 'shp_tli_root' },
@@ -41,7 +41,7 @@ export function decorOf(resultKey) {
 // 연출 3가지 (인상 다듬기에서 고름) — 결과 키 끝(still-vase → vase)과 같은 이름
 export const FORMS = [
   { key: 'wrap', label: '다발' },
-  { key: 'vase', label: '화병' },
+  { key: 'vase', label: '화기' },
   { key: 'hanging', label: '행잉' },
 ]
 

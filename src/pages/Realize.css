@@ -184,7 +184,7 @@
   padding: 4px 0;
   list-style: none;
   border-radius: 22px;
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.88);
 }
 
 .rz-stores__list li + li .rz-store::before {
@@ -305,7 +305,7 @@
   padding: 4px 0;
   list-style: none;
   border-radius: 22px;
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.88);
 }
 
 /* 목록 아래 한 줄 (판 바깥) */
@@ -823,11 +823,16 @@
   z-index: 6;
   padding: 10px 16px;
   border-radius: 100px;
-  background: rgba(25, 25, 25, 0.88);
+  /* 유리 알림: 홈 카드(.glass-card)와 같은 흰 반투명 + 흐림, 글씨는 진한 초록빛 회색 */
+  background: rgba(255, 255, 255, 0.88);
+  -webkit-backdrop-filter: blur(18px) saturate(1.25);
+  backdrop-filter: blur(18px) saturate(1.25);
+  /* 흰 화면 위에서도 경계가 보이게 연한 세이지 선 */
+  box-shadow: inset 0 0 0 1px rgba(175, 197, 144, 0.45);
   translate: -50% 0;
   font-size: 14px;
   font-weight: 600;
-  color: #fff;
+  color: #3f4a3c;
   white-space: nowrap;
   animation: rz-rise 0.4s var(--ease-smooth) backwards;
 }

@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react'
-import { PLANTS } from './plants'
-import { getProfile } from './profile'
+import { PLANTS, isExcludedPlant } from './plants'
+import { getProfile, subscribeProfile } from './profile'
 import stillPreview from '../assets/preview/bouquet.png'
 import stillVase from '../assets/result/still-vase.jpg'
 import stillHanging from '../assets/result/still-hanging.jpg'
@@ -70,14 +70,14 @@ export const BOUQUETS = [
     results: [
       {
         key: 'still-vase',
-        label: 'Vase Preview',
+        label: 'Vessel Preview',
         image: stillVase,
         size: [679, 940],
         pos: [-0.5, -85],
         bg: '#aab08a',
         shade: null,
         fade: [294, 0, '155, 149, 140', 0.6, '66.876%'],
-        demo: ['진주로', '꾸며서', '화병에', '꽂아줘'],
+        demo: ['진주로', '꾸며서', '화기에', '꽂아줘'],
         hero: { image: stillVase, size: [541, 749], top: -190 },
         heroShade: [220, '97, 88, 80', 0.52],
         card: stillVase,
@@ -101,7 +101,7 @@ export const BOUQUETS = [
     ],
   },
 
-  // 유지력 + 저자극 (Figma 2845:25557 줄) — 곧게 선 대나무 숲 같은 부케
+  // 유지력 + 저자극 (Figma 2845:25557 줄) — 곧게 선 대나무 숲 같은 부케 · 화기 스타일
   {
     key: 'grove',
     when: { criteria: '유지력', lowIrritant: true, lowScent: false },
@@ -120,15 +120,15 @@ export const BOUQUETS = [
     preview: { image: groovePreview, box: [278, 396, 30, 224], listen: [262, 372, 224], crop: [105.25, 106.17, -5.21, -0.71] },
     results: [
       {
-        key: 'grove-wrap',
-        label: 'Wrap Preview',
+        key: 'grove-vase',
+        label: 'Vessel Preview',
         image: groveResult,
         size: [753, 1158],
         pos: [-0.5, -187],
         bg: '#aab08a',
         shade: [229, '98, 98, 89', 0.41],
         fade: [220, 0, '98, 98, 89', 0.9, '95.981%'],
-        demo: ['진주랑', '큐빅으로', '꾸며서', '다발로', '묶어줘'],
+        demo: ['잘', '정돈해서', '화기에', '꽂아줘'],
         hero: { image: groveResult, size: [421, 647], top: -102.49, x: -0.5 },
         heroShade: [229, '98, 98, 89', 0.5],
         card: groveCard,
@@ -157,14 +157,14 @@ export const BOUQUETS = [
     results: [
       {
         key: 'ramble-vase',
-        label: 'Vase Preview',
+        label: 'Vessel Preview',
         image: rambleResult,
         size: [632, 949],
         pos: [0, -105],
         bg: '#bcb4ac',
         shade: [294, '188, 180, 172', 1, '18.663%'],
         fade: [263, 89, '188, 180, 172', 1, '81.337%'],
-        demo: ['레이스랑', '진주로', '꾸며서', '화병에', '꽂아줘'],
+        demo: ['레이스랑', '진주로', '꾸며서', '화기에', '꽂아줘'],
         hero: { image: rambleHero, size: [417, 521], top: -30.49, x: -0.5 },
         heroShade: [212, '188, 180, 172', 1],
         card: rambleCard,
@@ -193,14 +193,14 @@ export const BOUQUETS = [
     results: [
       {
         key: 'hush-vase',
-        label: 'Vase Preview',
+        label: 'Vessel Preview',
         image: hushResult,
         size: [719, 873],
         pos: [-20.5, -71],
         bg: '#e9dbc9',
         shade: [229, '97, 88, 80', 0.42],
         fade: [420, 198, '97, 88, 80', 1, '74.241%'],
-        demo: ['레이스랑', '진주로', '꾸며서', '화병에', '꽂아줘'],
+        demo: ['레이스랑', '진주로', '꾸며서', '화기에', '꽂아줘'],
         hero: { image: hushResult, size: [423, 513], top: -55.49, x: -16.5 },
         heroShade: [229, '97, 88, 80', 0.43],
         card: hushCard,
@@ -237,7 +237,7 @@ export const BOUQUETS = [
         bg: '#62625a',
         shade: [229, '98, 98, 89', 0.5],
         fade: [220, 0, '98, 98, 89', 0.9, '95.981%'],
-        demo: ['진주랑', '큐빅으로', '꾸며서', '다발로', '묶어줘'],
+        demo: ['레이스랑', '진주로', '꾸며서', '다발로', '묶어줘'],
         hero: { image: emberResult, size: [391, 521], top: -32.49, x: 0.5 },
         heroShade: [229, '98, 98, 89', 0.5],
         card: emberCard,
@@ -266,14 +266,14 @@ export const BOUQUETS = [
     results: [
       {
         key: 'glade-vase',
-        label: 'Vase Preview',
+        label: 'Vessel Preview',
         image: gladeResult,
         size: [813, 1084],
         pos: [-0.5, -145],
         bg: '#aab08a',
         shade: [229, '98, 98, 89', 0.41],
         fade: [220, 0, '98, 98, 89', 0.9, '95.981%'],
-        demo: ['진주랑', '큐빅으로', '꾸며서', '다발로', '묶어줘'],
+        demo: ['레이스랑', '진주로', '꾸며서', '화기에', '꽂아줘'],
         hero: { image: gladeResult, size: [448, 598], top: -70 },
         heroShade: [274, '98, 98, 89', 0.6],
         card: gladeCard,
@@ -310,7 +310,7 @@ export const BOUQUETS = [
         bg: '#d8d0c4',
         shade: [229, '98, 98, 89', 0.41],
         fade: [220, 0, '98, 98, 89', 0.9, '95.981%'],
-        demo: ['진주랑', '큐빅으로', '꾸며서', '다발로', '묶어줘'],
+        demo: ['레이스랑', '진주로', '꾸며서', '벽에', '걸어줘'],
         hero: { image: swayResult, size: [419, 727], top: -98, x: -0.5 },
         heroShade: [274, '98, 98, 89', 0.6],
         card: swayCard,
@@ -363,7 +363,8 @@ export const priceOf = (recipe) =>
 // 상세·완성 화면에 보일 금액: Figma 상세 화면에 정한 금액이 있으면 그 값, 없으면 레시피 합계
 // TODO: 레시피 합계와 다름 (Grove 27,600 · Ember 15,700 · Glade 15,400 · Sway 36,000) — 확정되면 정리
 const DETAIL_PRICE = { grove: 24600, ember: 9900, glade: 13800, sway: 31200 }
-export const bouquetPrice = (bouquet) => DETAIL_PRICE[bouquet.key] ?? priceOf(bouquet.recipe)
+export const bouquetPrice = (bouquet) =>
+  bouquet.removed?.length ? priceOf(bouquet.recipe) : (DETAIL_PRICE[bouquet.key] ?? priceOf(bouquet.recipe))
 
 const keyOf = ({ criteria, lowIrritant, lowScent }) => `${criteria}|${!!lowIrritant}|${!!lowScent}`
 
@@ -413,11 +414,31 @@ export function startBouquet(profile) {
   return true
 }
 
-export const getActiveBouquet = () => findBouquet(activeKey) ?? BOUQUETS[0]
+// 사용자가 피하고 싶다고 적은 식물(제외 식물)이 레시피에 있으면 그 식물은 빼고 구성
+// removed: 뺀 식물 이름 (없으면 빈 배열) — 같은 조건이면 같은 객체를 돌려줌 (화면이 매번 새로 그려지지 않게)
+let activeCache = { id: '', bouquet: null }
+export function getActiveBouquet() {
+  const base = findBouquet(activeKey) ?? BOUQUETS[0]
+  const excluded = getProfile().excludedPlants ?? []
+  const id = `${base.key}|${excluded.join(',')}`
+  if (activeCache.id !== id) {
+    const removed = base.recipe.filter(([name]) => isExcludedPlant(name, excluded)).map(([name]) => name)
+    const bouquet = removed.length
+      ? { ...base, recipe: base.recipe.filter(([name]) => !removed.includes(name)), removed }
+      : { ...base, removed }
+    activeCache = { id, bouquet }
+  }
+  return activeCache.bouquet
+}
 
 function subscribe(listener) {
   listeners.add(listener)
-  return () => listeners.delete(listener)
+  // 제외 식물이 바뀌어도 다시 계산
+  const offProfile = subscribeProfile(listener)
+  return () => {
+    listeners.delete(listener)
+    offProfile()
+  }
 }
 
 export function useActiveBouquet() {

@@ -101,7 +101,7 @@ function Realize() {
   const items = (cart.length ? cart : bouquet.recipe.map(([name, qty]) => ({ name, qty })))
     .map(({ name, qty }) => ({ plant: PLANTS.find((p) => p.name === name), qty }))
     .filter((item) => item.plant)
-  // 연출 소재: AI Preview에서 고른 연출(화병·행잉·포장)과 장식(진주·큐빅·레이스, 인상 다듬기 장식 포함)
+  // 연출 소재: AI Preview에서 고른 연출(화기·행잉·포장)과 장식(진주·큐빅·레이스, 인상 다듬기 장식 포함)
   const appliedTune = useAppliedTune()
   const styling = stylingFor(
     // 주소로 바로 들어오면(새로고침·링크) 결과 정보가 없어서 이 부케의 첫 AI 결과 기준으로

@@ -119,103 +119,106 @@ function TuneSheet({ items, initial, baseForm, photoForms, baseDecor, onApply, o
         >
           <span className="tune__handle" aria-hidden="true" />
         </button>
-        <h2 className="tune__title">Fine-tune</h2>
-        <p className="tune__desc">풍성함은 수량으로, 높이·분위기는 만드는 방법으로 바뀌어요.</p>
+        {/* 높이는 고정 — 고르는 것에 따라 내용이 늘어도 시트가 위아래로 움직이지 않고 이 안에서 스크롤 */}
+        <div className="tune__body">
+          <h2 className="tune__title">Fine-tune</h2>
+          <p className="tune__desc">풍성함은 수량으로, 높이·분위기는 만드는 방법으로 바뀌어요.</p>
 
-        <div className="tune__axes">
-          {TUNE_AXES.map((axis) => (
-            <div key={axis.key} className="tune-axis">
-              <div className="tune-axis__labels">
-                <span data-on={values[axis.key] < 0}>{axis.left}</span>
-                <span data-on={values[axis.key] > 0}>{axis.right}</span>
+          <div className="tune__axes">
+            {TUNE_AXES.map((axis) => (
+              <div key={axis.key} className="tune-axis">
+                <div className="tune-axis__labels">
+                  <span data-on={values[axis.key] < 0}>{axis.left}</span>
+                  <span data-on={values[axis.key] > 0}>{axis.right}</span>
+                </div>
+                <input
+                  id={`tune-${axis.key}`}
+                  className="tune-axis__range"
+                  type="range"
+                  min="-1"
+                  max="1"
+                  step="1"
+                  value={values[axis.key]}
+                  aria-label={`${axis.left} ↔ ${axis.right}`}
+                  onChange={(e) => setValues({ ...values, [axis.key]: Number(e.target.value) })}
+                />
               </div>
-              <input
-                id={`tune-${axis.key}`}
-                className="tune-axis__range"
-                type="range"
-                min="-1"
-                max="1"
-                step="1"
-                value={values[axis.key]}
-                aria-label={`${axis.left} ↔ ${axis.right}`}
-                onChange={(e) => setValues({ ...values, [axis.key]: Number(e.target.value) })}
-              />
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        {/* 연출: 다발 · 화병 · 행잉 중 어떤 모습으로 볼지 */}
-        <h3 className="tune__label">연출</h3>
-        <div className="tune__chips" data-cols="3">
-          {FORMS.map((f) => (
-            <button
-              key={f.key}
-              type="button"
-              className="tune__chip"
-              aria-pressed={form === f.key}
-              onClick={() => setForm(f.key)}
-            >
-              {f.label}
+          {/* 연출: 다발 · 화기 · 행잉 중 어떤 모습으로 볼지 */}
+          <h3 className="tune__label">연출</h3>
+          <div className="tune__chips" data-cols="3">
+            {FORMS.map((f) => (
+              <button
+                key={f.key}
+                type="button"
+                className="tune__chip"
+                aria-pressed={form === f.key}
+                onClick={() => setForm(f.key)}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+          {!photoForms.includes(form) && (
+            <p className="tune__note">이 연출 사진은 준비 중이에요. 필요한 소재는 제작 리스트에 반영돼요.</p>
+          )}
+
+          {/* 장식: 여러 개 고를 수 있음 — 지금 결과에 들어간 장식은 처음부터 선택 / 장식 없음은 모두 해제 */}
+          <h3 className="tune__label">장식</h3>
+          <div className="tune__chips" data-cols="4">
+            <button type="button" className="tune__chip" aria-pressed={decor.length === 0} onClick={() => setDecor([])}>
+              없음
             </button>
-          ))}
-        </div>
-        {!photoForms.includes(form) && (
-          <p className="tune__note">이 연출 사진은 준비 중이에요. 필요한 소재는 제작 리스트에 반영돼요.</p>
-        )}
+            {DECOR.map((d) => (
+              <button
+                key={d.key}
+                type="button"
+                className="tune__chip"
+                aria-pressed={decor.includes(d.key)}
+                onClick={() => toggleDecor(d.key)}
+              >
+                {d.word}
+              </button>
+            ))}
+          </div>
 
-        {/* 장식: 여러 개 고를 수 있음 — 지금 결과에 들어간 장식은 처음부터 선택 / 장식 없음은 모두 해제 */}
-        <h3 className="tune__label">장식</h3>
-        <div className="tune__chips" data-cols="4">
-          <button type="button" className="tune__chip" aria-pressed={decor.length === 0} onClick={() => setDecor([])}>
-            없음
-          </button>
-          {DECOR.map((d) => (
-            <button
-              key={d.key}
-              type="button"
-              className="tune__chip"
-              aria-pressed={decor.includes(d.key)}
-              onClick={() => toggleDecor(d.key)}
-            >
-              {d.word}
-            </button>
-          ))}
-        </div>
-
-        {/* 이렇게 바뀌어요: 풍성함 → 식물 수량 + 예상 금액 / 높이·정돈 → 만드는 방법 */}
-        <div className="tune-plan" data-empty={plan.changes.length === 0 && plan.guides.length === 0} aria-live="polite">
-          {plan.changes.length > 0 && (
-            <>
-              <ul className="tune-plan__list">
-                {plan.changes.map((c) => (
-                  <li key={c.name}>
-                    <span className="tune-plan__name">{c.name}</span>
-                    <span className="tune-plan__qty">
-                      {c.from} → <strong data-up={c.to > c.from}>{c.to === 0 ? '빼요' : `${c.to}개`}</strong>
-                    </span>
-                  </li>
-                ))}
-              </ul>
-              <p className="tune-plan__price">
-                예상 금액 {won(plan.priceFrom)} → <strong>{won(plan.priceTo)}</strong>
+          {/* 이렇게 바뀌어요: 풍성함 → 식물 수량 + 예상 금액 / 높이·정돈 → 만드는 방법 */}
+          <div className="tune-plan" data-empty={plan.changes.length === 0 && plan.guides.length === 0} aria-live="polite">
+            {plan.changes.length > 0 && (
+              <>
+                <ul className="tune-plan__list">
+                  {plan.changes.map((c) => (
+                    <li key={c.name}>
+                      <span className="tune-plan__name">{c.name}</span>
+                      <span className="tune-plan__qty">
+                        {c.from} → <strong data-up={c.to > c.from}>{c.to === 0 ? '빼요' : `${c.to}개`}</strong>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="tune-plan__price">
+                  예상 금액 {won(plan.priceFrom)} → <strong>{won(plan.priceTo)}</strong>
+                </p>
+              </>
+            )}
+            {plan.guides.length > 0 && (
+              <div className="tune-plan__guides">
+                <span className="tune-plan__label">만드는 방법</span>
+                <ul>
+                  {plan.guides.map((g) => (
+                    <li key={g}>{g}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {plan.changes.length === 0 && plan.guides.length === 0 && (
+              <p className="tune-plan__empty">
+                {words.length > 0 ? '식물 구성은 그대로예요.' :'가운데는 처음 구성 그대로예요. 바꾸고 싶은 쪽으로 옮겨보세요.'}
               </p>
-            </>
-          )}
-          {plan.guides.length > 0 && (
-            <div className="tune-plan__guides">
-              <span className="tune-plan__label">만드는 방법</span>
-              <ul>
-                {plan.guides.map((g) => (
-                  <li key={g}>{g}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {plan.changes.length === 0 && plan.guides.length === 0 && (
-            <p className="tune-plan__empty">
-              {words.length > 0 ? '식물 구성은 그대로예요.' :'가운데는 처음 구성 그대로예요. 바꾸고 싶은 쪽으로 옮겨보세요.'}
-            </p>
-          )}
+            )}
+          </div>
         </div>
 
         <button

@@ -11,12 +11,13 @@
 }
 
 .tune__panel {
-  display: grid;
-  gap: 14px;
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  max-height: 90%;
-  overflow-y: auto;
-  padding: 10px 20px calc(32px + env(safe-area-inset-bottom, 0px));
+  /* 높이 고정: 슬라이더·연출·장식을 바꿔도 시트가 출렁이지 않게 (넘치면 안쪽만 스크롤) */
+  height: min(700px, 90%);
+  overflow: hidden;
+  padding: 10px 0 calc(32px + env(safe-area-inset-bottom, 0px));
   border-radius: 28px 28px 0 0;
   background: #fff;
   color: var(--qb-text-strong);
@@ -29,18 +30,28 @@
   transition: none;
 }
 
-/* 손잡이 잡는 영역: 위아래로 넉넉하게, 스크롤해도 맨 위에 붙어 있음 */
+/* 손잡이 잡는 영역: 위아래로 넉넉하게 */
 .tune__grab {
-  position: sticky;
-  top: -10px;
-  z-index: 1;
+  flex: none;
   display: flex;
   justify-content: center;
-  margin: -10px -20px -8px;
+  margin: -10px 0 0;
   padding: 12px 0 10px;
   background: #fff;
   cursor: grab;
   touch-action: none;
+}
+
+/* 제목부터 바뀌는 내용까지: 이 안에서만 스크롤 (적용 버튼은 늘 아래에) */
+.tune__body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  padding: 0 20px 16px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .tune__grab:active {
@@ -316,6 +327,8 @@
 }
 
 .tune__apply {
+  flex: none;
+  margin: 8px 20px 0;
   height: 56px;
   border-radius: 200px;
   background: #191919;

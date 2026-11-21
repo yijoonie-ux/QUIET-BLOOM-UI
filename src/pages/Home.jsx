@@ -27,6 +27,13 @@ const TAGLINES = ['Quiet Comfort', 'Guided Structure', 'Lasting Bloom']
 // 진입 애니메이션은 앱을 처음 열었을 때 한 번만 (다른 화면에서 돌아올 땐 생략)
 let introPlayed = false
 
+// 이름 뒤 을/를: 한글은 받침으로, 영문 부케 이름은 소리로 (Still·Ramble → 을, Hush·Glade → 를)
+function objectJosa(name) {
+  const code = name.charCodeAt(name.length - 1) - 0xac00
+  if (code >= 0 && code <= 11171) return code % 28 ? '을' : '를'
+  return /(l|le|m|n)$/i.test(name) ? '을' : '를'
+}
+
 function Home() {
   usePageBackground('var(--qb-bg-end)')
   const profile = useProfile()
@@ -46,8 +53,19 @@ function Home() {
   const [leaving, leave] = usePageLeave(320)
   const [linkPressed, setLinkPressed] = useState(false)
 
+  // 카드 저장 뒤 '홈으로 가기'로 오면: 방금 만든 부케가 My Blooms에 들어갔다고 잠깐 알림
+  const location = useLocation()
+  const [savedToast, setSavedToast] = useState(() => location.state?.saved ?? null)
+  useEffect(() => {
+    if (!savedToast) return undefined
+    // 뒤로 가기 등으로 다시 들어와도 또 뜨지 않게 이번 기록의 알림 정보는 지움
+    window.history.replaceState({ ...window.history.state, usr: null }, '')
+    const timer = setTimeout(() => setSavedToast(null), 2600)
+    return () => clearTimeout(timer)
+  }, [savedToast])
+
   // 하단 탭: 흰 칸이 이동하는 걸 보여준 뒤 화면 전환 (탭끼리 오갈 땐 탭바는 그대로 두고 화면만 전환)
-  const viaTab = useLocation().state?.via === 'tab'
+  const viaTab = location.state?.via === 'tab'
   const [leavingByTab, setLeavingByTab] = useState(false)
   const handleTabChange = (key) => {
     if (key === 'bouquet') setTimeout(() => leave('/make'), 260)
@@ -211,6 +229,13 @@ function Home() {
           </section>
         </div>
       </div>
+
+      {savedToast && (
+        <p className="home-toast" role="status">
+          My Blooms에 {savedToast}
+          {objectJosa(savedToast)} 담았어요
+        </p>
+      )}
 
       <TabBar active="home" onChange={handleTabChange} />
 

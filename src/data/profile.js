@@ -37,10 +37,11 @@ export function updateProfile(changes) {
   listeners.forEach((listener) => listener())
 }
 
-function subscribe(listener) {
+export function subscribeProfile(listener) {
   listeners.add(listener)
   return () => listeners.delete(listener)
 }
+const subscribe = subscribeProfile
 
 export function useProfile() {
   return useSyncExternalStore(subscribe, () => profile)

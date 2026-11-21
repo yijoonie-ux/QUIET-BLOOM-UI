@@ -43,7 +43,8 @@ function BloomPrint() {
   const goHome = () => {
     // 부케 구성이 끝났으니 담은 식물은 비움
     clearCart()
-    leave('/')
+    // 홈에서 'My Blooms에 OO를 담았어요' 알림
+    leave('/', { state: { saved: bouquet.name } })
   }
 
   const goBlooms = () => {

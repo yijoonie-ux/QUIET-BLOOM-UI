@@ -8,7 +8,7 @@ import './BloomInfo.css'
 // TODO: 식물별 관리 정보 연동 전까지 쓰는 공통 관리 팁
 const CARE_TIPS = [
   { title: '줄기 손질', desc: '받자마자 끝을 사선으로 1cm 잘라 물을 올려주세요.' },
-  { title: '물 높이', desc: '화병의 1/3까지만, 잎이 물에 잠기지 않게 해주세요.' },
+  { title: '물 높이', desc: '화기의 1/3까지만, 잎이 물에 잠기지 않게 해주세요.' },
   { title: '두는 곳', desc: '직사광선과 냉난방 바람이 닿지 않는 곳이 좋아요.' },
   { title: '시든 잎', desc: '바로 정리하면 다른 식물이 더 오래가요.' },
 ]
@@ -129,7 +129,7 @@ function BloomInfo({ bouquetKey, resultKey, recipe, swaps = {}, decor, form, car
               })}
             </ul>
 
-            {/* 연출 소재: AI Preview 연출(화병·행잉·포장)과 장식 — 누르면 바로 구할 수 있는 곳으로 */}
+            {/* 연출 소재: AI Preview 연출(화기·행잉·포장)과 장식 — 누르면 바로 구할 수 있는 곳으로 */}
             {styling.length > 0 && (
               <>
                 <p className="bi-sublabel">연출 소재</p>

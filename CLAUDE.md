@@ -47,11 +47,14 @@ Product decisions to keep:
 - Flow: AI preview → "실제 제작 준비하기" → Make This Bloom (`/realize`: cost, store recommendation, substitutes, styling materials) → "완성하기" → Bloom Complete → "Bloom Card로 저장하기" → `/saved`.
 - No profile type names (e.g. "고요한 오래감상형"); show conditions like "저자극 · 저향". The onboarding result card's bottom line shows "제외 식물" (names, "외 N종" past two, or "없음"), not the plant count.
 - Fine-tune sheet can be dragged by its handle. "더 풍성하게" adds one volume plant; "더 가볍게" removes one structure plant (Grove has none, so 트리펀 3→2).
-- Stores (`src/data/sourcing.js`, sample data): 양재 꽃시장 / 고속터미널 꽃시장 / 온라인 꽃 도매몰. Plants the chosen store lacks must be substituted before "완성하기" is enabled. Substitutes carry through to Complete and Details as "OO 대신" and never show "이번 주 품절".
+- Stores (`src/data/sourcing.js`, sample data): 양재 꽃시장 / 고속터미널 꽃시장 / 온라인 꽃 도매몰. Plants the chosen store lacks must be substituted before "완성하기" is enabled. Every bouquet has all its plants at one market (`FULL_STORE`, alternating 양재/고터: Still·Grove·Hush·Ember 양재, Lush·Sway·Ramble·Glade 고터), which becomes the recommended store, so no substitute is needed by default; substituting would require new bouquet photos. `SOLD_OUT` is empty. Substitutes carry through to Complete and Details as "OO 대신" and never show "이번 주 품절".
 - Share buttons (Details, Complete) always toast "링크를 복사했어요".
 - The AI preview mic never uses real speech recognition: tapping it always types the preset demo sentence (`demo` in `src/data/bouquets.js`, e.g. "진주랑 큐빅으로 꾸며서…") so the demo is predictable.
 - Refreshing any screen restarts at `/onboarding` (`src/data/onboarding.js`); opening a link fresh (e.g. a shared `/blooms/still`) keeps that screen.
 - Sway uses 베어그라스 (not 스틸그라스). Grove has 트리펀 2.
+- Bouquet styles (AI preview result): Still 화기→행잉, Lush 다발, Grove 화기, Sway 행잉, Hush 화기, Ramble 화기, Ember 다발, Glade 화기. Demo sentences mention only decorations actually visible in the photo (no 큐빅 anywhere; Grove has none: "잘 정돈해서 화기에 꽂아줘").
+- Use "화기" (not "화병") everywhere in Korean; English label is "Vessel Preview".
+- Fine-tune sheet has a fixed height (700px, max 90%); content scrolls inside and the apply button stays at the bottom.
 
 ## Deployment
 
@@ -63,14 +66,12 @@ Product decisions to keep:
 
 ## Current status
 
-Last updated 2026-11-13 (office PC session).
+Last updated 2026-11-21 (home PC session).
 
-- Confirmed the project builds cleanly with `npm run build`. The only output is a warning that the main JS chunk is 514 kB (over 500 kB); harmless for now.
-- Deployed on Vercel (team `yijoon`, project `quiet-bloom-ui`). Public URL: https://quiet-bloom-ui.vercel.app (verified 200, deep links like `/compose` also 200). Per-deployment URLs (`quiet-bloom-<hash>-yijoon.vercel.app`) redirect to a Vercel login because of deployment protection, so always share the production URL above. Pushing to `main` redeploys automatically.
-- Owner asked about switching the repo from private to public. Only needed for GitHub Pages; not needed for Vercel. Not yet confirmed whether it was changed. Commit history was scanned on 2026-11-13: no `.env` files, API keys, tokens or passwords, so it is safe to make public.
-- `gh` CLI is not installed on the office PC, so repo settings were changed through the GitHub web UI.
+- All 8 bouquet flows follow the Still flow and were captured screen by screen to the Desktop folder `Quiet Bloom 캡처/부케 8종 플로우` (capture script lives only in the home PC scratchpad). Details of this session in `docs/CHANGELOG.md` (2026-11-21).
+- Toasts (home saved notice, share "링크를 복사했어요", Make This Bloom swap) were switched from black to white glass; the owner will check on a phone and decide whether to keep it.
+- Open idea, not done: small "NEW" label on the home My Blooms card (owner chose the toast only).
+- Deployed on Vercel (team `yijoon`, project `quiet-bloom-ui`): https://quiet-bloom-ui.vercel.app (push to `main` redeploys). Per-deployment URLs redirect to a Vercel login, so always share the production URL.
+- The app icon was made from a 208×208 image (slightly soft at 512px). If the owner provides a 1024px+ original, regenerate the four icons in `public/` and bump `?v=` in `index.html` and `public/manifest.webmanifest`.
 
-- UI changes this session (details in `docs/CHANGELOG.md`, 2026-11-13): new app icons (gradient clover on white, cache version `?v=5`); 저향 is now an on/off toggle like 저자극 on onboarding, Edit Conditions and the Home profile card (`ScentRange` removed); Edit Conditions no longer shows icons before 저자극/저향 (the owner's professor said the wind icon looked like a bone; after comparing alternatives the owner chose to drop both icons for consistency).
-- The app icon was made from a 208×208 image, so it is slightly soft at 512px. If the owner provides a 1024px+ original, regenerate the four icons in `public/` and bump `?v=` in `index.html` and `public/manifest.webmanifest`.
-
-Next step: continue with `TODO.md` or whatever UI change the owner asks for.
+Next step: owner reviews on phone (toast style, Fine-tune sheet height, Complete fixed button), then continue with `TODO.md`.

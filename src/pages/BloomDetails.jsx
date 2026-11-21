@@ -123,6 +123,18 @@ function withMade(bloom, made) {
 
 // Bloom Details (Still 2268:20476 · Calm 2268:20410) / Bloom Complete (Figma 2268:20344)
 // complete: 방금 완성한 부케 — 사진은 마지막 생성 결과
+// 제외 식물을 뺀 부케: 그 식물이 나오는 문장은 지우고, 뺀 이유를 한 줄로 (예: 대나무는 빼고 구성했어요)
+function withoutRemoved(desc, removed) {
+  if (!removed?.length) return desc
+  const kept = desc
+    .split(/(?<=요\.)\s+/)
+    .filter((sentence) => !removed.some((name) => sentence.includes(name)))
+  const names = removed.join(', ')
+  const last = removed[removed.length - 1]
+  const josa = (last.charCodeAt(last.length - 1) - 0xac00) % 28 ? '은' : '는'
+  return [...kept, `피하고 싶은 식물로 적은 ${names}${josa} 빼고 구성했어요.`].join(' ')
+}
+
 function BloomDetails({ variant = 'details' }) {
   const [leaving, leave] = usePageLeave(280)
   const { id } = useParams()
@@ -145,7 +157,7 @@ function BloomDetails({ variant = 'details' }) {
         lasting: active.lasting,
         water: active.water,
         summary: active.summary,
-        desc: Object.entries(swaps).reduce((text, [to, from]) => replaceName(text, from, to), active.desc),
+        desc: withoutRemoved(Object.entries(swaps).reduce((text, [to, from]) => replaceName(text, from, to), active.desc), active.removed),
         plants: cart.length ? cart.map(({ name }) => name) : active.recipe.map(([name]) => name),
         recipe: cart.length ? cart.map(({ name, qty }) => [name, qty]) : active.recipe,
         swaps,
@@ -209,6 +221,7 @@ function BloomDetails({ variant = 'details' }) {
   return (
     <div
       className="bd"
+      data-complete={isComplete}
       data-leaving={leaving}
       data-enter={viaPull ? 'pull' : undefined}
     >
@@ -344,9 +357,12 @@ function BloomDetails({ variant = 'details' }) {
 
       {isComplete && (
         // 실제 제작 준비(구매처·대체 소재)를 마친 완성 구성 → Bloom Card로 저장
-        <button type="button" className="bd__next" onClick={() => leave('/saved', { state: location.state })}>
-          Bloom Card로 저장하기
-        </button>
+        // 화면은 전체가 스크롤되고 버튼은 아래에 늘 떠 있음 (Make This Bloom '완성하기'와 같은 방식)
+        <div className="bd__actions">
+          <button type="button" className="bd__next" onClick={() => leave('/saved', { state: location.state })}>
+            Bloom Card로 저장하기
+          </button>
+        </div>
       )}
 
       {detailPlant && <PlantDetail plant={detailPlant} onClose={() => setDetailPlant(null)} />}

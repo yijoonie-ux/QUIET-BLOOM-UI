@@ -202,6 +202,24 @@
   color: #3b4a22;
 }
 
+/* 시연 안내: 골라볼 연출 칩 → 고른 뒤 적용 버튼이 세이지 링으로 은은하게 숨 쉼 */
+.tune__chip[data-guide] {
+  animation: tune-guide 1.8s ease-out infinite;
+}
+
+.tune__apply[data-guide] {
+  animation: tune-guide 1.8s ease-out infinite;
+}
+
+@keyframes tune-guide {
+  0% {
+    box-shadow: 0 0 0 0 rgba(156, 185, 118, 0.55);
+  }
+  100% {
+    box-shadow: 0 0 0 9px rgba(156, 185, 118, 0);
+  }
+}
+
 /* 연출 사진이 아직 없을 때 안내 (상자 없이 글자만) */
 .tune__note {
   margin-top: -6px;

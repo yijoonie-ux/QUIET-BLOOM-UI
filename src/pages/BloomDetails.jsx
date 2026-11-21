@@ -8,15 +8,13 @@ import divider from '../assets/blooms/divider.svg'
 import lastingIcon from '../assets/blooms/icon-lasting.svg'
 import waterIcon from '../assets/blooms/icon-water.svg'
 import budgetIcon from '../assets/blooms/icon-budget.svg'
-import { SAVED_BLOOMS, findBloom, useMadeBloom } from '../data/blooms'
+import { SAVED_BLOOMS, bloomNameOf, findBloom, setBloomName, useBloomNames, useMadeBloom } from '../data/blooms'
 import { useCart } from '../data/bouquet'
 import { findBouquet, findResult, useActiveBouquet } from '../data/bouquets'
-import { PLANTS } from '../data/plants'
 import { settleSoldOut, useSwaps } from '../data/sourcing'
 import { costOf, stylingFor } from '../data/styling'
 import { useAppliedTune } from '../data/tune'
 import { usePageBackground } from '../hooks/usePageBackground'
-import { useDragScroll } from '../hooks/useDragScroll'
 import { usePageLeave } from '../hooks/usePageLeave'
 import './BloomDetails.css'
 
@@ -24,32 +22,6 @@ const won = (n) => `₩${n.toLocaleString('ko-KR')}`
 
 // 106×106 칸 안에 카드 사진을 높이 98 기준으로, 아래에 붙여 넣음
 // onOpen: 상세 정보가 있는 식물(지금은 엽란)은 눌러서 식물 상세 팝업
-function PlantThumb({ plant, onOpen }) {
-  const { photo } = plant
-  const scale = photo ? 98 / photo.frame[3] : 1
-  return (
-    <li className="bd-thumb" aria-label={plant.name}>
-      {onOpen && (
-        <button type="button" className="bd-thumb__open" aria-label={`${plant.name} 상세 정보`} onClick={onOpen} />
-      )}
-      {photo && (
-        <span className="bd-thumb__photo" style={{ width: photo.frame[2] * scale, height: photo.frame[3] * scale }}>
-          <img
-            src={photo.src}
-            alt=""
-            style={{
-              width: `${photo.crop[0]}%`,
-              height: `${photo.crop[1]}%`,
-              left: `${photo.crop[2]}%`,
-              top: `${photo.crop[3]}%`,
-            }}
-          />
-        </span>
-      )}
-    </li>
-  )
-}
-
 // 링크 복사: 클립보드 API가 막힌 곳(휴대폰에서 http 주소로 열었을 때 등)은 예전 방식(선택 후 복사)으로
 async function copyText(text) {
   try {
@@ -112,6 +84,7 @@ function withMade(bloom, made) {
   return {
     ...bloom,
     swaps: made.swaps ?? {},
+    store: made.store,
     recipe: made.items.map(({ name, qty }) => [name, qty]),
     plants: made.items.map(({ name }) => name),
     result: made.result ?? bloom.result,
@@ -140,10 +113,12 @@ function BloomDetails({ variant = 'details' }) {
   const { id } = useParams()
   const location = useLocation()
   const isComplete = variant === 'complete'
-  const thumbsRef = useDragScroll()
-  // Composition 식물을 누르면 식물 상세 팝업 (보기 전용)
+  // Composition 식물 줄을 누르면 식물 상세 팝업 (보기 전용)
   const [detailPlant, setDetailPlant] = useState(null)
   const [toast, setToast] = useState(null)
+  // 이름 고치는 중이면 입력 중인 글자 (아니면 null)
+  const [nameDraft, setNameDraft] = useState(null)
+  useBloomNames()
   // 완성 화면: 지금 만든 부케 유형(bouquets.js) / 상세 화면: 저장한 부케(blooms.js)
   const active = useActiveBouquet()
   const cart = useCart()
@@ -176,10 +151,15 @@ function BloomDetails({ variant = 'details' }) {
         hero: result?.hero ?? { image: active.preview.image, size: [300, 546], top: -40, plain: true },
       }
     : base
+  // 바꾼 이름이 있으면 그 이름 (부케 유형마다 하나 — 완성 화면에서 바꾸면 저장한 부케에도 그대로)
+  const bloomId = isComplete ? active.key : base.id
+  const name = bloomNameOf(bloomId, bloom.name)
+  const saveName = () => {
+    if (nameDraft !== null) setBloomName(bloomId, nameDraft)
+    setNameDraft(null)
+  }
   // 사진 위 그라데이션: 완성 화면은 이번 결과의 것, 상세 화면은 저장한 부케의 것
   const heroShade = isComplete ? result?.heroShade : base.heroShade
-  // Composition은 부케 데이터의 대표 구성 그대로 (blooms.js)
-  const plants = base.plants.map((name) => PLANTS.find((p) => p.name === name)).filter(Boolean)
   // 가격 = 총 제작비(식물 + 연출 소재) — Make This Bloom과 같은 기준
   // 완성 화면: 지금 담은 수량(인상 다듬기 반영) + 이번 결과의 연출 / 상세 화면: 저장한 부케 구성 + 그 결과의 연출
   const cost = isComplete
@@ -208,7 +188,7 @@ function BloomDetails({ variant = 'details' }) {
     const url = isComplete ? `${window.location.origin}/blooms/${active.key}` : window.location.href
     if (navigator.share) {
       try {
-        await navigator.share({ title: `${bloom.name} · Quiet Bloom`, text: bloom.summary, url })
+        await navigator.share({ title: `${name} · Quiet Bloom`, text: bloom.summary, url })
       } catch {
         // 공유 창을 닫은 경우
       }
@@ -230,7 +210,7 @@ function BloomDetails({ variant = 'details' }) {
         <img
           className="bd__hero-image"
           src={bloom.hero.image}
-          alt={`${bloom.name} 부케`}
+          alt={`${name} 부케`}
           style={{
             width: bloom.hero.size[0],
             height: bloom.hero.size[1],
@@ -280,12 +260,32 @@ function BloomDetails({ variant = 'details' }) {
         </header>
       </div>
 
-      <div className="bd__name">
-        <h2>{bloom.name}</h2>
-        {/* TODO: 이름 수정 */}
-        <button type="button" className="bd__edit" aria-label="이름 수정">
-          <img src={editIcon} alt="" />
-        </button>
+      {/* 이름: 연필을 누르면 그 자리에서 고쳐 씀 (Enter·바깥 누르면 저장, Esc 취소) → Bloom Card · My Blooms에도 이 이름 */}
+      <div className="bd__name" data-editing={nameDraft !== null}>
+        {nameDraft !== null ? (
+          <input
+            className="bd__name-input"
+            value={nameDraft}
+            maxLength={16}
+            enterKeyHint="done"
+            aria-label="부케 이름"
+            autoFocus
+            onFocus={(e) => e.currentTarget.select()}
+            onChange={(e) => setNameDraft(e.target.value)}
+            onBlur={saveName}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.nativeEvent.isComposing) e.currentTarget.blur()
+              if (e.key === 'Escape') setNameDraft(null)
+            }}
+          />
+        ) : (
+          <>
+            <h2>{name}</h2>
+            <button type="button" className="bd__edit" aria-label="이름 수정" onClick={() => setNameDraft(name)}>
+              <img src={editIcon} alt="" />
+            </button>
+          </>
+        )}
       </div>
 
       <dl className="bd__stats">
@@ -321,26 +321,15 @@ function BloomDetails({ variant = 'details' }) {
         </p>
       </section>
 
-      <section className="bd__section bd__section--composition">
-        <h3 className="bd__heading">Composition</h3>
-        <ul ref={thumbsRef} className="bd__thumbs">
-          {plants.map((plant) => (
-            <PlantThumb
-              key={plant.name}
-              plant={plant}
-              onOpen={plant.detail ? () => setDetailPlant(plant) : undefined}
-            />
-          ))}
-        </ul>
-      </section>
-
-      {/* 구매처(대체한 식물은 바꾼 식물로) · 연출 소재 · 관리 정보 — 완성 화면은 지금 확정한 구성·인상 다듬기 기준 */}
+      {/* Composition(식물 · 구매처) · 연출 소재 · 관리 정보 — 완성 화면은 지금 확정한 구성·인상 다듬기 기준 */}
       {isComplete ? (
         <BloomInfo
           bouquetKey={active.key}
           resultKey={stylingKey}
           recipe={base.recipe}
           swaps={base.swaps}
+          storeKey={location.state?.store}
+          onOpenPlant={setDetailPlant}
           decor={appliedTune?.decor}
           form={appliedTune?.form}
         />
@@ -350,6 +339,8 @@ function BloomDetails({ variant = 'details' }) {
           resultKey={base.result}
           recipe={base.recipe}
           swaps={base.swaps}
+          storeKey={base.store}
+          onOpenPlant={setDetailPlant}
           decor={base.decor}
           form={base.form}
         />

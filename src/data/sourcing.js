@@ -42,6 +42,10 @@ const FULL_STORE = {
 }
 const fullStoreOf = (bouquetKey) => FULL_STORE[bouquetKey] ?? 'yangjae'
 
+// 구매처 찾기: 고른 곳(storeKey)이 없으면 이 부케의 추천 구매처 (기본 구성이 모두 있는 곳)
+export const storeFor = (bouquetKey, storeKey) =>
+  STORES.find((s) => s.key === storeKey) ?? STORES.find((s) => s.key === fullStoreOf(bouquetKey))
+
 // 부케 기본 구성 중 구매처별로 구하기 어려운 식물: 다 있는 곳 0종 · 다른 꽃시장 1종 · 온라인 2종
 // (그 곳을 고르면 없는 소재만 대체)
 function storeMisses(storeKey, bouquetKey, recipeNames) {

@@ -51,6 +51,43 @@
   position: relative;
 }
 
+/* 고른 구매처 한 줄 (누르면 지도 ↗) */
+.bi-store {
+  /* 오른쪽 여백은 연출 소재 줄과 같게 (화살표 세로줄 맞춤) */
+  padding: 14px 14px;
+}
+
+
+/* 식물 줄: 누르면 상세 (온라인 구매처면 오른쪽에 상품 보기) */
+.bi-plant {
+  display: flex;
+  align-items: center;
+  padding-right: 14px;
+}
+
+.bi-plant .bi-row {
+  flex: 1;
+  min-width: 0;
+}
+
+.bi-plant .bi-row:active {
+  opacity: 0.6;
+}
+
+.bi-plant__link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin-right: -6px;
+}
+
+/* 링크 화살표: 연출 소재(.bi-line svg)와 같은 색 */
+.bi-plant__link svg {
+  color: #9aa597;
+}
+
 /* 줄 사이 가는 선 */
 .bi-group > li + li::before {
   position: absolute;

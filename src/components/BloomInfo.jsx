@@ -1,7 +1,6 @@
-import { useState } from 'react'
 import { findBouquet } from '../data/bouquets'
 import { PLANTS } from '../data/plants'
-import { findSubstitutes, isSoldOut, shopsFor } from '../data/sourcing'
+import { storeFor, storeUrl } from '../data/sourcing'
 import { stylingFor } from '../data/styling'
 import './BloomInfo.css'
 
@@ -38,95 +37,90 @@ function Thumb({ plant }) {
 }
 
 // Bloom Details 아래쪽 정보
-// 구매처(품절이면 대체 식물) · 관리 정보 (AI Preview 결과는 화면 맨 위 사진)
+// Composition(식물 · 고른 구매처) · 연출 소재 · 관리 정보 (AI Preview 결과는 화면 맨 위 사진)
 // careOnly: 관리 정보만 (완성 화면 — 구매처는 앞 단계 Make This Bloom에서 확인)
 // recipe: 실제로 쓴 구성(대체 식물로 바꾼 것 포함) — 없으면 부케 기본 레시피
-// swaps: 대체한 식물 { 새 식물: 원래 식물 } — 품절 표시 대신 'OO 대신' 으로
-function BloomInfo({ bouquetKey, resultKey, recipe, swaps = {}, decor, form, careOnly = false }) {
+// swaps: 대체한 식물 { 새 식물: 원래 식물 } — 'OO 대신' 으로
+// storeKey: Make This Bloom에서 고른 구매처 (없으면 추천 구매처)
+// onOpenPlant: 식물 줄을 누르면 식물 상세 팝업
+function BloomInfo({ bouquetKey, resultKey, recipe, swaps = {}, storeKey, onOpenPlant, decor, form, careOnly = false }) {
   const bouquet = findBouquet(bouquetKey)
-  const [open, setOpen] = useState(null)
   if (!bouquet) return null
   const styling = stylingFor(resultKey, decor, form)
+  const store = storeFor(bouquet.key, storeKey)
 
-  const profile = { lowIrritant: bouquet.when.lowIrritant, lowScent: bouquet.when.lowScent, excludedPlants: [] }
   const items = (recipe ?? bouquet.recipe)
     .map(([name, qty]) => ({ plant: PLANTS.find((p) => p.name === name), qty }))
     .filter((item) => item.plant)
-  const cartNames = items.map((item) => item.plant.name)
 
   return (
     <>
       {!careOnly && (
         <>
-          {/* 구매처: 식물을 누르면 그 식물을 구할 수 있는 곳이 펼쳐짐 (품절이면 대체 식물) */}
+          {/* Composition: 식물(누르면 상세) + 구매처(Make This Bloom에서 고른 한 곳, 고른 적 없으면 추천 구매처)
+              — 고른 곳에서 모두 구할 수 있으니 식물마다 펼치지 않음 */}
           <section className="bd__section bi-sec">
-            <h3 className="bd__heading">Where to Buy</h3>
-            <p className="bi-desc">식물을 누르면 구할 수 있는 곳을 볼 수 있어요.</p>
+            <h3 className="bd__heading">Composition</h3>
 
             <ul className="bi-group">
-              {items.map(({ plant, qty }) => {
-                const soldOut = isSoldOut(bouquet.key, plant.name)
-                const subs = soldOut ? findSubstitutes(plant.name, { profile, cartNames, bouquetKey: bouquet.key }) : []
-                const isOpen = open === plant.name
-                return (
-                  <li key={plant.name} className="bi-item" data-open={isOpen}>
-                    <button
-                      type="button"
-                      className="bi-row"
-                      aria-expanded={isOpen}
-                      onClick={() => setOpen(isOpen ? null : plant.name)}
+              {items.map(({ plant, qty }) => (
+                <li key={plant.name} className="bi-plant">
+                  <button
+                    type="button"
+                    className="bi-row"
+                    aria-label={`${plant.name} 상세 정보`}
+                    onClick={onOpenPlant && plant.detail ? () => onOpenPlant(plant) : undefined}
+                  >
+                    <Thumb plant={plant} />
+                    <span className="bi-row__text">
+                      <span className="bi-row__name">
+                        {plant.name}
+                        <span>{qty}개</span>
+                      </span>
+                      {swaps[plant.name] && <span className="bi-row__sub">{swaps[plant.name]} 대신</span>}
+                    </span>
+                  </button>
+                  {/* 온라인 구매처면 식물마다 상품 링크 ↗ */}
+                  {!store.url && (
+                    <a
+                      className="bi-plant__link"
+                      href={storeUrl(store, plant.name)}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={`${plant.name} 상품 보기`}
                     >
-                      <Thumb plant={plant} />
-                      <span className="bi-row__text">
-                        <span className="bi-row__name">
-                          {plant.name}
-                          <span>{qty}개</span>
-                        </span>
-                        {swaps[plant.name] && <span className="bi-row__sub">{swaps[plant.name]} 대신</span>}
-                      </span>
-                      <span className="bi-status" data-tone={soldOut ? 'bad' : 'ok'}>
-                        {soldOut ? '이번 주 품절' : '구매 가능'}
-                      </span>
-                      <svg className="bi-row__chev" width="12" height="8" viewBox="0 0 12 8" fill="none" aria-hidden="true">
-                        <path d="M1 1.5l5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                        <path d="M3.5 8.5l5-5M4.5 3.5h4v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
-                    </button>
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ul>
 
-                    {/* 펼친 내용: 높이를 부드럽게 열고 닫음 */}
-                    <div className="bi-more">
-                      <div className="bi-more__inner">
-                        {soldOut ? (
-                          <div className="bi-more__box">
-                            <span className="bi-more__label">대신 이 식물을 써보세요</span>
-                            {subs.map(({ plant: sub, reasons }) => (
-                              <div key={sub.name} className="bi-line">
-                                <span className="bi-row__text">
-                                  <span className="bi-row__name">{sub.name}</span>
-                                  <span className="bi-line__note">{reasons.join(' · ')}</span>
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <div className="bi-more__box">
-                            {shopsFor(bouquet.key, plant.name).map((shop) => (
-                              <a key={shop.name} className="bi-line" href={shop.url} target="_blank" rel="noreferrer">
-                                <span className="bi-row__text">
-                                  <span className="bi-row__name">{shop.name}</span>
-                                  <span className="bi-line__note">{shop.note}</span>
-                                </span>
-                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                                  <path d="M3.5 8.5l5-5M4.5 3.5h4v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                              </a>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </li>
-                )
-              })}
+            <p className="bi-sublabel">구매처</p>
+            <ul className="bi-group">
+              <li>
+                {store.url ? (
+                  <a className="bi-line bi-store" href={store.url} target="_blank" rel="noreferrer">
+                    <span className="bi-row__text">
+                      <span className="bi-row__name">{store.name}</span>
+                      <span className="bi-line__note">{store.note}</span>
+                    </span>
+                    {/* 꽃시장은 지도에서 위치 (아래 연출 소재처럼 ↗ 만) */}
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                      <path d="M3.5 8.5l5-5M4.5 3.5h4v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </a>
+                ) : (
+                  <div className="bi-line bi-store">
+                    <span className="bi-row__text">
+                      <span className="bi-row__name">{store.name}</span>
+                      <span className="bi-line__note">{store.note}</span>
+                    </span>
+                  </div>
+                )}
+              </li>
             </ul>
 
             {/* 연출 소재: AI Preview 연출(화기·행잉·포장)과 장식 — 누르면 바로 구할 수 있는 곳으로 */}

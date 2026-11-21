@@ -66,6 +66,25 @@ export function useTilt() {
       // 가로 스크롤되는 칩 줄을 잡으면 카드 대신 칩을 넘김
       const scroller = e.target.closest?.('.chip-scroller')
       if (scroller && scroller.scrollWidth > scroller.clientWidth) return
+      // 긴 이름표(Bloom Card)를 잡으면 카드를 기울이지 않고 이름표를 옆으로 밀어줌
+      // (카드는 터치 스크롤을 막아 두어서 손가락 움직임대로 직접 넘김)
+      const label = e.target.closest?.('.bc__label')
+      if (label && label.scrollWidth > label.clientWidth) {
+        const startX = e.clientX
+        const startLeft = label.scrollLeft
+        const move = (ev) => {
+          label.scrollLeft = startLeft - (ev.clientX - startX)
+        }
+        const up = () => {
+          window.removeEventListener('pointermove', move)
+          window.removeEventListener('pointerup', up)
+          window.removeEventListener('pointercancel', up)
+        }
+        window.addEventListener('pointermove', move)
+        window.addEventListener('pointerup', up)
+        window.addEventListener('pointercancel', up)
+        return
+      }
       start = { x: e.clientX, y: e.clientY }
       el.setPointerCapture(e.pointerId)
       target.lift = 1

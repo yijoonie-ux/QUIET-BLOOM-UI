@@ -67,8 +67,8 @@ let madeBloom = (() => {
 })()
 const listeners = new Set()
 
-// swaps: 대체 식물로 바꾼 것 { 바꾼 식물: 원래 식물 }
-export function saveMadeBloom(bouquet, result, items, tune, swaps) {
+// swaps: 대체 식물로 바꾼 것 { 바꾼 식물: 원래 식물 } / store: Make This Bloom에서 고른 구매처 키
+export function saveMadeBloom(bouquet, result, items, tune, swaps, store) {
   const list = items?.length
     ? items.map(({ name, qty }) => ({ name, qty }))
     : bouquet.recipe.map(([name, qty]) => ({ name, qty }))
@@ -82,6 +82,7 @@ export function saveMadeBloom(bouquet, result, items, tune, swaps) {
     decor: tune?.decor,
     form: tune?.form,
     swaps: swaps ?? {},
+    store: store ?? null,
   }
   try {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(madeBloom))
@@ -98,4 +99,48 @@ function subscribe(listener) {
 
 export function useMadeBloom() {
   return useSyncExternalStore(subscribe, () => madeBloom)
+}
+
+// 부케 이름 바꾸기 (Bloom Complete · Bloom Details의 연필 버튼) — 부케 유형(id)마다 하나
+// 바꾼 이름은 Bloom Card · My Blooms · 홈 카드에 같이 쓰임. 비우면 원래 이름(Still 등)으로
+// TODO: 사용자 데이터 연동 전까지 이 탭(sessionStorage)에만 저장 — 새로고침하면 처음 이름으로
+const NAMES_KEY = 'qb-bloom-names'
+let bloomNames = (() => {
+  try {
+    if (performance.getEntriesByType('navigation')[0]?.type === 'reload') {
+      sessionStorage.removeItem(NAMES_KEY)
+      return {}
+    }
+    return JSON.parse(sessionStorage.getItem(NAMES_KEY)) ?? {}
+  } catch {
+    return {}
+  }
+})()
+const nameListeners = new Set()
+
+export function setBloomName(id, name) {
+  const next = { ...bloomNames }
+  const trimmed = name.trim()
+  if (trimmed) next[id] = trimmed
+  else delete next[id]
+  bloomNames = next
+  try {
+    sessionStorage.setItem(NAMES_KEY, JSON.stringify(bloomNames))
+  } catch {
+    // 저장 공간을 못 쓰면 메모리에만
+  }
+  nameListeners.forEach((listener) => listener())
+}
+
+// 바꾼 이름이 있으면 그 이름, 없으면 원래 이름
+export const bloomNameOf = (id, fallback) => bloomNames[id] ?? fallback
+
+export function useBloomNames() {
+  return useSyncExternalStore(
+    (listener) => {
+      nameListeners.add(listener)
+      return () => nameListeners.delete(listener)
+    },
+    () => bloomNames,
+  )
 }

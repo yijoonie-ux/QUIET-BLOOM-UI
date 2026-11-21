@@ -203,6 +203,12 @@ function BloomPreview() {
   const baseForm = formOf(baseResultKey)
   const baseDecor = decorOf(baseResultKey)
   const photoForms = RESULTS.map((r) => formOf(r.key))
+  // 시연 흐름: Still(연밥 부케)은 화기 결과에서 인상 다듬기로 '행잉'으로 바꿔 적용하도록 안내
+  // AI 프리뷰 첫 화면: 아직 말하거나 입력하지 않았으면 마이크를 누르도록 안내
+  const micGuide = mode === 'ai' && !input
+  const tuneGuide = bouquetType.key === 'still' && formOf(result?.key) === 'vase' ? 'hanging' : null
+  // 행잉으로 다듬어 적용한 뒤에는 '부케 제작하기'로 이어가도록 안내
+  const makeGuide = bouquetType.key === 'still' && formOf(result?.key) === 'hanging' && !!tuned
   const applyTune = (tune) => {
     if (!tuneBase) setTuneBase(cartItems.map((item) => ({ ...item })))
     if (!tuneBaseResult) setTuneBaseResult(result?.key)
@@ -252,7 +258,7 @@ function BloomPreview() {
     switchMode('preview')
   }
 
-  // 실제 제작 준비하기: 지금 결과(없으면 처음 부케 그대로)로 Make This Bloom → 완성하기 후 Bloom Complete
+  // 부케 제작하기: 지금 결과(없으면 처음 부케 그대로)로 Make This Bloom → 완성하기 후 Bloom Complete
   // back: 제작 준비에서 뒤로 올 때 이 결과 화면을 그대로 되살릴 정보
   const complete = () =>
     leave('/realize', {
@@ -336,16 +342,9 @@ function BloomPreview() {
         <header className="bp__header bp__header--result" key="result">
           <h1 className="bp__title">{tuned ? 'Final Preview' : 'Preview Generated'}</h1>
           <p className="bp__desc">
-            {tuned ? '조정한 인상에 맞춰 식물 수량을 바꿔 다시 그렸어요.' : '생성된 모습을 확인하고, 필요하면 다시 요청해보세요.'}
+            {/* 다듬은 뒤: 이번에 바꾼 내용을 한 문장으로 (예: 행잉 연출로 바꿨어요.) — 따로 태그는 두지 않음 */}
+            {tuned ? tuned.sentence || '다듬은 인상을 반영했어요.' : '생성된 모습을 확인하고, 필요하면 인상을 다듬어보세요.'}
           </p>
-          {/* 이번에 적용한 인상 조정 */}
-          {tuned && (
-            // 적용한 인상은 한 줄 요약으로만 (자세한 값은 인상 다듬기를 다시 열면 그대로 보임)
-            <p className="bp__tuned" aria-label="적용한 인상">
-              {tuned.words.length > 1 ? `${tuned.words[0]} 외 ${tuned.words.length - 1}개` : tuned.words[0]}
-              {tuned.changes.length > 0 && ` · 식물 ${tuned.changes.length}종 수량 조정`}
-            </p>
-          )}
           <button type="button" className="bp__close" aria-label="결과 닫기" onClick={closeResult}>
             <img src={closeWhiteIcon} alt="" />
           </button>
@@ -386,28 +385,33 @@ function BloomPreview() {
         </div>
       )}
 
-      {/* 결과 하단: 실제 제작 준비하기 + 다시 요청하는 작은 마이크 */}
-      {/* 결과 위: 인상 다듬기 (조형 미세조정) */}
-      {mode === 'result' && !active && !generating && (
-        <button type="button" className="bp-tune" onClick={() => setTuneOpen(true)}>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <path d="M2 4h7M12 4h2M2 12h2M7 12h7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-            <circle cx="10.5" cy="4" r="1.8" stroke="currentColor" strokeWidth="1.6" />
-            <circle cx="5.5" cy="12" r="1.8" stroke="currentColor" strokeWidth="1.6" />
-          </svg>
-          {tuned ? '인상 다시 다듬기' : '인상 다듬기'}
-        </button>
+      {/* 시연 안내 (Still): 아래 버튼 바로 위 한 줄 */}
+      {mode === 'result' && !active && !generating && (tuneGuide || makeGuide) && (
+        <p className="bp-tune-guide" role="status" key={tuneGuide ? 'tune' : 'make'}>
+          {tuneGuide ? '인상을 다듬어 행잉으로 바꿔볼까요?' : '이제 실제로 만들어볼까요?'}
+        </p>
       )}
-      {tuneOpen && <TuneSheet items={tuneItems} initial={tuned} baseForm={baseForm} photoForms={photoForms} baseDecor={baseDecor} onApply={applyTune} onClose={() => setTuneOpen(false)} />}
+      {tuneOpen && <TuneSheet items={tuneItems} initial={tuned} baseForm={baseForm} photoForms={photoForms} baseDecor={baseDecor} guideForm={tuneGuide} onApply={applyTune} onClose={() => setTuneOpen(false)} />}
 
+      {/* 결과 하단: 부케 제작하기 + 옆 동그란 버튼은 인상 다듬기 (조형 미세조정) */}
       {mode === 'result' && !active && (
         <div className="bp-result__bar" key="bar">
           <img className="bp-result__bar-shape" src={barShape} alt="" />
-          <button type="button" className="bp-result__done" onClick={complete}>
-            실제 제작 준비하기
+          <button type="button" className="bp-result__done" data-guide={(makeGuide && !generating) || undefined} onClick={complete}>
+            부케 제작하기
           </button>
-          <button type="button" className="bp-result__mic" aria-label="다시 말로 요청하기" onClick={startVoice}>
-            <img src={micIcon} alt="" />
+          <button
+            type="button"
+            className="bp-result__mic bp-result__tune"
+            aria-label={tuned ? '인상 다시 다듬기' : '인상 다듬기'}
+            data-guide={(!!tuneGuide && !generating) || undefined}
+            onClick={() => setTuneOpen(true)}
+          >
+            <svg width="24" height="24" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M2 4h7M12 4h2M2 12h2M7 12h7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              <circle cx="10.5" cy="4" r="1.8" stroke="currentColor" strokeWidth="1.5" />
+              <circle cx="5.5" cy="12" r="1.8" stroke="currentColor" strokeWidth="1.5" />
+            </svg>
           </button>
         </div>
       )}
@@ -472,11 +476,18 @@ function BloomPreview() {
                 다 말했으면 마이크를 한 번 더 눌러주세요
               </p>
             )}
+            {/* 처음 들어왔을 때: 마이크로 말해보도록 안내 (마이크 링이 은은하게 숨 쉼) */}
+            {micGuide && (
+              <p className="bp__mic-hint" role="status" key="mic-guide">
+                마이크를 눌러 원하는 연출을 말해보세요
+              </p>
+            )}
             <button
               type="button"
               className="bp-orb bp-orb--mic"
               data-on={input === 'voice' && listening}
               data-listening={listening}
+              data-guide={micGuide || undefined}
               aria-pressed={listening}
               aria-label={listening ? '음성 입력 멈추기' : '말로 입력하기'}
               onClick={startVoice}

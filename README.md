@@ -35,7 +35,7 @@ npm run build           # dist/ 에 빌드
 | `/edit` | 조건 수정 / Bloom Profile | 2268:17827 · 2268:17735 · 2350:35711 |
 | `/compose` | 부케 구성 (Structure · Volume · Line · Texture, Composition 시트) | 2268:18886 · 19129 · 20043 · 19399 · 19672 |
 | `/preview` | Bloom Preview → AI 프리뷰 → 생성 중 → 생성 결과 | 2268:21089 · 21057 · 20786 · 20983 · 2376:36036 · 36115 · 2268:20856 |
-| `/realize` | Make This Bloom (예상 제작비 · 구매처 추천 · 대체 식물 · 연출 소재) — AI 프리뷰 "실제 제작 준비하기"에서 이어짐 | (Figma 없음) |
+| `/realize` | Make This Bloom (예상 제작비 · 구매처 추천 · 대체 식물 · 연출 소재) — AI 프리뷰 "부케 제작하기"에서 이어짐 | (Figma 없음) |
 | `/complete` | Bloom Complete (Make This Bloom "완성하기"에서 이어짐) | 2268:20344 |
 | `/card` | Bloom Card (현재 흐름에서는 건너뜀) | 2268:20892 |
 | `/saved` | 카드 생성 모션 → Bloom Card 저장 완료 (Bloom Complete "Bloom Card로 저장하기"에서 이어짐, `/print`도 여기로) | (Figma 없음) |
@@ -53,7 +53,7 @@ npm run build           # dist/ 에 빌드
                     └▶ 조건 수정                ┌─ 이대로 제작 준비하기 ─┤
                                                 │                        └▶ AI 프리뷰 ─▶ 말하기/입력 ─▶ 생성 중 ─▶ 결과
                                                 │                                     (인상 다듬기 · 다시 요청 가능) │
-                                                └──────────▶ Make This Bloom ◀── 실제 제작 준비하기 ─────────────────┘
+                                                └──────────▶ Make This Bloom ◀── 부케 제작하기 ─────────────────────┘
                                                                   │ 완성하기 (대체 식물을 고르면 활성)
                                                                   ▼
                                                             Bloom Complete

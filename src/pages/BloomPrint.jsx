@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router'
 import CardSparkles from '../components/CardSparkles'
-import { saveMadeBloom } from '../data/blooms'
+import { bloomNameOf, saveMadeBloom } from '../data/blooms'
 import { clearCart, useCart } from '../data/bouquet'
 import { getActiveBouquet } from '../data/bouquets'
 import { useSwaps } from '../data/sourcing'
@@ -22,6 +22,7 @@ function BloomPrint() {
   const [leaving, leave] = usePageLeave(280)
   const location = useLocation()
   const resultKey = location.state?.result
+  const storeKey = location.state?.store
   const [done, setDone] = useState(reduceMotion)
   // 완료 후 살짝 떠오르는 움직임까지 끝나면 애니메이션을 걷어내 사진을 원래 해상도로 그림
   const [settled, setSettled] = useState(reduceMotion)
@@ -37,14 +38,14 @@ function BloomPrint() {
   useEffect(() => {
     if (!done || saved.current) return
     saved.current = true
-    saveMadeBloom(bouquet, resultKey, cart, appliedTune, swaps)
-  }, [done, bouquet, resultKey, cart, appliedTune, swaps])
+    saveMadeBloom(bouquet, resultKey, cart, appliedTune, swaps, storeKey)
+  }, [done, bouquet, resultKey, cart, appliedTune, swaps, storeKey])
 
   const goHome = () => {
     // 부케 구성이 끝났으니 담은 식물은 비움
     clearCart()
     // 홈에서 'My Blooms에 OO를 담았어요' 알림
-    leave('/', { state: { saved: bouquet.name } })
+    leave('/', { state: { saved: bloomNameOf(bouquet.key, bouquet.name) } })
   }
 
   const goBlooms = () => {

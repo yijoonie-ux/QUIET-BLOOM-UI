@@ -14,10 +14,11 @@ import ChipScroller from '../components/ChipScroller'
 import ExitConfirm from '../components/ExitConfirm'
 import SlideToStart from '../components/SlideToStart'
 import TabBar from '../components/TabBar'
-import { useMadeBloom } from '../data/blooms'
+import { bloomNameOf, useBloomNames, useMadeBloom } from '../data/blooms'
 import { useProfile } from '../data/profile'
 import { findBouquet, findResult } from '../data/bouquets'
 import { useInView } from '../hooks/useInView'
+import { fadeEdges } from '../hooks/fadeEdges'
 import { usePageBackground } from '../hooks/usePageBackground'
 import { usePageLeave } from '../hooks/usePageLeave'
 import './Home.css'
@@ -39,6 +40,7 @@ function Home() {
   const profile = useProfile()
   // 부케를 하나 만들기 전엔 빈 상태, 만든 뒤엔 최근 부케
   const madeBloom = useMadeBloom()
+  useBloomNames()
   const madeResult = findResult(madeBloom?.result)
   const madeBouquet = madeBloom ? findBouquet(madeBloom.bouquet) : null
   // 홈 카드 사진 배치: Still 행잉은 Figma 홈 카드용 누끼 사진, 누끼가 있는 결과는 배경 없이 부케만, 그 외 결과는 꽉 채움
@@ -211,7 +213,7 @@ function Home() {
                 <div ref={emptyRef} className="blooms-card__photo" data-revealed={emptyInView} data-kind={madeKind}>
                   <img src={madeImage} alt="" />
                   {/* 부케 이름만 (칸이 작아 민감도 줄은 사진과 겹침) — 알약 없이 글씨만, 다른 카드 이름표와 같은 굵기 */}
-                  <span className="blooms-card__tag">{madeBloom.name}</span>
+                  <span ref={fadeEdges} className="blooms-card__tag">{bloomNameOf(madeBloom.bouquet, madeBloom.name)}</span>
                 </div>
                 <img className="blooms-card__arrow" src={arrowGreen} alt="" />
               </>

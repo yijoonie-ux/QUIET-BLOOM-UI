@@ -4,7 +4,8 @@ import backIcon from '../assets/edit/back.svg'
 import { replacePlant, setPlantQty, useCart } from '../data/bouquet'
 import { useActiveBouquet } from '../data/bouquets'
 import { PLANTS } from '../data/plants'
-import { getBloomType, useProfile } from '../data/profile'
+import { setBloomName } from '../data/blooms'
+import { useProfile } from '../data/profile'
 import { clearSwaps, findSubstitutes, isAvailableAt, rankStores, recordSwap, storeUrl, useSwaps } from '../data/sourcing'
 import { costOf, stylingFor } from '../data/styling'
 import { useAppliedTune } from '../data/tune'
@@ -32,51 +33,22 @@ function Thumb({ plant, size = 44 }) {
   )
 }
 
-// 예상 제작비 vs 설정 예산 (민감도 × 추천 기준별 기본 예산)
+// 예상 제작비: 금액과 식물 · 연출 소재 내역만 (추천 기준이 예산이어도 예산 비교·초과 표시는 하지 않음)
 // cost: 총 제작비 { plants, styling, total } (Bloom Complete · Details와 같은 기준)
-// showBudget: 추천 기준이 '예산'인 사람만 기본 예산과 비교 (유지력은 금액만)
-function Budget({ cost, budget, showBudget }) {
-  const { total } = cost
-  const over = total > budget
-  const rate = Math.round((total / budget) * 100)
-  const breakdown = cost.styling > 0 && (
-    <span className="rz-budget__break">
-      식물 {won(cost.plants)} · 연출 소재 {won(cost.styling)}
-    </span>
-  )
-  if (!showBudget) {
-    return (
-      <div className="rz-budget">
-        <div className="rz-budget__sum">
-          <span className="rz-budget__label">예상 제작비</span>
-          <strong className="rz-budget__total">
-            {total.toLocaleString('ko-KR')}
-            <small>원</small>
-          </strong>
-          {breakdown}
-        </div>
-      </div>
-    )
-  }
+function Budget({ cost }) {
   return (
-    <div className="rz-budget" data-over={over}>
-      <div className="rz-budget__top">
-        <div className="rz-budget__sum">
-          <span className="rz-budget__label">예상 제작비</span>
-          <strong className="rz-budget__total">
-            {total.toLocaleString('ko-KR')}
-            <small>원</small>
-          </strong>
-          {breakdown}
-        </div>
-        <span className="rz-budget__state">{over ? `예산 ${won(total - budget)} 초과` : `예산의 ${rate}%`}</span>
-      </div>
-      <span className="rz-budget__bar">
-        <i style={{ width: `${Math.min(100, rate)}%` }} />
-      </span>
-      <div className="rz-budget__scale">
-        <span>기본 예산</span>
-        <span>{won(budget)}</span>
+    <div className="rz-budget">
+      <div className="rz-budget__sum">
+        <span className="rz-budget__label">예상 제작비</span>
+        <strong className="rz-budget__total">
+          {cost.total.toLocaleString('ko-KR')}
+          <small>원</small>
+        </strong>
+        {cost.styling > 0 && (
+          <span className="rz-budget__break">
+            식물 {won(cost.plants)} · 연출 소재 {won(cost.styling)}
+          </span>
+        )}
       </div>
     </div>
   )
@@ -92,7 +64,6 @@ function Realize() {
   const bouquet = useActiveBouquet()
   const cart = useCart()
   const swaps = useSwaps()
-  const bloomType = getBloomType(profile)
   const [selected, setSelected] = useState(null) // 구매처 시트를 연 소재 이름
   const [showSubs, setShowSubs] = useState(false)
   const [toast, setToast] = useState(null)
@@ -212,12 +183,12 @@ function Realize() {
         </button>
         <h1 className="rz__title">Make This Bloom</h1>
         <p className="rz__desc">
-          이 부케를 실제로 만들 때 필요한 소재예요.
+          이 부케를 만들 때 필요한 소재예요.
         </p>
       </header>
 
       <div className="rz__body">
-        <Budget cost={cost} showBudget={(profile.criteria[0] ?? '유지력') === '예산'} budget={bloomType.budget} />
+        <Budget cost={cost} />
 
         {/* 구매처 추천: 한 곳에서 최대한 많이 — 구할 수 있는 식물 수 순 (시연용 가상 재고) */}
         <section className="rz-stores">
@@ -349,7 +320,11 @@ function Realize() {
           type="button"
           className="rz__primary"
           disabled={blocked.length > 0}
-          onClick={() => leave('/complete', { state: location.state })}
+          onClick={() => {
+            // 부케를 새로 완성하면 이름은 처음 이름(Still 등)부터 — 예전에 바꾼 이름은 지움
+            setBloomName(bouquet.key, '')
+            leave('/complete', { state: { ...location.state, store: store.key } })
+          }}
         >
           완성하기
         </button>

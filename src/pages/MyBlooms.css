@@ -103,16 +103,28 @@
   z-index: 2;
   text-shadow: 0 1px 2px rgba(40, 36, 30, 0.18);
   top: 20px;
-  left: 22px;
+  right: 0;
+  left: 0;
   display: flex;
   align-items: baseline;
   gap: 8px;
+  /* 이름이 길면 양옆 여백(22) 안에서 흐릿하게 사라짐 — 가운데 카드는 옆으로 밀어 나머지를 봄 (Bloom Card 이름표와 같은 방식) */
+  padding: 0 22px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, var(--fade-l, 1)) 22px, #000 54px, #000 calc(100% - 54px), rgba(0, 0, 0, var(--fade-r, 1)) calc(100% - 22px));
+  mask-image: linear-gradient(to right, rgba(0, 0, 0, var(--fade-l, 1)) 22px, #000 54px, #000 calc(100% - 54px), rgba(0, 0, 0, var(--fade-r, 1)) calc(100% - 22px));
   font-size: 16px;
   font-weight: 500;
   line-height: 1.4;
   letter-spacing: -0.2282px;
   color: #fff;
   white-space: nowrap;
+}
+
+.mb-card__label::-webkit-scrollbar {
+  display: none;
 }
 
 .mb-card__label strong {

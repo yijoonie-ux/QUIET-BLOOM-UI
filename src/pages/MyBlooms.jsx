@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router'
 import backIcon from '../assets/edit/back.svg'
-import { SAVED_BLOOMS, useMadeBloom } from '../data/blooms'
+import { SAVED_BLOOMS, bloomNameOf, useBloomNames, useMadeBloom } from '../data/blooms'
+import { fadeEdges } from '../hooks/fadeEdges'
 import { usePageBackground } from '../hooks/usePageBackground'
 import { usePageLeave } from '../hooks/usePageLeave'
 import './MyBlooms.css'
@@ -68,6 +69,8 @@ function MyBlooms() {
   // 상세 화면에서 돌아오면 보던 카드부터, 아니면 방금 만든 부케가 가장 앞(가운데)에
   const fromId = useLocation().state?.id
   const madeBloom = useMadeBloom()
+  // 이름을 바꾼 부케는 바꾼 이름으로
+  useBloomNames()
   const firstId = fromId ?? madeBloom?.bouquet
   const startIndex = Math.max(0, SAVED_BLOOMS.findIndex((b) => b.id === firstId))
   const [index, setIndex] = useState(startIndex)
@@ -268,6 +271,25 @@ function MyBlooms() {
 
     const onDown = (e) => {
       if (committed || drag) return
+      // 가운데 카드의 긴 이름표는 손가락으로 옆으로 밀어 끝까지 읽음 → 그땐 카드를 넘기지 않음
+      const label = e.target.closest?.('.mb-card__label')
+      // (카드 무대가 터치 스크롤을 막아 두어서 이름표는 손가락 움직임대로 직접 밀어줌)
+      if (label && label.scrollWidth > label.clientWidth && label.closest('.mb-card')?.dataset.index === String(mod(Math.round(pos.x), COUNT))) {
+        const startX = e.clientX
+        const startLeft = label.scrollLeft
+        const move = (ev) => {
+          label.scrollLeft = startLeft - (ev.clientX - startX)
+        }
+        const up = () => {
+          window.removeEventListener('pointermove', move)
+          window.removeEventListener('pointerup', up)
+          window.removeEventListener('pointercancel', up)
+        }
+        window.addEventListener('pointermove', move)
+        window.addEventListener('pointerup', up)
+        window.addEventListener('pointercancel', up)
+        return
+      }
       const card = e.target.closest?.('.mb-card')
       measure()
       drag = {
@@ -435,7 +457,7 @@ function MyBlooms() {
         role="group"
         tabIndex={0}
         aria-roledescription="carousel"
-        aria-label={`저장한 부케 ${index + 1} / ${COUNT} — ${current.name}. 좌우 화살표로 넘기고 Enter로 자세히 보기`}
+        aria-label={`저장한 부케 ${index + 1} / ${COUNT} — ${bloomNameOf(current.id, current.name)}. 좌우 화살표로 넘기고 Enter로 자세히 보기`}
         onKeyDown={onKeyDown}
       >
         {SAVED_BLOOMS.map((bloom, i) => (
@@ -461,8 +483,8 @@ function MyBlooms() {
                 top: `${bloom.card[3]}%`,
               }}
             />
-            <span className="mb-card__label">
-              <strong>{bloom.name}</strong>
+            <span ref={fadeEdges} className="mb-card__label">
+              <strong>{bloomNameOf(bloom.id, bloom.name)}</strong>
               {/* 민감도 · 추천 기준 (예: 저향 · 유지력 순) */}
               {bloom.criteria ? `${bloom.tags} · ${bloom.criteria} 순` : bloom.tags}
             </span>

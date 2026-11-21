@@ -59,13 +59,6 @@
   padding: 6px 4px 4px;
 }
 
-.rz-budget__top {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 12px;
-}
-
 .rz-budget__sum {
   display: grid;
   gap: 4px;
@@ -101,51 +94,6 @@
   font-size: 13px;
   font-weight: 500;
   color: var(--qb-text-sub);
-}
-
-/* 예산 대비 (예산 기준인 사람만): 오른쪽 작은 글자 + 아래 가는 선 하나 */
-.rz-budget__state {
-  flex: none;
-  margin-bottom: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #5f7a3c;
-  white-space: nowrap;
-}
-
-.rz-budget[data-over='true'] .rz-budget__state {
-  color: var(--qb-text-strong);
-}
-
-.rz-budget__bar {
-  display: block;
-  height: 2px;
-  overflow: hidden;
-  border-radius: 100px;
-  background: rgba(67, 76, 66, 0.12);
-}
-
-.rz-budget__bar i {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: #8fae66;
-  transition: width 0.6s var(--ease-smooth);
-}
-
-.rz-budget[data-over='true'] .rz-budget__bar i {
-  background: var(--qb-text-strong);
-}
-
-.rz-budget__scale {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: -6px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--qb-text-sub);
-  white-space: nowrap;
 }
 
 /* 섹션 이름: 다른 화면 소제목(About This Bloom·Composition)과 같은 18px + 오른쪽 옅은 보조 글 (판 바깥 위) */

@@ -1,7 +1,9 @@
 import { useLocation } from 'react-router'
 import logoMask from '../assets/logo-clover.svg'
 import CardSparkles from '../components/CardSparkles'
+import { fadeEdges } from '../hooks/fadeEdges'
 import { useTilt } from '../hooks/useTilt'
+import { bloomNameOf } from '../data/blooms'
 import { clearCart } from '../data/bouquet'
 import { findResult, getActiveBouquet } from '../data/bouquets'
 import { usePageBackground } from '../hooks/usePageBackground'
@@ -20,8 +22,8 @@ export function CardFront({ resultKey }) {
     <div className="bc__face bc__face--front" data-plain={!result}>
       <img className="bc__image" src={image} alt="완성한 부케 카드" data-cover="true" />
       {/* My Blooms 카드와 같은 이름표: 부케 이름 + 민감도 · 추천 기준 */}
-      <span className="bc__label">
-        <strong>{bouquet.name}</strong>
+      <span ref={fadeEdges} className="bc__label">
+        <strong>{bloomNameOf(bouquet.key, bouquet.name)}</strong>
         {bouquet.tags} · {bouquet.when.criteria} 순
       </span>
     </div>

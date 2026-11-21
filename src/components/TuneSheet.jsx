@@ -33,12 +33,29 @@ function describeTune(values, decor, baseDecor) {
   return words
 }
 
+// 결과 화면 제목 아래 한 문장: 이번에 바꾼 것 (예: '행잉 연출로 바꿨어요.' / '행잉 연출로 바꾸고, 더 풍성하게 다듬었어요.')
+// 조각마다 [이어질 때, 끝날 때] 말끝
+function describeSentence(values, decor, baseDecor, form, baseForm) {
+  const parts = []
+  const formLabel = FORMS.find((f) => f.key === form)?.label
+  if (form !== baseForm && formLabel) parts.push([`${formLabel} 연출로 바꾸고`, `${formLabel} 연출로 바꿨어요`])
+  const axisWords = TUNE_AXES.filter((axis) => values[axis.key]).map((axis) => (values[axis.key] > 0 ? axis.right : axis.left))
+  if (axisWords.length) parts.push([`${axisWords.join(' · ')} 다듬고`, `${axisWords.join(' · ')} 다듬었어요`])
+  if (!sameSet(decor, baseDecor)) {
+    const labels = DECOR.filter((d) => decor.includes(d.key)).map((d) => d.label).join(' · ')
+    parts.push(labels ? [`${labels} 장식으로 바꾸고`, `${labels} 장식으로 바꿨어요`] : ['장식은 빼고', '장식은 뺐어요'])
+  }
+  if (!parts.length) return ''
+  return `${parts.map((p, i) => (i === parts.length - 1 ? p[1] : p[0])).join(', ')}.`
+}
+
 // 결과 화면 위로 올라오는 시트. 가운데 = 처음 구성 그대로
 // items: 처음(다듬기 전) 구성 [{ name, qty }] — 바뀔 수량은 늘 이 구성에서 계산
 // initial: 지난번에 적용한 인상 (다시 열면 그 값에서 이어서 조정)
 // baseForm: AI 결과의 원래 연출(wrap · vase · hanging) / photoForms: 사진이 준비된 연출
 // baseDecor: AI 결과에 이미 들어간 장식 (예: 진주로 꾸며서 → pearl) — 처음부터 선택돼 있음
-function TuneSheet({ items, initial, baseForm, photoForms, baseDecor, onApply, onClose }) {
+// guideForm: 시연 흐름에서 골라보도록 안내할 연출 (예: Still → 'hanging') — 그 칩, 고른 뒤엔 적용 버튼이 은은하게 숨 쉼
+function TuneSheet({ items, initial, baseForm, photoForms, baseDecor, guideForm, onApply, onClose }) {
   // 축마다 왼쪽(-1) · 가운데(0) · 오른쪽(1) 한 칸씩
   const [values, setValues] = useState(() =>
     Object.fromEntries(TUNE_AXES.map((axis) => [axis.key, Math.sign(initial?.values?.[axis.key] ?? 0)])),
@@ -155,6 +172,7 @@ function TuneSheet({ items, initial, baseForm, photoForms, baseDecor, onApply, o
                 type="button"
                 className="tune__chip"
                 aria-pressed={form === f.key}
+                data-guide={(guideForm === f.key && form !== f.key) || undefined}
                 onClick={() => setForm(f.key)}
               >
                 {f.label}
@@ -224,8 +242,20 @@ function TuneSheet({ items, initial, baseForm, photoForms, baseDecor, onApply, o
         <button
           type="button"
           className="tune__apply"
+          data-guide={(!!guideForm && form === guideForm && changed) || undefined}
           disabled={!changed}
-          onClick={() => onApply({ values, decor, form, words, changes: plan.changes, next: plan.next, guides: plan.guides })}
+          onClick={() =>
+            onApply({
+              values,
+              decor,
+              form,
+              words,
+              sentence: describeSentence(values, decor, baseDecor, form, baseForm),
+              changes: plan.changes,
+              next: plan.next,
+              guides: plan.guides,
+            })
+          }
         >
           수정 적용하기
         </button>

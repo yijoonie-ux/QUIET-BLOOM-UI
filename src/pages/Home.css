@@ -595,7 +595,13 @@
   position: absolute;
   z-index: 2;
   top: 10px;
-  left: 12px;
+  right: 0;
+  left: 0;
+  /* 이름이 길면 양옆 여백(12) 안에서 흐릿하게 사라짐 (칸이 작아 밀어 보기는 없음 — 누르면 My Blooms) */
+  padding: 0 12px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, var(--fade-l, 1)) 12px, #000 36px, #000 calc(100% - 36px), rgba(0, 0, 0, var(--fade-r, 1)) calc(100% - 12px));
+  mask-image: linear-gradient(to right, rgba(0, 0, 0, var(--fade-l, 1)) 12px, #000 36px, #000 calc(100% - 36px), rgba(0, 0, 0, var(--fade-r, 1)) calc(100% - 12px));
   font-size: 15px;
   font-weight: 600;
   line-height: 1.3;

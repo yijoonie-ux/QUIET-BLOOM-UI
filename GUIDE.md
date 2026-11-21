@@ -88,7 +88,7 @@ npm run dev -- --host
 
 ```
 온보딩 ─▶ 홈 ─▶ Make Quiet Bloom ─▶ 부케 구성 ─▶ Bloom Preview ─▶ AI 프리뷰 (인상 다듬기 · 다시 요청)
-                      └▶ 조건 수정                                        │ 실제 제작 준비하기
+                      └▶ 조건 수정                                        │ 부케 제작하기
                                                                           ▼
                                      Make This Bloom (예상 제작비 · 구매처 · 대체 식물 · 연출 소재)
                                                                           │ 완성하기

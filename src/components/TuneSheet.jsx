@@ -35,15 +35,37 @@ function describeTune(values, decor, baseDecor) {
 
 // 결과 화면 제목 아래 한 문장: 이번에 바꾼 것 (예: '행잉 연출로 바꿨어요.' / '행잉 연출로 바꾸고, 더 풍성하게 다듬었어요.')
 // 조각마다 [이어질 때, 끝날 때] 말끝
-function describeSentence(values, decor, baseDecor, form, baseForm) {
+// 받침에 따라 을/를
+const withObject = (word) => {
+  const code = word.charCodeAt(word.length - 1) - 0xac00
+  return `${word}${code >= 0 && code <= 11171 && code % 28 !== 0 ? '을' : '를'}`
+}
+
+// changes: 바뀐 식물 — 슬라이더 문장 앞에 '필리카·팔손이를 빼서' / '운룡버들을 더해' 처럼 무엇을 바꿨는지
+function describeSentence(values, decor, baseDecor, form, baseForm, changes = []) {
   const parts = []
   const formLabel = FORMS.find((f) => f.key === form)?.label
   if (form !== baseForm && formLabel) parts.push([`${formLabel} 연출로 바꾸고`, `${formLabel} 연출로 바꿨어요`])
   const axisWords = TUNE_AXES.filter((axis) => values[axis.key]).map((axis) => (values[axis.key] > 0 ? axis.right : axis.left))
-  if (axisWords.length) parts.push([`${axisWords.join(' · ')} 다듬고`, `${axisWords.join(' · ')} 다듬었어요`])
+  if (axisWords.length) {
+    const fewer = changes.filter((c) => c.to < c.from)
+    const more = changes.filter((c) => c.to > c.from)
+    const names = (list) => withObject(list.map((c) => c.name).join('·'))
+    const how = [
+      fewer.length && `${names(fewer)} ${fewer.every((c) => c.to === 0) ? '빼' : '줄여'}`,
+      more.length && `${names(more)} 더해`,
+    ].filter(Boolean)
+    // 예: '필리카·팔손이를 빼서 더 가볍게 · 더 정돈되게' / '필리카를 빼고 운룡버들을 더해 …'
+    const lead = how.length ? `${how.join('고 ').replace(/빼$/, '빼서').replace(/줄여$/, '줄여서')} ` : ''
+    const words = axisWords.join(' · ')
+    parts.push([`${lead}${words} 다듬고`, `${lead}${words} 다듬었어요`])
+  }
   if (!sameSet(decor, baseDecor)) {
     const labels = DECOR.filter((d) => decor.includes(d.key)).map((d) => d.label).join(' · ')
-    parts.push(labels ? [`${labels} 장식으로 바꾸고`, `${labels} 장식으로 바꿨어요`] : ['장식은 빼고', '장식은 뺐어요'])
+    // 모두 뺐으면 무엇을 뺐는지 (예: '진주 · 레이스 장식을 뺐어요')
+    const removed = DECOR.filter((d) => baseDecor.includes(d.key)).map((d) => d.word ?? d.label).join(' · ')
+    const none = removed ? [`${removed} 장식을 빼고`, `${removed} 장식을 뺐어요`] : ['장식은 빼고', '장식은 뺐어요']
+    parts.push(labels ? [`${labels} 장식으로 바꾸고`, `${labels} 장식으로 바꿨어요`] : none)
   }
   if (!parts.length) return ''
   return `${parts.map((p, i) => (i === parts.length - 1 ? p[1] : p[0])).join(', ')}.`
@@ -55,8 +77,9 @@ function describeSentence(values, decor, baseDecor, form, baseForm) {
 // baseForm: AI 결과의 원래 연출(wrap · vase · hanging) / photoForms: 사진이 준비된 연출
 // baseDecor: AI 결과에 이미 들어간 장식 (예: 진주로 꾸며서 → pearl) — 처음부터 선택돼 있음
 // guideForm: 시연 흐름에서 골라보도록 안내할 연출 (예: Still → 'hanging') — 그 칩, 고른 뒤엔 적용 버튼이 은은하게 숨 쉼
-// guideAxis: 시연 흐름에서 옮겨보도록 안내할 슬라이더 { key, value } (예: Lush → 더 높고 길게) — 그 끝, 옮긴 뒤엔 적용 버튼
-function TuneSheet({ items, initial, baseForm, photoForms, baseDecor, guideForm, guideAxis, onApply, onClose }) {
+// guideAxes: 시연 흐름에서 옮겨보도록 안내할 슬라이더 { 축: 값 } (예: Lush { height: 1 }) — 그 끝, 모두 옮긴 뒤엔 적용 버튼
+// guideDecor: 시연 흐름에서 골라보도록 안내할 장식 (예: Sway [] = 장식 없음) — '없음' 칩, 고른 뒤엔 적용 버튼
+function TuneSheet({ items, initial, baseForm, photoForms, baseDecor, guideForm, guideAxes, guideDecor, onApply, onClose }) {
   // 축마다 왼쪽(-1) · 가운데(0) · 오른쪽(1) 한 칸씩
   const [values, setValues] = useState(() =>
     Object.fromEntries(TUNE_AXES.map((axis) => [axis.key, Math.sign(initial?.values?.[axis.key] ?? 0)])),
@@ -140,14 +163,17 @@ function TuneSheet({ items, initial, baseForm, photoForms, baseDecor, guideForm,
         {/* 높이는 고정 — 고르는 것에 따라 내용이 늘어도 시트가 위아래로 움직이지 않고 이 안에서 스크롤 */}
         <div className="tune__body">
           <h2 className="tune__title">Fine-tune</h2>
-          <p className="tune__desc">풍성함은 수량으로, 높이·분위기는 만드는 방법으로 바뀌어요.</p>
+          <p className="tune__desc">고른 인상에 맞춰 단계별 식물 수와 만드는 방법이 바뀌어요.</p>
 
           <div className="tune__axes">
             {TUNE_AXES.map((axis) => (
               <div
                 key={axis.key}
                 className="tune-axis"
-                data-guide={(guideAxis?.key === axis.key && values[axis.key] !== guideAxis.value && (guideAxis.value > 0 ? 'right' : 'left')) || undefined}
+                data-guide={
+                  (guideAxes?.[axis.key] && values[axis.key] !== guideAxes[axis.key] && (guideAxes[axis.key] > 0 ? 'right' : 'left')) ||
+                  undefined
+                }
               >
                 <div className="tune-axis__labels">
                   <span data-on={values[axis.key] < 0}>{axis.left}</span>
@@ -191,7 +217,13 @@ function TuneSheet({ items, initial, baseForm, photoForms, baseDecor, guideForm,
           {/* 장식: 여러 개 고를 수 있음 — 지금 결과에 들어간 장식은 처음부터 선택 / 장식 없음은 모두 해제 */}
           <h3 className="tune__label">장식</h3>
           <div className="tune__chips" data-cols="4">
-            <button type="button" className="tune__chip" aria-pressed={decor.length === 0} onClick={() => setDecor([])}>
+            <button
+              type="button"
+              className="tune__chip"
+              aria-pressed={decor.length === 0}
+              data-guide={(guideDecor?.length === 0 && decor.length > 0) || undefined}
+              onClick={() => setDecor([])}
+            >
               없음
             </button>
             {DECOR.map((d) => (
@@ -248,7 +280,12 @@ function TuneSheet({ items, initial, baseForm, photoForms, baseDecor, guideForm,
           type="button"
           className="tune__apply"
           data-guide={
-            ((guideForm ? form === guideForm : !!guideAxis && values[guideAxis.key] === guideAxis.value) && changed) || undefined
+            (changed &&
+              (guideForm || guideAxes || guideDecor) &&
+              (!guideForm || form === guideForm) &&
+              (!guideAxes || Object.entries(guideAxes).every(([key, v]) => values[key] === v)) &&
+              (!guideDecor || sameSet(decor, guideDecor))) ||
+            undefined
           }
           disabled={!changed}
           onClick={() =>
@@ -257,7 +294,7 @@ function TuneSheet({ items, initial, baseForm, photoForms, baseDecor, guideForm,
               decor,
               form,
               words,
-              sentence: describeSentence(values, decor, baseDecor, form, baseForm),
+              sentence: describeSentence(values, decor, baseDecor, form, baseForm, plan.changes),
               changes: plan.changes,
               next: plan.next,
               guides: plan.guides,

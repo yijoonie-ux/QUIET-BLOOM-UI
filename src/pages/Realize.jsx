@@ -76,7 +76,8 @@ function Realize() {
   const appliedTune = useAppliedTune()
   const styling = stylingFor(
     // 주소로 바로 들어오면(새로고침·링크) 결과 정보가 없어서 이 부케의 첫 AI 결과 기준으로
-    location.state?.result ?? bouquet.results[0]?.key,
+    // AI 프리뷰 없이 '이대로 부케 제작하기'로 왔으면(result: null) 연출 소재 없음
+    location.state && 'result' in location.state ? location.state.result : bouquet.results[0]?.key,
     appliedTune?.decor,
     appliedTune?.form,
   )

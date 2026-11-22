@@ -1,14 +1,26 @@
 import { useSyncExternalStore } from 'react'
-import { BOUQUETS, bouquetPrice, findBouquet, findResult } from './bouquets'
+import { BOUQUETS, bouquetPrice, findBouquet } from './bouquets'
+import { planTune } from './tune'
 
 // TODO: 부케 저장 기능 연동 전까지 쓰는 예시 데이터 — 부케를 하나 만들었다고 보고 부케 유형 6가지를 모두 보여줌
 // card: My Blooms 카드(268×397) 안 사진 배치 [너비, 높이, 왼쪽, 위] %
 // hero: 상세 화면 위쪽 사진 · heroShade: 그 위 그라데이션 (bouquets.js와 같은 형식)
 
-// 부케 유형 데이터(bouquets.js)에서 이름·설명·구성·금액과 첫 AI 결과 사진을 가져옴
+// 부케 유형 데이터(bouquets.js)에서 이름·설명·구성·금액과 '최종본' 사진을 가져옴
+// 최종본 = 결과 목록의 마지막 (인상 다듬기까지 마친 모습: Still 행잉 · Lush 운룡버들 2대 · Grove 정돈 · Sway 장식 없음)
+// 그 결과가 인상 다듬기 전용(tune)이면 구성·장식도 다듬은 대로 (예: Grove 팔손이·필리카 빠짐, Sway 장식 없음)
 const fromBouquet = (key) => {
   const b = findBouquet(key)
-  const result = b.results[0]
+  const result = b.results[b.results.length - 1]
+  const { decor, ...axes } = result.tune ?? {}
+  const recipe = result.tune
+    ? planTune(
+        b.recipe.map(([name, qty]) => ({ name, qty })),
+        { volume: 0, height: 0, order: 0, ...axes },
+      )
+        .next.filter(({ qty }) => qty > 0)
+        .map(({ name, qty }) => [name, qty])
+    : b.recipe
   return {
     id: b.key,
     name: b.name,
@@ -16,14 +28,15 @@ const fromBouquet = (key) => {
     criteria: b.when.criteria,
     lasting: b.lasting,
     water: b.water,
-    price: bouquetPrice(b),
+    price: bouquetPrice({ ...b, recipe }),
     summary: b.summary,
     desc: b.desc,
-    plants: b.recipe.map(([name]) => name),
-    recipe: b.recipe,
+    plants: recipe.map(([name]) => name),
+    recipe,
     // 카드 사진은 이미 카드 비율(276×408)로 잘려 있어 꽉 채워 넣음
-    // AI Preview 결과 키 — 연출 소재(화기·행잉·포장·장식) 목록에 씀
+    // AI Preview 결과 키 — 연출 소재(화기·행잉·포장·장식) 목록에 씀 (decor: 다듬어서 바꾼 장식, 없으면 결과 그대로)
     result: result.key,
+    decor,
     image: result.card,
     card: [100, 100, 0, 0],
     hero: result.hero,
@@ -31,19 +44,8 @@ const fromBouquet = (key) => {
   }
 }
 
-// Still: 카드는 카드 출력 화면과 같은 행잉 카드 사진,
-// 상세 위쪽 사진·그라데이션은 Figma Bloom Details(2845:24220) — 행잉 결과의 완성 화면과 같은 값
-const stillHanging = findResult('still-hanging')
-const still = {
-  ...fromBouquet('still'),
-  result: stillHanging.key,
-  image: stillHanging.card,
-  hero: stillHanging.hero,
-  heroShade: stillHanging.heroShade,
-}
-
 // 순서대로 이어서 넘어감 (끝에서 처음으로) — 처음엔 Still이 가운데
-export const SAVED_BLOOMS = [still, ...BOUQUETS.filter((b) => b.key !== 'still').map((b) => fromBouquet(b.key))]
+export const SAVED_BLOOMS = [fromBouquet('still'), ...BOUQUETS.filter((b) => b.key !== 'still').map((b) => fromBouquet(b.key))]
 
 export const findBloom = (id) => SAVED_BLOOMS.find((bloom) => bloom.id === id)
 

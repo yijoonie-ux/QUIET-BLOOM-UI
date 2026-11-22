@@ -293,7 +293,8 @@
 
 .tune-plan__qty strong {
   font-weight: 700;
-  color: #c0643a;
+  /* 줄어들 때: 주황 대신 진한 회녹색 (늘 때는 세이지) */
+  color: var(--qb-text-strong);
 }
 
 .tune-plan__qty strong[data-up='true'] {

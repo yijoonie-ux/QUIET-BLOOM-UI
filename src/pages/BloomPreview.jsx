@@ -26,10 +26,12 @@ const WORD_GAP = 800 // 단어가 하나씩 나오는 간격
 // preview: Bloom Preview (Figma 2268:21089) → ai: Bloom AI Preview (2268:21057)
 // → 말하는 중/입력 중 (2268:20786): 부케가 작아지고 말한 내용이 아래에 나타남
 // 시연 안내 (부케별): 첫 결과(from)에서 인상 다듬기로 이끌고, 적용해 바뀐 결과(to)에선 부케 제작하기로
-// Still: 화기 → 행잉 연출 / Lush: 더 높고 길게 (운룡버들 1 → 2)
+// Still: 화기 → 행잉 연출 / Lush: 더 높고 길게 (운룡버들 1 → 2) / Grove: 더 가볍게 + 더 정돈되게 (필리카·팔손이 빼기) / Sway: 장식(레이스·진주) 모두 빼기
 const DEMO_GUIDE = {
   still: { from: 'still-vase', to: 'still-hanging', text: '인상을 다듬어 행잉으로 바꿔볼까요?', form: 'hanging' },
-  lush: { from: 'lush-wrap', to: 'lush-tall-wrap', text: '인상을 다듬어 더 높고 길게 해볼까요?', axis: { key: 'height', value: 1 } },
+  lush: { from: 'lush-wrap', to: 'lush-tall-wrap', text: '인상을 다듬어 더 높고 길게 해볼까요?', axes: { height: 1 } },
+  sway: { from: 'sway-hanging', to: 'sway-plain-hanging', text: '인상을 다듬어 장식을 모두 빼볼까요?', decor: [] },
+  grove: { from: 'grove-vase', to: 'grove-tidy-vase', text: '인상을 다듬어 더 가볍고 정돈되게 해볼까요?', axes: { volume: -1, order: -1 } },
 }
 
 // 말로 요청했을 때 다음 결과: 인상 다듬기 전용 결과(tune)는 건너뜀
@@ -248,7 +250,13 @@ function BloomPreview() {
     else {
       const results = getActiveBouquet().results
       const sameForm = results.map((r, i) => ({ r, i })).filter(({ r }) => formOf(r.key) === tune.form)
-      const matches = (r) => Object.entries(r.tune).every(([axis, v]) => Math.sign(tune.values?.[axis] ?? 0) === v)
+      // tune: { 축: -1·1 } 과 decor(장식 목록) — 고른 인상과 모두 같아야 그 사진
+      const matches = (r) =>
+        Object.entries(r.tune).every(([key, v]) =>
+          key === 'decor'
+            ? tune.decor?.length === v.length && v.every((d) => tune.decor.includes(d))
+            : Math.sign(tune.values?.[key] ?? 0) === v,
+        )
       const pick = sameForm.find(({ r }) => r.tune && matches(r)) ?? sameForm.find(({ r }) => !r.tune)
       if (pick) setResultIndex(pick.i)
     }
@@ -281,6 +289,7 @@ function BloomPreview() {
   const complete = () =>
     leave('/realize', {
       state: {
+        // AI 프리뷰 없이 '이대로 부케 제작하기'면 결과 없음(null) → 연출 소재 없이, 완성·카드는 이 풀부케 사진 그대로
         result: result?.key ?? null,
         back: mode === 'result' ? { resultIndex, tuneBase, tuneBaseResult, tuned } : null,
       },
@@ -409,7 +418,7 @@ function BloomPreview() {
           {tuneGuide ? tuneGuide.text : '이제 실제로 만들어볼까요?'}
         </p>
       )}
-      {tuneOpen && <TuneSheet items={tuneItems} initial={tuned} baseForm={baseForm} photoForms={photoForms} baseDecor={baseDecor} guideForm={tuneGuide?.form} guideAxis={tuneGuide?.axis} onApply={applyTune} onClose={() => setTuneOpen(false)} />}
+      {tuneOpen && <TuneSheet items={tuneItems} initial={tuned} baseForm={baseForm} photoForms={photoForms} baseDecor={baseDecor} guideForm={tuneGuide?.form} guideAxes={tuneGuide?.axes} guideDecor={tuneGuide?.decor} onApply={applyTune} onClose={() => setTuneOpen(false)} />}
 
       {/* 결과 하단: 부케 제작하기 + 옆 동그란 버튼은 인상 다듬기 (조형 미세조정) */}
       {mode === 'result' && !active && (
@@ -440,7 +449,7 @@ function BloomPreview() {
             AI 프리뷰 만들기
           </button>
           <button type="button" className="bp__done" onClick={complete}>
-            이대로 제작 준비하기
+            이대로 부케 제작하기
           </button>
         </div>
       )}

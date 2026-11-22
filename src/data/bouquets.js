@@ -6,6 +6,7 @@ import stillVase from '../assets/result/still-vase.jpg'
 import stillHanging from '../assets/result/still-hanging.jpg'
 import groovePreview from '../assets/bouquets/grove-preview.png'
 import groveResult from '../assets/bouquets/grove-result.jpg'
+import groveResultFirst from '../assets/bouquets/grove-result-first.jpg'
 import ramblePreview from '../assets/bouquets/ramble-preview.png'
 import rambleResult from '../assets/bouquets/ramble-result.jpg'
 import rambleHero from '../assets/bouquets/ramble-hero.jpg'
@@ -16,17 +17,20 @@ import emberResult from '../assets/bouquets/ember-result.jpg'
 // 카드 앞면 사진 (Figma 부케별 Print Complete 화면의 카드 구도 그대로 276×408 비율로 잘라둠)
 import stillCard from '../assets/cards/still-card.jpg'
 import groveCard from '../assets/cards/grove-card.jpg'
+import groveCardFirst from '../assets/cards/grove-card-first.jpg'
 import rambleCard from '../assets/cards/ramble-card.jpg'
 import hushCard from '../assets/cards/hush-card.jpg'
 import emberCard from '../assets/cards/ember-card.jpg'
 import gladeCard from '../assets/cards/glade-card.jpg'
 import swayCard from '../assets/cards/sway-card.jpg'
+import swayCardPlain from '../assets/cards/sway-card-plain.jpg'
 import lushCard from '../assets/cards/lush-card.jpg'
 import lushCardFirst from '../assets/cards/lush-card-first.jpg'
 import gladePreview from '../assets/bouquets/glade-preview.png'
 import gladeResult from '../assets/bouquets/glade-result.jpg'
 import swayPreview from '../assets/bouquets/sway-preview.png'
 import swayResult from '../assets/bouquets/sway-result.jpg'
+import swayResultPlain from '../assets/bouquets/sway-result-plain.jpg'
 import lushPreview from '../assets/bouquets/lush-preview.png'
 import lushResult from '../assets/bouquets/lush-result.jpg'
 import lushResultFirst from '../assets/bouquets/lush-result-first.jpg'
@@ -44,7 +48,7 @@ import lushCutout from '../assets/main/lush-cutout.png'
 //
 // when: 조건 { criteria: '유지력' | '예산', lowIrritant, lowScent }
 // recipe: 구성 [식물 이름, 수량] (단계 순서는 plants.js 카테고리를 따름)
-// preview: 부케 사진과 프리뷰 화면 속 자리 { image, box: [너비, 높이, 가운데 기준 x, top], listen: 입력 중 크기 [너비, 높이, top], crop: 상자 안 사진 [너비%, 높이%, 왼쪽%, 위%] }
+// preview: 부케 사진과 프리뷰 화면 속 자리 { image, box: [너비, 높이, 가운데 기준 x, top], listen: 입력 중 크기 [너비, 높이, top], crop: 상자 안 사진 [너비%, 높이%, 왼쪽%, 위%], heroX: AI 결과 없이 만든 완성 화면에서 줄기가 가운데 오게 옆으로 미는 값 }
 // results: AI 프리뷰 결과(요청 순서대로)
 //   size·pos: 사진 크기와 위치(가운데 기준 x, top) · bg: 바탕색
 //   shade: 위쪽 그라데이션 [높이, 색, 맨 위 진하기, 진하게 유지되는 구간(기본 0%)] · fade: 아래 그라데이션 [높이, 아래로 넘친 길이, 색, 진하기, 진해지는 지점]
@@ -114,17 +118,39 @@ export const BOUQUETS = [
     water: '3~4일 교체',
     summary: '자극 부담은 낮추고, 오래 감상할 수 있도록 구성했어요.',
     desc: '대나무로 곧게 선 흐름을 세우고 스틸그라스로 부드러운 곡선을 그렸어요. 하이포에스테스로 은은한 색감을 더하고 트리펀으로 풍성한 볼륨을 채웠어요.',
+    // 처음엔 팔손이(Structure)·필리카(Texture)까지 담고, 인상 다듬기 '더 가볍게 + 더 정돈되게'로 둘을 빼면 Figma 원래 구성
     recipe: [
+      ['팔손이', 1],
       ['대나무', 5],
       ['스틸그라스', 7],
       ['하이포에스테스', 2],
       ['트리펀', 3],
+      ['필리카', 1],
     ],
-    preview: { image: groovePreview, box: [278, 396, 30, 224], listen: [262, 372, 224], crop: [105.25, 106.17, -5.21, -0.71] },
+    // 팔손이·필리카까지 든 풀부케 (Figma 3833:547 · 3833:681) — 상자 비율과 같아 자르지 않음
+    preview: { image: groovePreview, box: [278, 396, 30, 224], listen: [262, 372, 224], heroX: 27 },
     results: [
+      // 마이크로 처음 요청한 결과: 팔손이·필리카까지 든 모습 (Figma 2845:24885)
       {
         key: 'grove-vase',
         label: 'Vessel Preview',
+        image: groveResultFirst,
+        size: [749, 1124],
+        pos: [7, -174.5],
+        bg: '#aab08a',
+        shade: [229, '98, 98, 89', 0.41],
+        fade: [220, 0, '98, 98, 89', 0.9, '95.981%'],
+        demo: ['잘', '정돈해서', '화기에', '꽂아줘'],
+        hero: { image: groveResultFirst, size: [419, 628], top: -95.5, x: 3.7 },
+        heroShade: [229, '98, 98, 89', 0.5],
+        card: groveCardFirst,
+        cutout: groveCutout,
+      },
+      // 인상 다듬기 '더 가볍게 + 더 정돈되게': 필리카·팔손이를 빼서 정돈한 모습 (같은 화기 연출)
+      {
+        key: 'grove-tidy-vase',
+        label: 'Vessel Preview',
+        tune: { volume: -1, order: -1 },
         image: groveResult,
         size: [753, 1158],
         pos: [-0.5, -187],
@@ -317,6 +343,24 @@ export const BOUQUETS = [
         hero: { image: swayResult, size: [419, 727], top: -98, x: -0.5 },
         heroShade: [274, '98, 98, 89', 0.6],
         card: swayCard,
+        cutout: swayCutout,
+      },
+      // 인상 다듬기에서 장식(레이스·진주)을 모두 뺀 모습 (같은 행잉 연출 · Figma 3835:3277)
+      {
+        key: 'sway-plain-hanging',
+        label: 'Hanging Preview',
+        tune: { decor: [] },
+        image: swayResultPlain,
+        // Figma 3835:3277 배치
+        size: [664, 1155],
+        pos: [0, -113],
+        bg: '#d8d0c4',
+        shade: [229, '98, 98, 89', 0.41],
+        fade: [220, 0, '98, 98, 89', 0.9, '95.981%'],
+        demo: ['레이스랑', '진주로', '꾸며서', '벽에', '걸어줘'],
+        hero: { image: swayResultPlain, size: [419, 727], top: -98, x: -0.5 },
+        heroShade: [274, '98, 98, 89', 0.6],
+        card: swayCardPlain,
         cutout: swayCutout,
       },
     ],

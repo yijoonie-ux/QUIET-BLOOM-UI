@@ -144,11 +144,14 @@ function BloomDetails({ variant = 'details' }) {
   const viaPull = location.state?.via === 'pull'
   const result = findResult(location.state?.result)
   // 연출 소재 기준 결과: 결과 없이 왔으면 이 부케의 첫 AI 결과 (Make This Bloom과 같은 기준)
-  const stylingKey = location.state?.result ?? active.results[0]?.key
+  // AI 프리뷰 없이 만들었으면(result: null) 연출 소재 없음
+  const stylingKey = location.state && 'result' in location.state ? location.state.result : active.results[0]?.key
   const bloom = isComplete
     ? {
         ...base,
-        hero: result?.hero ?? { image: active.preview.image, size: [300, 546], top: -40, plain: true },
+        // AI 결과 없이 만들었으면 풀부케 사진 — 부케 전체가 보이게 제목 아래부터 사진 칸 끝까지 (높이 268)
+        // heroX: 부케 줄기(대)가 가운데 오게 옆으로 미는 값 (bouquets.js preview.heroX, 없으면 0)
+        hero: result?.hero ?? { image: active.preview.image, size: [390, 268], top: 124, x: active.preview.heroX ?? 0, plain: true },
       }
     : base
   // 바꾼 이름이 있으면 그 이름 (부케 유형마다 하나 — 완성 화면에서 바꾸면 저장한 부케에도 그대로)

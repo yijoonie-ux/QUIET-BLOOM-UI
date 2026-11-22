@@ -2,13 +2,17 @@ import { useSyncExternalStore } from 'react'
 import { PLANTS } from './plants'
 
 // 인상 다듬기: 일상어(형용사) → 실제 구성 변화.
-// 풍성함만 식물 수량을 바꾸고, 높이·정돈은 수량 그대로 만드는 방법(줄기 길이·꽂는 방식)으로 안내
+// 풍성함·높이는 식물 수량을 바꾸고, 정돈은 수량 그대로 만드는 방법(꽂는 방식)으로 안내
 // 더 풍성하게: Volume 역할 식물을 한 칸 더 / 더 가볍게: Structure 역할 식물을 한 대 덜 (0이면 구성에서 빠짐)
+// 더 높고 길게: Line 역할 식물을 하나 더 (Lush 운룡버들 1 → 2) — 더 낮게는 줄기만 짧게
 // fallback: 그 역할 식물이 없는 부케(Grove)는 이 역할에서 — Grove 더 가볍게 = 트리펀 3 → 2
 const AXIS_EFFECT = {
   volume: {
     plus: { role: 'volume', dir: 1, min: 1 },
     minus: { role: 'structure', fallback: 'volume', dir: -1, min: 0, step: 1 },
+  },
+  height: {
+    plus: { role: 'line', dir: 1, min: 1, step: 1 },
   },
 }
 
@@ -24,10 +28,21 @@ const AXIS_GUIDE = {
   },
 }
 
-// 고른 인상 → 만드는 방법 문장
-export function guidesFor(values) {
+// 받침에 따라 을/를
+const withObject = (word) => {
+  const code = word.charCodeAt(word.length - 1) - 0xac00
+  return `${word}${code >= 0 && code <= 11171 && code % 28 !== 0 ? '을' : '를'}`
+}
+
+// 고른 인상 → 만드는 방법 문장 (changes: 바뀐 수량 — 더 높고 길게로 Line 식물을 더했으면 그 식물 이름으로 안내)
+export function guidesFor(values, changes = []) {
   return Object.entries(AXIS_GUIDE)
-    .map(([axis, guide]) => (values[axis] ? guide[values[axis] > 0 ? 'plus' : 'minus'] : null))
+    .map(([axis, guide]) => {
+      if (!values[axis]) return null
+      const line = axis === 'height' && values[axis] > 0 && changes.find((c) => c.role === 'line')
+      if (line) return `Line 역할을 하는 ${withObject(line.name)} 하나 더 넣고, 줄기를 길게 남겨 위로 세워 꽂아요.`
+      return guide[values[axis] > 0 ? 'plus' : 'minus']
+    })
     .filter(Boolean)
 }
 
@@ -61,7 +76,7 @@ export function planTune(items, values) {
   const priceOf = (list) =>
     list.reduce((sum, { name, qty }) => sum + (PLANTS.find((p) => p.name === name)?.price ?? 0) * qty, 0)
   // 0이 된 식물은 구성에서 빠짐 (담은 식물 수량을 0으로 두면 목록에서 지워짐)
-  return { next, changes, guides: guidesFor(values), priceFrom: priceOf(items), priceTo: priceOf(next) }
+  return { next, changes, guides: guidesFor(values, changes), priceFrom: priceOf(items), priceTo: priceOf(next) }
 }
 
 // 이번 부케에 적용한 인상 (장식 선택은 연출 소재 목록에도 쓰임) — 부케를 다 만들면 비움

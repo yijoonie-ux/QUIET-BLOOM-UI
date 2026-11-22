@@ -55,7 +55,8 @@ function describeSentence(values, decor, baseDecor, form, baseForm) {
 // baseForm: AI 결과의 원래 연출(wrap · vase · hanging) / photoForms: 사진이 준비된 연출
 // baseDecor: AI 결과에 이미 들어간 장식 (예: 진주로 꾸며서 → pearl) — 처음부터 선택돼 있음
 // guideForm: 시연 흐름에서 골라보도록 안내할 연출 (예: Still → 'hanging') — 그 칩, 고른 뒤엔 적용 버튼이 은은하게 숨 쉼
-function TuneSheet({ items, initial, baseForm, photoForms, baseDecor, guideForm, onApply, onClose }) {
+// guideAxis: 시연 흐름에서 옮겨보도록 안내할 슬라이더 { key, value } (예: Lush → 더 높고 길게) — 그 끝, 옮긴 뒤엔 적용 버튼
+function TuneSheet({ items, initial, baseForm, photoForms, baseDecor, guideForm, guideAxis, onApply, onClose }) {
   // 축마다 왼쪽(-1) · 가운데(0) · 오른쪽(1) 한 칸씩
   const [values, setValues] = useState(() =>
     Object.fromEntries(TUNE_AXES.map((axis) => [axis.key, Math.sign(initial?.values?.[axis.key] ?? 0)])),
@@ -143,7 +144,11 @@ function TuneSheet({ items, initial, baseForm, photoForms, baseDecor, guideForm,
 
           <div className="tune__axes">
             {TUNE_AXES.map((axis) => (
-              <div key={axis.key} className="tune-axis">
+              <div
+                key={axis.key}
+                className="tune-axis"
+                data-guide={(guideAxis?.key === axis.key && values[axis.key] !== guideAxis.value && (guideAxis.value > 0 ? 'right' : 'left')) || undefined}
+              >
                 <div className="tune-axis__labels">
                   <span data-on={values[axis.key] < 0}>{axis.left}</span>
                   <span data-on={values[axis.key] > 0}>{axis.right}</span>
@@ -242,7 +247,9 @@ function TuneSheet({ items, initial, baseForm, photoForms, baseDecor, guideForm,
         <button
           type="button"
           className="tune__apply"
-          data-guide={(!!guideForm && form === guideForm && changed) || undefined}
+          data-guide={
+            ((guideForm ? form === guideForm : !!guideAxis && values[guideAxis.key] === guideAxis.value) && changed) || undefined
+          }
           disabled={!changed}
           onClick={() =>
             onApply({

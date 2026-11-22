@@ -22,12 +22,14 @@ import emberCard from '../assets/cards/ember-card.jpg'
 import gladeCard from '../assets/cards/glade-card.jpg'
 import swayCard from '../assets/cards/sway-card.jpg'
 import lushCard from '../assets/cards/lush-card.jpg'
+import lushCardFirst from '../assets/cards/lush-card-first.jpg'
 import gladePreview from '../assets/bouquets/glade-preview.png'
 import gladeResult from '../assets/bouquets/glade-result.jpg'
 import swayPreview from '../assets/bouquets/sway-preview.png'
 import swayResult from '../assets/bouquets/sway-result.jpg'
 import lushPreview from '../assets/bouquets/lush-preview.png'
 import lushResult from '../assets/bouquets/lush-result.jpg'
+import lushResultFirst from '../assets/bouquets/lush-result-first.jpg'
 // 홈 My Blooms 카드용 누끼 (배경 없이 부케만)
 import groveCutout from '../assets/main/grove-cutout.png'
 import rambleCutout from '../assets/main/ramble-cutout.png'
@@ -48,6 +50,7 @@ import lushCutout from '../assets/main/lush-cutout.png'
 //   shade: 위쪽 그라데이션 [높이, 색, 맨 위 진하기, 진하게 유지되는 구간(기본 0%)] · fade: 아래 그라데이션 [높이, 아래로 넘친 길이, 색, 진하기, 진해지는 지점]
 //   demo: 음성 인식 대신 쓰는 예시 문장(단어) · label: 홈 카드에 보일 이름
 //   hero: 완성 화면 위 사진 { image, size, top, x } · heroShade: 그 위 그라데이션 (shade와 같은 형식) · card: 카드 앞면 사진
+//   tune: 인상 다듬기로만 나오는 결과 — 고른 인상이 이 값과 같을 때 (예: { height: 1 } = 더 높고 길게). 같은 연출 안에서 이 결과로 바뀜
 
 export const BOUQUETS = [
   {
@@ -329,17 +332,36 @@ export const BOUQUETS = [
     water: '2~3일 교체',
     summary: '민감도 제한 없이, 오래 감상할 수 있도록 풍성하게 구성했어요.',
     desc: '자비타의 무늬진 잎과 드라세나로 구조를 잡고 렉스 베고니아로 선명한 색을 더했어요. 운룡버들로 동그랗게 말린 곡선을 높이 세워 화려한 분위기를 냈어요.',
+    // 운룡버들은 처음엔 1대 — 인상 다듬기 '더 높고 길게'에서 Line 역할로 1대 더 (Figma 2881:3678 원래 구성은 2대)
     recipe: [
       ['드라세나', 1],
       ['자비타', 2],
-      ['운룡버들', 2],
+      ['운룡버들', 1],
       ['렉스 베고니아', 2],
     ],
     preview: { image: lushPreview, box: [314, 419, 0, 224], listen: [279, 372, 224] },
     results: [
+      // 마이크로 처음 요청한 결과: 운룡버들 1대 (Figma 3833:458)
       {
         key: 'lush-wrap',
         label: 'Wrap Preview',
+        image: lushResultFirst,
+        size: [563, 844],
+        pos: [-23.5, 0],
+        bg: '#62625a',
+        shade: [229, '98, 98, 89', 0.41],
+        fade: [220, 0, '98, 98, 89', 0.9, '95.981%'],
+        demo: ['레이스로', '꾸며서', '다발로', '묶어줘'],
+        hero: { image: lushResultFirst, size: [390, 584], top: -50 },
+        heroShade: [274, '98, 98, 89', 0.6],
+        card: lushCardFirst,
+        cutout: lushCutout,
+      },
+      // 인상 다듬기 '더 높고 길게': 운룡버들 2대로 더 높게 (같은 다발 연출)
+      {
+        key: 'lush-tall-wrap',
+        label: 'Wrap Preview',
+        tune: { height: 1 },
         image: lushResult,
         size: [563, 844],
         pos: [-23.5, 0],

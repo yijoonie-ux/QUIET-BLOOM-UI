@@ -25,6 +25,19 @@ const WORD_GAP = 800 // 단어가 하나씩 나오는 간격
 // 부케 제작하기 다음 화면
 // preview: Bloom Preview (Figma 2268:21089) → ai: Bloom AI Preview (2268:21057)
 // → 말하는 중/입력 중 (2268:20786): 부케가 작아지고 말한 내용이 아래에 나타남
+// 시연 안내 (부케별): 첫 결과(from)에서 인상 다듬기로 이끌고, 적용해 바뀐 결과(to)에선 부케 제작하기로
+// Still: 화기 → 행잉 연출 / Lush: 더 높고 길게 (운룡버들 1 → 2)
+const DEMO_GUIDE = {
+  still: { from: 'still-vase', to: 'still-hanging', text: '인상을 다듬어 행잉으로 바꿔볼까요?', form: 'hanging' },
+  lush: { from: 'lush-wrap', to: 'lush-tall-wrap', text: '인상을 다듬어 더 높고 길게 해볼까요?', axis: { key: 'height', value: 1 } },
+}
+
+// 말로 요청했을 때 다음 결과: 인상 다듬기 전용 결과(tune)는 건너뜀
+function nextSpoken(results, i) {
+  for (let j = i + 1; j < results.length; j++) if (!results[j].tune) return j
+  return Math.max(i, 0)
+}
+
 function BloomPreview() {
   usePageBackground('#d9e4c8')
   const [leaving, leave] = usePageLeave(280)
@@ -115,7 +128,7 @@ function BloomPreview() {
   // 예시 문장을 단어 단위로 '듣는 중 → 확정' 순서로 이어 붙임
   const runDemo = () => {
     // 다음에 만들 결과에 맞는 예시 문장
-    const DEMO_WORDS = RESULTS[Math.min(resultIndex + 1, RESULTS.length - 1)].demo
+    const DEMO_WORDS = RESULTS[nextSpoken(RESULTS, resultIndex)].demo
     clearDemo()
     setWords([])
     setListening(true)
@@ -206,9 +219,10 @@ function BloomPreview() {
   // 시연 흐름: Still(연밥 부케)은 화기 결과에서 인상 다듬기로 '행잉'으로 바꿔 적용하도록 안내
   // AI 프리뷰 첫 화면: 아직 말하거나 입력하지 않았으면 마이크를 누르도록 안내
   const micGuide = mode === 'ai' && !input
-  const tuneGuide = bouquetType.key === 'still' && formOf(result?.key) === 'vase' ? 'hanging' : null
+  const demoGuide = DEMO_GUIDE[bouquetType.key]
+  const tuneGuide = demoGuide && result?.key === demoGuide.from ? demoGuide : null
   // 행잉으로 다듬어 적용한 뒤에는 '부케 제작하기'로 이어가도록 안내
-  const makeGuide = bouquetType.key === 'still' && formOf(result?.key) === 'hanging' && !!tuned
+  const makeGuide = !!demoGuide && result?.key === demoGuide.to && !!tuned
   const applyTune = (tune) => {
     if (!tuneBase) setTuneBase(cartItems.map((item) => ({ ...item })))
     if (!tuneBaseResult) setTuneBaseResult(result?.key)
@@ -228,11 +242,15 @@ function BloomPreview() {
     pendingTune.current = null
     // 가운데로 모두 되돌렸으면 조정 없음 (처음 구성 그대로)
     setTuned(tune?.words.length ? tune : null)
-    if (!tune) setResultIndex((i) => Math.min(i + 1, getActiveBouquet().results.length - 1))
+    if (!tune) setResultIndex((i) => nextSpoken(getActiveBouquet().results, i))
     // 고른 연출의 사진이 있으면 그 결과로 (없으면 사진은 그대로, 소재 목록에만 반영)
+    // 같은 연출에 '인상 다듬기 전용' 사진(tune)이 있으면 고른 인상과 맞을 때 그 사진, 아니면 기본 사진
     else {
-      const idx = getActiveBouquet().results.findIndex((r) => formOf(r.key) === tune.form)
-      if (idx >= 0) setResultIndex(idx)
+      const results = getActiveBouquet().results
+      const sameForm = results.map((r, i) => ({ r, i })).filter(({ r }) => formOf(r.key) === tune.form)
+      const matches = (r) => Object.entries(r.tune).every(([axis, v]) => Math.sign(tune.values?.[axis] ?? 0) === v)
+      const pick = sameForm.find(({ r }) => r.tune && matches(r)) ?? sameForm.find(({ r }) => !r.tune)
+      if (pick) setResultIndex(pick.i)
     }
     setMode('result')
     setInput(null)
@@ -388,10 +406,10 @@ function BloomPreview() {
       {/* 시연 안내 (Still): 아래 버튼 바로 위 한 줄 */}
       {mode === 'result' && !active && !generating && (tuneGuide || makeGuide) && (
         <p className="bp-tune-guide" role="status" key={tuneGuide ? 'tune' : 'make'}>
-          {tuneGuide ? '인상을 다듬어 행잉으로 바꿔볼까요?' : '이제 실제로 만들어볼까요?'}
+          {tuneGuide ? tuneGuide.text : '이제 실제로 만들어볼까요?'}
         </p>
       )}
-      {tuneOpen && <TuneSheet items={tuneItems} initial={tuned} baseForm={baseForm} photoForms={photoForms} baseDecor={baseDecor} guideForm={tuneGuide} onApply={applyTune} onClose={() => setTuneOpen(false)} />}
+      {tuneOpen && <TuneSheet items={tuneItems} initial={tuned} baseForm={baseForm} photoForms={photoForms} baseDecor={baseDecor} guideForm={tuneGuide?.form} guideAxis={tuneGuide?.axis} onApply={applyTune} onClose={() => setTuneOpen(false)} />}
 
       {/* 결과 하단: 부케 제작하기 + 옆 동그란 버튼은 인상 다듬기 (조형 미세조정) */}
       {mode === 'result' && !active && (

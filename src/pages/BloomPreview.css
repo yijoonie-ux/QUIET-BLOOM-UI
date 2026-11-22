@@ -210,14 +210,27 @@
   color: #fff;
 }
 
-/* 시연 안내 (Still): 인상 다듬기 동그란 버튼 둘레로 은은한 링 */
+/* 시연 안내 (Still · Lush): 인상 다듬기 동그란 버튼 — 가는 흰 선 링 하나가 은은하게 퍼짐 */
 .bp-result__tune[data-guide]::after {
   content: '';
   position: absolute;
-  inset: 0;
+  inset: -1px;
+  border: 1.5px solid rgba(255, 255, 255, 0.75);
   border-radius: 50%;
   pointer-events: none;
-  animation: bp-tune-guide 1.8s ease-out 1.4s infinite;
+  opacity: 0;
+  animation: bp-tune-ripple 2.2s ease-out 1.4s infinite;
+}
+
+@keyframes bp-tune-ripple {
+  0% {
+    opacity: 0.8;
+    scale: 1;
+  }
+  100% {
+    opacity: 0;
+    scale: 1.4;
+  }
 }
 
 .bp-result__mic:active {

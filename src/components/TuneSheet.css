@@ -113,6 +113,30 @@
   color: #2a2a2a;
 }
 
+/* 시연 안내: 옮겨볼 쪽 끝(손잡이가 갈 자리)에 세이지 링이 숨 쉼 */
+.tune-axis[data-guide] {
+  position: relative;
+}
+
+.tune-axis[data-guide]::after {
+  content: '';
+  position: absolute;
+  bottom: 1px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: tune-guide 1.8s ease-out infinite;
+}
+
+.tune-axis[data-guide='right']::after {
+  right: 0;
+}
+
+.tune-axis[data-guide='left']::after {
+  left: 0;
+}
+
 /* 5칸 슬라이더 (가운데 = 지금 그대로) */
 .tune-axis__range {
   width: 100%;

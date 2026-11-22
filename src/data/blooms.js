@@ -17,6 +17,7 @@ const fromBouquet = (key) => {
     ? planTune(
         b.recipe.map(([name, qty]) => ({ name, qty })),
         { volume: 0, height: 0, order: 0, ...axes },
+        b.tuneTargets,
       )
         .next.filter(({ qty }) => qty > 0)
         .map(({ name, qty }) => [name, qty])

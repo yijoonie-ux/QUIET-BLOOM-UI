@@ -1,9 +1,7 @@
 import closeIcon from '../assets/make/close.svg'
 import cardFrame from '../assets/make/profile-card.svg'
 import bulb from '../assets/make/bulb.svg'
-import ChipScroller from '../components/ChipScroller'
-import { getRecommendedPlants } from '../data/plants'
-import { getProfileSummary, useProfile } from '../data/profile'
+import { excludedPlantsText, getProfileSummary, sensitivityText, useProfile } from '../data/profile'
 import { usePageBackground } from '../hooks/usePageBackground'
 import { usePageLeave } from '../hooks/usePageLeave'
 import { useTilt } from '../hooks/useTilt'
@@ -15,7 +13,6 @@ function MakeBloom() {
   const [leaving, leave] = usePageLeave(280)
   const cardRef = useTilt()
   const summary = getProfileSummary(profile)
-  const plantCount = getRecommendedPlants(profile).length
 
   return (
     <div className="make" data-leaving={leaving}>
@@ -52,23 +49,20 @@ function MakeBloom() {
             ))}
           </p>
 
-          <h4 className="bloom-card__label">제외 식물</h4>
-          <ChipScroller className="bloom-card__chips">
-            {profile.excludedPlants.length > 0 ? (
-              profile.excludedPlants.map((plant) => (
-                <span key={plant} className="bloom-card__chip">{plant}</span>
-              ))
-            ) : (
-              <span className="bloom-card__chip">없음</span>
-            )}
-          </ChipScroller>
+          {/* 카드 아래: 온보딩 결과 카드와 같은 두 줄 (민감도 · 제외 식물, 가는 선으로 구분) */}
+          <dl className="bloom-card__facts">
+            {[
+              ['민감도', sensitivityText(profile.lowIrritant, profile.lowScent)],
+              ['제외 식물', excludedPlantsText(profile.excludedPlants)],
+            ].map(([name, value]) => (
+              <div key={name} className="bloom-card__fact">
+                <dt>{name}</dt>
+                <dd data-empty={value === '없음'}>{value}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
 
-        {/* 카드 아래 한 줄: 조건(저자극·저향·제외 식물)에 맞는 식물 수 — 부케 구성 화면과 같은 필터 */}
-        <p className="bloom-card__foot">
-          <span>조건에 맞는 식물</span>
-          <strong>{plantCount}종</strong>
-        </p>
 
         {/* 은은한 유리 질감 (Sensitivity 카드 · MyPage 메뉴와 같은 값) */}
         <span className="bloom-card__sheen" aria-hidden="true" />

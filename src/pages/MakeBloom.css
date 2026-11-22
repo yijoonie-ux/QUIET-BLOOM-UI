@@ -53,16 +53,11 @@
 .bloom-card__heading,
 .bloom-card__title,
 .bloom-card__line,
-.bloom-card__label {
-  animation: card-content-in 0.7s var(--ease-smooth) backwards;
-}
-
 .bloom-card__heading { animation-delay: 0.34s; }
 .bloom-card__title { animation-delay: 0.62s; }
 .bloom-card__line:nth-child(1) { animation-delay: 0.7s; }
 .bloom-card__line:nth-child(2) { animation-delay: 0.76s; }
 .bloom-card__line:nth-child(3) { animation-delay: 0.82s; }
-.bloom-card__label { animation-delay: 0.9s; }
 
 /* 배지는 가운데에서 양옆으로 펼쳐짐 */
 .bloom-card__badge {
@@ -73,13 +68,7 @@
   animation: card-pop 0.8s var(--ease-spring-gentle) 0.6s backwards;
 }
 
-.bloom-card__chip {
-  animation: card-pop 0.8s var(--ease-spring-gentle) backwards;
-}
 
-.bloom-card__chip:nth-child(1) { animation-delay: 0.98s; }
-.bloom-card__chip:nth-child(2) { animation-delay: 1.05s; }
-.bloom-card__chip:nth-child(3) { animation-delay: 1.12s; }
 
 .bloom-card__line {
   display: block;
@@ -263,30 +252,6 @@
   opacity: var(--tilt-lift);
 }
 
-/* 카드 아래 한 줄: 가는 선 위에 라벨 · 값 (양 끝 정렬) */
-.bloom-card__foot {
-  position: absolute;
-  right: 24px;
-  bottom: 20px;
-  left: 24px;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  padding-top: 11px;
-  border-top: 1px solid rgba(67, 76, 66, 0.12);
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: -0.2px;
-  color: var(--qb-text-sub);
-  animation: card-content-in 0.7s var(--ease-smooth) 1s backwards;
-}
-
-.bloom-card__foot strong {
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: -0.1px;
-  color: var(--qb-text-strong);
-}
 
 /* 은은한 유리 질감: 위쪽 가는 빛 · 오른쪽 아래로 깊어지는 세이지 · 옅은 그레인 */
 .bloom-card__sheen {
@@ -373,55 +338,70 @@
 }
 
 .bloom-card__text {
-  margin-top: 9.97px;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 1.4;
-  letter-spacing: -0.2282px;
-  color: var(--qb-text-sub);
-}
-
-.bloom-card__label {
-  /* 아래 한 줄(평균 감상 · 기본 예산) 자리를 두고 조금 위로 */
-  margin: 26px 0 0;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.3;
-  letter-spacing: -0.2282px;
-  color: var(--qb-text-strong);
-}
-
-.bloom-card__chips {
-  display: flex;
-  gap: 8px;
-  margin-top: 10.2px;
-}
-
-.bloom-card__chip {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 28.2px;
-  /* 마지막 글자 뒤에도 붙는 자간(-0.2282px)만큼 오른쪽 여백 보정 */
-  padding: 0 9.77px 0 10px;
-  text-align: center;
-  border-radius: 1140.898px;
-  background: #d9e4c8;
+  /* 온보딩 결과 카드 설명과 같은 크기 */
+  margin-top: 8px;
   font-size: 14px;
   font-weight: 500;
-  line-height: 1.3;
+  line-height: 1.6;
   letter-spacing: -0.2282px;
   color: var(--qb-text-sub);
+}
+
+.bloom-card {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 이름 · 설명 아래 남는 자리를 채우고, 두 줄은 카드 바닥에 붙임 (마지막 줄 아래 여백 10 + 줄 안쪽 10) */
+.bloom-card__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding-bottom: 10px;
+}
+
+/* 카드 아래 두 줄: 온보딩 결과 카드(.ob-type__facts)와 같은 모양 */
+.bloom-card__facts {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  margin: auto 0 0;
+  padding-top: 16px;
+  animation: card-content-in 0.7s var(--ease-smooth) 0.9s backwards;
+}
+
+.bloom-card__fact {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
   white-space: nowrap;
 }
 
-/* 글자 박스를 대문자 높이~기준선으로 잘라 칩(28.2px) 세로 정중앙에 둠 — 폰트가 바뀌어도 어긋나지 않음 */
-@supports (text-box: trim-both cap alphabetic) {
-  .bloom-card__chip {
-    display: inline-block;
-    padding-top: calc((28.2px - 1cap) / 2);
-    text-box: trim-both cap alphabetic;
-  }
+.bloom-card__fact + .bloom-card__fact {
+  border-top: 1px solid rgba(67, 76, 66, 0.12);
+}
+
+.bloom-card__fact dt {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+  color: var(--qb-text-sub);
+}
+
+.bloom-card__fact dd {
+  margin: 0;
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.1px;
+  color: var(--qb-text-strong);
+  text-overflow: ellipsis;
+}
+
+.bloom-card__fact dd[data-empty='true'] {
+  font-weight: 500;
+  color: #8a9387;
 }
 
 /* 하단 버튼 */

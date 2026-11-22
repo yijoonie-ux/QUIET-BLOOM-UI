@@ -45,7 +45,10 @@ const withObject = (word) => {
 function describeSentence(values, decor, baseDecor, form, baseForm, changes = []) {
   const parts = []
   const formLabel = FORMS.find((f) => f.key === form)?.label
-  if (form !== baseForm && formLabel) parts.push([`${formLabel} 연출로 바꾸고`, `${formLabel} 연출로 바꿨어요`])
+  // 받침이 있으면(ㄹ 빼고) '으로' — 다발로 · 화기로 · 행잉으로
+  const code = formLabel ? formLabel.charCodeAt(formLabel.length - 1) - 0xac00 : 0
+  const to = code % 28 !== 0 && code % 28 !== 8 ? '으로' : '로'
+  if (form !== baseForm && formLabel) parts.push([`${formLabel}${to} 바꾸고`, `${formLabel}${to} 바꿨어요`])
   const axisWords = TUNE_AXES.filter((axis) => values[axis.key]).map((axis) => (values[axis.key] > 0 ? axis.right : axis.left))
   if (axisWords.length) {
     const fewer = changes.filter((c) => c.to < c.from)
@@ -61,11 +64,13 @@ function describeSentence(values, decor, baseDecor, form, baseForm, changes = []
     parts.push([`${lead}${words} 다듬고`, `${lead}${words} 다듬었어요`])
   }
   if (!sameSet(decor, baseDecor)) {
-    const labels = DECOR.filter((d) => decor.includes(d.key)).map((d) => d.label).join(' · ')
-    // 모두 뺐으면 무엇을 뺐는지 (예: '진주 · 레이스 장식을 뺐어요')
-    const removed = DECOR.filter((d) => baseDecor.includes(d.key)).map((d) => d.word ?? d.label).join(' · ')
-    const none = removed ? [`${removed} 장식을 빼고`, `${removed} 장식을 뺐어요`] : ['장식은 빼고', '장식은 뺐어요']
-    parts.push(labels ? [`${labels} 장식으로 바꾸고`, `${labels} 장식으로 바꿨어요`] : none)
+    // 더한 것만 → '진주 · 레이스 장식을 더했어요' / 뺀 것만 → '진주 · 레이스 장식을 뺐어요' / 둘 다 → '레이스 장식으로 바꿨어요'
+    const names = (keys) => DECOR.filter((d) => keys.includes(d.key)).map((d) => d.word ?? d.label).join(' · ')
+    const added = decor.filter((k) => !baseDecor.includes(k))
+    const removed = baseDecor.filter((k) => !decor.includes(k))
+    if (added.length && !removed.length) parts.push([`${names(added)} 장식을 더하고`, `${names(added)} 장식을 더했어요`])
+    else if (removed.length && !added.length) parts.push([`${names(removed)} 장식을 빼고`, `${names(removed)} 장식을 뺐어요`])
+    else parts.push([`${names(decor)} 장식으로 바꾸고`, `${names(decor)} 장식으로 바꿨어요`])
   }
   if (!parts.length) return ''
   return `${parts.map((p, i) => (i === parts.length - 1 ? p[1] : p[0])).join(', ')}.`
@@ -78,8 +83,9 @@ function describeSentence(values, decor, baseDecor, form, baseForm, changes = []
 // baseDecor: AI 결과에 이미 들어간 장식 (예: 진주로 꾸며서 → pearl) — 처음부터 선택돼 있음
 // guideForm: 시연 흐름에서 골라보도록 안내할 연출 (예: Still → 'hanging') — 그 칩, 고른 뒤엔 적용 버튼이 은은하게 숨 쉼
 // guideAxes: 시연 흐름에서 옮겨보도록 안내할 슬라이더 { 축: 값 } (예: Lush { height: 1 }) — 그 끝, 모두 옮긴 뒤엔 적용 버튼
-// guideDecor: 시연 흐름에서 골라보도록 안내할 장식 (예: Sway [] = 장식 없음) — '없음' 칩, 고른 뒤엔 적용 버튼
-function TuneSheet({ items, initial, baseForm, photoForms, baseDecor, guideForm, guideAxes, guideDecor, onApply, onClose }) {
+// guideDecor: 시연 흐름에서 골라보도록 안내할 장식 (예: Sway [] = 장식 없음 → '없음' 칩 / Ramble ['pearl', 'lace'] → 그 칩들), 고른 뒤엔 적용 버튼
+// tuneTargets: 부케마다 축별로 정해 둔 식물 (bouquets.js) — 예: Hush 더 낮고 안정적으로 = 나선골풀
+function TuneSheet({ items, initial, baseForm, photoForms, baseDecor, tuneTargets, guideForm, guideAxes, guideDecor, onApply, onClose }) {
   // 축마다 왼쪽(-1) · 가운데(0) · 오른쪽(1) 한 칸씩
   const [values, setValues] = useState(() =>
     Object.fromEntries(TUNE_AXES.map((axis) => [axis.key, Math.sign(initial?.values?.[axis.key] ?? 0)])),
@@ -92,7 +98,7 @@ function TuneSheet({ items, initial, baseForm, photoForms, baseDecor, guideForm,
   const formLabel = FORMS.find((f) => f.key === form)?.label
   const words = describeTune(values, decor, baseDecor)
   if (form !== baseForm && formLabel) words.unshift(`${formLabel} 연출`)
-  const plan = planTune(items, values)
+  const plan = planTune(items, values, tuneTargets)
   // 지난번에 적용한 것과 달라졌을 때만 적용 가능 (가운데로 되돌리는 것도 변경) — 세 축 · 연출 · 장식 비교
   const before = initial?.values ?? EMPTY
   const changed =
@@ -232,6 +238,7 @@ function TuneSheet({ items, initial, baseForm, photoForms, baseDecor, guideForm,
                 type="button"
                 className="tune__chip"
                 aria-pressed={decor.includes(d.key)}
+                data-guide={(guideDecor?.includes(d.key) && !decor.includes(d.key)) || undefined}
                 onClick={() => toggleDecor(d.key)}
               >
                 {d.word}

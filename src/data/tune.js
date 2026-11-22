@@ -53,12 +53,14 @@ function guideOf(axis, dir, change) {
   const who = `${ROLE_LABEL[change.role]} 단계의 ${withObject(change.name)}`
   const less = change.to === 0 ? '빼서' : '하나 줄여'
   if (axis === 'volume') {
-    return dir > 0 ? `${who} 하나 더 넣어, 결을 풍성하게 채워요.` : `${who} ${less} 결을 가볍게 정돈해요.`
+    return dir > 0
+      ? `${who} 하나 더 넣어, ${change.role === 'texture' ? '결을' : '부케를'} 풍성하게 채워요.`
+      : `${who} ${less} 결을 가볍게 정돈해요.`
   }
   if (axis === 'height') {
     return dir > 0
       ? `${who} 하나 더 넣고, 줄기를 길게 남겨 위로 세워 꽂아요.`
-      : `${who} ${less} 줄기를 2~3cm 짧게 잘라 낮게 묶어요.`
+      : `${who} ${less} 위로 솟는 선을 줄여요.`
   }
   return dir > 0
     ? `${who} 하나 더 넣고, 길이를 조금씩 다르게 두어 흐르듯 꽂아요.`
@@ -73,8 +75,9 @@ export function guidesFor(values, changes = []) {
 }
 
 // items: [{ name, qty }] (처음 구성), values: { volume, height, order } (-1 · 0 · 1)
+// targets: 부케마다 축별로 정해 둔 식물 (bouquets.js tuneTargets) — 있으면 단계 규칙 대신 그 식물
 // → 축마다 정해진 단계의 식물 하나를 1대 빼거나 더함 (changes에 축·단계·전후 수량)
-export function planTune(items, values) {
+export function planTune(items, values, targets = {}) {
   const withRole = items
     .map((item) => ({ ...item, role: PLANTS.find((p) => p.name === item.name)?.category }))
     .filter((item) => item.role)
@@ -87,16 +90,19 @@ export function planTune(items, values) {
     // 이미 다른 축에서 바뀐 식물은 건너뜀 (한 식물이 두 번 바뀌지 않게)
     const inRole = (r) =>
       withRole.filter((item) => item.role === r && !changes.some((c) => c.name === item.name))
-    const role = inRole(want).length || !fallback ? want : fallback
+    const fixed = withRole.find((item) => item.name === targets[axis] && !changes.some((c) => c.name === item.name))
+    const role = fixed ? fixed.role : inRole(want).length || !fallback ? want : fallback
     const pool = inRole(role)
     if (!pool.length) return
     // 더할 땐 가장 많이 담긴 식물, 뺄 땐 가장 적게 담긴 식물(같으면 목록에서 뒤쪽 — 포인트로 더한 소재)
-    const main =
-      dir > 0
+    const main = fixed
+      ? fixed
+      : dir > 0
         ? [...pool].sort((a, b) => b.qty - a.qty)[0]
         : [...pool].reverse().sort((a, b) => a.qty - b.qty)[0]
     const target = next.find((item) => item.name === main.name)
-    const to = Math.max(min, target.qty + dir)
+    // 정해 둔 식물(targets)은 0까지 뺄 수 있음 (Hush 나선골풀 1 → 빼요)
+    const to = Math.max(fixed ? 0 : min, target.qty + dir)
     if (to === target.qty) return
     changes.push({ axis, name: target.name, role, from: target.qty, to })
     target.qty = to

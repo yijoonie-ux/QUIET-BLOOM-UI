@@ -27,10 +27,34 @@ const WORD_GAP = 800 // 단어가 하나씩 나오는 간격
 // → 말하는 중/입력 중 (2268:20786): 부케가 작아지고 말한 내용이 아래에 나타남
 // 시연 안내 (부케별): 첫 결과(from)에서 인상 다듬기로 이끌고, 적용해 바뀐 결과(to)에선 부케 제작하기로
 // Still: 화기 → 행잉 연출 / Lush: 더 높고 길게 (운룡버들 1 → 2) / Grove: 더 가볍게 + 더 정돈되게 (필리카·팔손이 빼기) / Sway: 장식(레이스·진주) 모두 빼기
+// Hush: 더 낮고 안정적으로(나선골풀 빼기) + 다발 → 화기
+// Ramble: 더 높고 길게(아이비 2 → 3) + 행잉 → 화기 + 장식 없음 → 진주·레이스
 const DEMO_GUIDE = {
   still: { from: 'still-vase', to: 'still-hanging', text: '인상을 다듬어 행잉으로 바꿔볼까요?', form: 'hanging' },
   lush: { from: 'lush-wrap', to: 'lush-tall-wrap', text: '인상을 다듬어 더 높고 길게 해볼까요?', axes: { height: 1 } },
   sway: { from: 'sway-hanging', to: 'sway-plain-hanging', text: '인상을 다듬어 장식을 모두 빼볼까요?', decor: [] },
+  hush: {
+    from: 'hush-wrap',
+    to: 'hush-vase',
+    text: '인상을 다듬어 더 낮고 안정적인 화기로 바꿔볼까요?',
+    axes: { height: -1 },
+    form: 'vase',
+  },
+  ramble: {
+    from: 'ramble-hanging',
+    to: 'ramble-vase',
+    text: '인상을 다듬어 더 높게, 화기에 진주·레이스로 꾸며볼까요?',
+    axes: { height: 1 },
+    form: 'vase',
+    decor: ['pearl', 'lace'],
+  },
+  ember: {
+    from: 'ember-wrap',
+    to: 'ember-cubic-wrap',
+    text: '인상을 다듬어 더 풍성하게, 큐빅으로 꾸며볼까요?',
+    axes: { volume: 1 },
+    decor: ['cubic'],
+  },
   grove: { from: 'grove-vase', to: 'grove-tidy-vase', text: '인상을 다듬어 더 가볍고 정돈되게 해볼까요?', axes: { volume: -1, order: -1 } },
 }
 
@@ -418,7 +442,7 @@ function BloomPreview() {
           {tuneGuide ? tuneGuide.text : '이제 실제로 만들어볼까요?'}
         </p>
       )}
-      {tuneOpen && <TuneSheet items={tuneItems} initial={tuned} baseForm={baseForm} photoForms={photoForms} baseDecor={baseDecor} guideForm={tuneGuide?.form} guideAxes={tuneGuide?.axes} guideDecor={tuneGuide?.decor} onApply={applyTune} onClose={() => setTuneOpen(false)} />}
+      {tuneOpen && <TuneSheet items={tuneItems} initial={tuned} baseForm={baseForm} photoForms={photoForms} baseDecor={baseDecor} guideForm={tuneGuide?.form} tuneTargets={bouquetType.tuneTargets} guideAxes={tuneGuide?.axes} guideDecor={tuneGuide?.decor} onApply={applyTune} onClose={() => setTuneOpen(false)} />}
 
       {/* 결과 하단: 부케 제작하기 + 옆 동그란 버튼은 인상 다듬기 (조형 미세조정) */}
       {mode === 'result' && !active && (

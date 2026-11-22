@@ -10,7 +10,7 @@ import glow from '../assets/onboarding/glow.svg'
 import budgetIcon from '../assets/onboarding/icon-budget.svg'
 import sproutIcon from '../assets/onboarding/icon-sprout.svg'
 import { markOnboarded } from '../data/onboarding'
-import { getBloomType, getProfileSummary, updateProfile } from '../data/profile'
+import { excludedPlantsText, getBloomType, sensitivityText, getProfileSummary, updateProfile } from '../data/profile'
 import { usePageBackground } from '../hooks/usePageBackground'
 import { useTilt } from '../hooks/useTilt'
 import './Onboarding.css'
@@ -28,13 +28,6 @@ const CRITERIA = [
   { key: '유지력', icon: sproutIcon, desc: ['싱그러움을 오래 유지하는', '식물을 추천해드려요.'] },
 ]
 
-// 블룸 유형 지도의 칸 (민감도 조합 4가지)
-const TYPE_COLS = [
-  { label: '저자극·저향', irritant: true, scent: true },
-  { label: '저자극', irritant: true, scent: false },
-  { label: '저향', irritant: false, scent: true },
-  { label: '무필터', irritant: false, scent: false },
-]
 
 // 조건 설정 → 유형 카드 사이 분석 로딩 (단계 번호 2와 3 사이)
 const ANALYZING = 2.5
@@ -43,19 +36,6 @@ const ANALYZE_STEPS = ['민감도 조건을 확인하고 있어요', '피하고 
 
 // 단계별 진행 바 색 (Figma 2268:20554 / 20756 / 20710)
 const BAR_COLORS = ['#fff', '#f4ffe4', '#e9ffcc']
-
-// 카드 한 줄(값 자리 약 한글 11자)에 들어가는 만큼만 이름을 보여줌
-const textWidth = (text) =>
-  [...text].reduce((sum, ch) => sum + (/[가-힣]/.test(ch) ? 1 : /[\s·]/.test(ch) ? 0.4 : 0.6), 0)
-
-function excludedPlantsText(plants) {
-  if (plants.length === 0) return '없음'
-  for (let count = Math.min(2, plants.length); count >= 1; count--) {
-    const rest = plants.length - count
-    const text = plants.slice(0, count).join(' · ') + (rest ? ` 외 ${rest}종` : '')
-    if (count === 1 || textWidth(text) <= 11) return text
-  }
-}
 
 // 나의 Bloom Profile 카드 — Make Quiet Bloom의 Bloom Profile 카드와 같은 모양, 끌어서 기울이기
 function BloomTypeCard({ type, criteria, lowIrritant, lowScent, excludedPlants }) {
@@ -88,7 +68,7 @@ function BloomTypeCard({ type, criteria, lowIrritant, lowScent, excludedPlants }
         {/* 카드 아래: 고른 조건을 이름 · 값 한 줄씩 (가는 선으로 구분). 추천 기준은 위 배지에 있어 생략 */}
         <dl className="ob-type__facts">
           {[
-            ['민감도', TYPE_COLS.find((col) => col.irritant === lowIrritant && col.scent === lowScent).label.replace('·', ' · ')],
+            ['민감도', sensitivityText(lowIrritant, lowScent)],
             ['제외 식물', excludedText],
           ].map(([name, value]) => (
             <div key={name} className="ob-type__fact">

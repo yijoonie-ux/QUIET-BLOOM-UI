@@ -9,18 +9,24 @@ import groveResult from '../assets/bouquets/grove-result.jpg'
 import groveResultFirst from '../assets/bouquets/grove-result-first.jpg'
 import ramblePreview from '../assets/bouquets/ramble-preview.png'
 import rambleResult from '../assets/bouquets/ramble-result.jpg'
+import rambleResultFirst from '../assets/bouquets/ramble-result-first.jpg'
 import rambleHero from '../assets/bouquets/ramble-hero.jpg'
 import hushPreview from '../assets/bouquets/hush-preview.png'
 import hushResult from '../assets/bouquets/hush-result.jpg'
+import hushResultFirst from '../assets/bouquets/hush-result-first.jpg'
 import emberPreview from '../assets/bouquets/ember-preview.png'
-import emberResult from '../assets/bouquets/ember-result.jpg'
+import emberResult from '../assets/bouquets/ember-result-final.jpg'
+import emberResultFirst from '../assets/bouquets/ember-result-first.jpg'
 // 카드 앞면 사진 (Figma 부케별 Print Complete 화면의 카드 구도 그대로 276×408 비율로 잘라둠)
 import stillCard from '../assets/cards/still-card.jpg'
 import groveCard from '../assets/cards/grove-card.jpg'
 import groveCardFirst from '../assets/cards/grove-card-first.jpg'
 import rambleCard from '../assets/cards/ramble-card.jpg'
+import rambleCardFirst from '../assets/cards/ramble-card-first.jpg'
 import hushCard from '../assets/cards/hush-card.jpg'
-import emberCard from '../assets/cards/ember-card.jpg'
+import hushCardFirst from '../assets/cards/hush-card-first.jpg'
+import emberCard from '../assets/cards/ember-card-final.jpg'
+import emberCardFirst from '../assets/cards/ember-card-first.jpg'
 import gladeCard from '../assets/cards/glade-card.jpg'
 import swayCard from '../assets/cards/sway-card.jpg'
 import swayCardPlain from '../assets/cards/sway-card-plain.jpg'
@@ -54,6 +60,7 @@ import lushCutout from '../assets/main/lush-cutout.png'
 //   shade: 위쪽 그라데이션 [높이, 색, 맨 위 진하기, 진하게 유지되는 구간(기본 0%)] · fade: 아래 그라데이션 [높이, 아래로 넘친 길이, 색, 진하기, 진해지는 지점]
 //   demo: 음성 인식 대신 쓰는 예시 문장(단어) · label: 홈 카드에 보일 이름
 //   hero: 완성 화면 위 사진 { image, size, top, x } · heroShade: 그 위 그라데이션 (shade와 같은 형식) · card: 카드 앞면 사진
+// tuneTargets: 인상 다듬기에서 축마다 꼭 이 식물을 다듬음 (예: Hush { height: '나선골풀' } — 단계 규칙보다 먼저)
 //   tune: 인상 다듬기로만 나오는 결과 — 고른 인상이 이 값과 같을 때 (예: { height: 1 } = 더 높고 길게). 같은 연출 안에서 이 결과로 바뀜
 
 export const BOUQUETS = [
@@ -184,8 +191,26 @@ export const BOUQUETS = [
     ],
     preview: { image: ramblePreview, box: [358, 392, 0, 226], listen: [335, 367, 229] },
     results: [
+      // 마이크로 처음 요청한 결과: 장식 없이 행잉 (Figma 3835:3832)
+      {
+        key: 'ramble-hanging',
+        label: 'Hanging Preview',
+        image: rambleResultFirst,
+        size: [563, 844],
+        pos: [0, 0],
+        bg: '#d5c9c2',
+        shade: [229, '188, 180, 172', 0.8],
+        fade: [263, 89, '188, 180, 172', 1, '81.337%'],
+        demo: ['잘', '다듬어서', '벽에', '걸어줘'],
+        hero: { image: rambleResultFirst, size: [390, 584], top: -50 },
+        heroShade: [212, '188, 180, 172', 0.9],
+        card: rambleCardFirst,
+        cutout: rambleCutout,
+      },
+      // 인상 다듬기 '더 높고 길게'(아이비 2 → 3) + 화기 + 진주·레이스: 최종본
       {
         key: 'ramble-vase',
+        tune: { height: 1, decor: ['pearl', 'lace'] },
         label: 'Vessel Preview',
         image: rambleResult,
         size: [632, 949],
@@ -212,16 +237,38 @@ export const BOUQUETS = [
     water: '매일 교체',
     summary: '향과 자극 부담은 낮추고, 예산에 맞춰 가볍게 구성했어요.',
     desc: '연잎으로 넓은 구조를 잡고 살랄로 단정한 볼륨을 더했어요. 시페루스로 가볍게 퍼지는 선을 그리고 이오난사로 연못 위에 피어난 듯한 질감을 살렸어요.',
+    // 처음엔 Texture 나선골풀까지 — 인상 다듬기 '더 낮고 안정적으로'에서 나선골풀을 빼고 화기로 바꾸면 Figma 원래 최종본
     recipe: [
       ['연잎', 5],
       ['살랄', 1],
       ['이오난사', 1],
       ['시페루스', 2],
+      ['나선골풀', 1],
     ],
-    preview: { image: hushPreview, box: [302, 396, 0, 224], listen: [277, 362, 234], crop: [101.48, 104.23, 0, -2.25] },
+    tuneTargets: { height: '나선골풀' },
+    // 나선골풀까지 든 풀부케 (Figma 3835:3452 · 3835:3586)
+    preview: { image: hushPreview, box: [356, 474, 0, 174], listen: [327, 434, 194] },
     results: [
+      // 마이크로 처음 요청한 결과: 다발 + 레이스·진주 (Figma 3835:3668)
+      {
+        key: 'hush-wrap',
+        label: 'Wrap Preview',
+        image: hushResultFirst,
+        size: [701, 852],
+        pos: [-5, -9],
+        bg: '#ead9c7',
+        shade: [229, '97, 88, 80', 0.42],
+        fade: [420, 198, '97, 88, 80', 1, '74.241%'],
+        demo: ['레이스와', '진주로', '꾸며서', '다발로', '묶어줘'],
+        hero: { image: hushResultFirst, size: [412, 501], top: -19, x: -7.4 },
+        heroShade: [229, '97, 88, 80', 0.43],
+        card: hushCardFirst,
+        cutout: hushCutout,
+      },
+      // 인상 다듬기 '더 낮고 안정적으로'(나선골풀 빼기) + 화기 연출: 최종본
       {
         key: 'hush-vase',
+        tune: { height: -1 },
         label: 'Vessel Preview',
         image: hushResult,
         size: [719, 873],
@@ -249,16 +296,37 @@ export const BOUQUETS = [
     summary: '자극 부담은 낮추고, 예산에 맞춰 선명하게 구성했어요.',
     desc: '엽란의 짙은 잎으로 뒤를 받치고 홍가시의 붉은 잎으로 중심을 채웠어요. 스틸그라스로 가볍게 퍼지는 선을 더하고 나선골풀로 감기는 질감을 살렸어요.',
     // 스틸그라스는 사진 속 양이 1단쯤이라 20줄기로 잡음
+    // 처음엔 엽란 1장 — 인상 다듬기 '더 풍성하게'로 엽란 2장 + 큐빅 장식이면 Figma 원래 최종본
     recipe: [
       ['홍가시', 5],
       ['스틸그라스', 20],
-      ['엽란', 2],
+      ['엽란', 1],
       ['나선골풀', 2],
     ],
+    tuneTargets: { volume: '엽란' },
+    // 엽란 1장 풀부케 (Figma 3835:4051)
     preview: { image: emberPreview, box: [297, 396, -0.5, 224], listen: [279, 372, 224] },
     results: [
+      // 마이크로 처음 요청한 결과: 장식 없이 다발 포장만 (Figma 3835:4409)
       {
         key: 'ember-wrap',
+        label: 'Wrap Preview',
+        image: emberResultFirst,
+        size: [634, 844],
+        pos: [-5.5, 0],
+        bg: '#62625a',
+        shade: [229, '98, 98, 89', 0.5],
+        fade: [220, 0, '98, 98, 89', 0.9, '95.981%'],
+        demo: ['깔끔하게', '다발로', '묶어줘'],
+        hero: { image: emberResultFirst, size: [391, 521], top: -32.49, x: -2.6 },
+        heroShade: [229, '98, 98, 89', 0.5],
+        card: emberCardFirst,
+        cutout: emberCutout,
+      },
+      // 인상 다듬기 '더 풍성하게'(엽란 1 → 2) + 큐빅 장식: 최종본 (Figma 3835:4485)
+      {
+        key: 'ember-cubic-wrap',
+        tune: { volume: 1, decor: ['cubic'] },
         label: 'Wrap Preview',
         image: emberResult,
         size: [633, 844],
@@ -266,7 +334,7 @@ export const BOUQUETS = [
         bg: '#62625a',
         shade: [229, '98, 98, 89', 0.5],
         fade: [220, 0, '98, 98, 89', 0.9, '95.981%'],
-        demo: ['레이스랑', '진주로', '꾸며서', '다발로', '묶어줘'],
+        demo: ['큐빅으로', '꾸며서', '다발로', '묶어줘'],
         hero: { image: emberResult, size: [391, 521], top: -32.49, x: 0.5 },
         heroShade: [229, '98, 98, 89', 0.5],
         card: emberCard,

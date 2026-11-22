@@ -92,3 +92,22 @@ export function getProfileSummary({ lowIrritant, lowScent, criteria }) {
     description,
   }
 }
+
+// Bloom Profile 카드 아래 두 줄 (온보딩 결과 카드 · Make Quiet Bloom 카드 공용)
+// 민감도: '저자극 · 저향' / 고른 게 없으면 '없음'
+export const sensitivityText = (lowIrritant, lowScent) =>
+  [lowIrritant && '저자극', lowScent && '저향'].filter(Boolean).join(' · ') || '없음'
+
+// 제외 식물: 카드 한 줄(값 자리 약 한글 11자)에 들어가는 만큼만 이름 — 두 개까지, 더 많으면 '외 N종' (안 들어가면 하나만)
+const textWidth = (text) =>
+  [...text].reduce((sum, ch) => sum + (/[가-힣]/.test(ch) ? 1 : /[\s·]/.test(ch) ? 0.4 : 0.6), 0)
+
+export function excludedPlantsText(plants) {
+  if (plants.length === 0) return '없음'
+  for (let count = Math.min(2, plants.length); count >= 1; count--) {
+    const rest = plants.length - count
+    const text = plants.slice(0, count).join(' · ') + (rest ? ` 외 ${rest}종` : '')
+    if (count === 1 || textWidth(text) <= 11) return text
+  }
+}
+

@@ -96,6 +96,13 @@
   color: #efefef;
 }
 
+/* 결과 화면 설명은 바꾼 내용이 길어질 수 있어 줄바꿈 (닫기 버튼 자리는 피해서) */
+.bp__header--result .bp__desc {
+  max-width: 300px;
+  white-space: normal;
+  word-break: keep-all;
+}
+
 /* 하단 바: 부케 제작하기(흰 알약, 동그란 버튼 자리만큼 파임) + 인상 다듬기 동그란 버튼 50 */
 
 /* 시연 안내 링 (흰색): 부케 제작하기 · 인상 다듬기 버튼 */

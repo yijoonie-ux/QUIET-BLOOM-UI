@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router'
 import backIcon from '../assets/edit/back.svg'
 import { SAVED_BLOOMS, bloomNameOf, useBloomNames, useMadeBloom } from '../data/blooms'
+import { findBouquet, findResult } from '../data/bouquets'
 import { fadeEdges } from '../hooks/fadeEdges'
 import { usePageBackground } from '../hooks/usePageBackground'
 import { usePageLeave } from '../hooks/usePageLeave'
@@ -467,22 +468,34 @@ function MyBlooms() {
               cardRefs.current[i] = el
             }}
             className="mb-card"
+            data-plain={madeBloom?.bouquet === bloom.id && !madeBloom.result}
             data-index={i}
             data-active={i === index}
             aria-hidden={i !== index}
           >
-            <img
-              className="mb-card__image"
-              src={bloom.image}
-              alt=""
-              draggable="false"
-              style={{
-                width: `${bloom.card[0]}%`,
-                height: `${bloom.card[1]}%`,
-                left: `${bloom.card[2]}%`,
-                top: `${bloom.card[3]}%`,
-              }}
-            />
+            {madeBloom?.bouquet === bloom.id && !madeBloom.result ? (
+              // AI 프리뷰 없이 만든 부케: 꾸미지 않은 풀부케 전체가 여유 있게 (Bloom Card와 같은 모습)
+              <img
+                className="mb-card__image mb-card__image--plain"
+                src={findBouquet(bloom.id).preview.image}
+                alt=""
+                draggable="false"
+              />
+            ) : (
+              <img
+                className="mb-card__image"
+                // 직접 만든 부케면 실제로 고른 결과의 카드 사진, 아니면 최종본
+                src={(madeBloom?.bouquet === bloom.id && findResult(madeBloom.result)?.card) || bloom.image}
+                alt=""
+                draggable="false"
+                style={{
+                  width: `${bloom.card[0]}%`,
+                  height: `${bloom.card[1]}%`,
+                  left: `${bloom.card[2]}%`,
+                  top: `${bloom.card[3]}%`,
+                }}
+              />
+            )}
             <span ref={fadeEdges} className="mb-card__label">
               <strong>{bloomNameOf(bloom.id, bloom.name)}</strong>
               {/* 민감도 · 추천 기준 (예: 저향 · 유지력 순) */}

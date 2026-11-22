@@ -30,7 +30,13 @@ const WORD_GAP = 800 // 단어가 하나씩 나오는 간격
 // Hush: 더 낮고 안정적으로(나선골풀 빼기) + 다발 → 화기
 // Ramble: 더 높고 길게(아이비 2 → 3) + 행잉 → 화기 + 장식 없음 → 진주·레이스
 const DEMO_GUIDE = {
-  still: { from: 'still-vase', to: 'still-hanging', text: '인상을 다듬어 행잉으로 바꿔볼까요?', form: 'hanging' },
+  still: {
+    from: 'still-vase',
+    to: 'still-hanging',
+    text: '인상을 다듬어 더 풍성한 행잉으로 바꿔볼까요?',
+    axes: { volume: 1 },
+    form: 'hanging',
+  },
   lush: { from: 'lush-wrap', to: 'lush-tall-wrap', text: '인상을 다듬어 더 높고 길게 해볼까요?', axes: { height: 1 } },
   sway: { from: 'sway-hanging', to: 'sway-plain-hanging', text: '인상을 다듬어 장식을 모두 빼볼까요?', decor: [] },
   hush: {
@@ -54,6 +60,13 @@ const DEMO_GUIDE = {
     text: '인상을 다듬어 더 풍성하게, 큐빅으로 꾸며볼까요?',
     axes: { volume: 1 },
     decor: ['cubic'],
+  },
+  glade: {
+    from: 'glade-vase',
+    to: 'glade-lace-vase',
+    text: '인상을 다듬어 더 가볍게, 진주·레이스로 꾸며볼까요?',
+    axes: { volume: -1 },
+    decor: ['pearl', 'lace'],
   },
   grove: { from: 'grove-vase', to: 'grove-tidy-vase', text: '인상을 다듬어 더 가볍고 정돈되게 해볼까요?', axes: { volume: -1, order: -1 } },
 }

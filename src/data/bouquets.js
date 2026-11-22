@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from 'react'
 import { PLANTS, isExcludedPlant } from './plants'
 import { getProfile, subscribeProfile } from './profile'
-import stillPreview from '../assets/preview/bouquet.png'
+import stillPreview from '../assets/preview/still-preview.png'
 import stillVase from '../assets/result/still-vase.jpg'
 import stillHanging from '../assets/result/still-hanging.jpg'
 import groovePreview from '../assets/bouquets/grove-preview.png'
@@ -28,12 +28,14 @@ import hushCardFirst from '../assets/cards/hush-card-first.jpg'
 import emberCard from '../assets/cards/ember-card-final.jpg'
 import emberCardFirst from '../assets/cards/ember-card-first.jpg'
 import gladeCard from '../assets/cards/glade-card.jpg'
+import gladeCardFirst from '../assets/cards/glade-card-first.jpg'
 import swayCard from '../assets/cards/sway-card.jpg'
 import swayCardPlain from '../assets/cards/sway-card-plain.jpg'
 import lushCard from '../assets/cards/lush-card.jpg'
 import lushCardFirst from '../assets/cards/lush-card-first.jpg'
 import gladePreview from '../assets/bouquets/glade-preview.png'
 import gladeResult from '../assets/bouquets/glade-result.jpg'
+import gladeResultFirst from '../assets/bouquets/glade-result-first.jpg'
 import swayPreview from '../assets/bouquets/sway-preview.png'
 import swayResult from '../assets/bouquets/sway-result.jpg'
 import swayResultPlain from '../assets/bouquets/sway-result-plain.jpg'
@@ -73,31 +75,36 @@ export const BOUQUETS = [
     water: '2~3일 교체',
     summary: '향과 자극 부담은 낮추고, 오래 감상할 수 있도록 구성했어요.',
     desc: '연밥으로 단단한 구조를 잡고 살랄로 볼륨을 채웠어요. 대나무로 곧은 흐름을 더하고 세로그라피카로 은은한 질감을 살렸어요.',
+    // 처음엔 연밥 6 — 인상 다듬기 '더 풍성하게'(연밥 6 → 7) + 행잉이면 Figma 원래 최종본
     recipe: [
-      ['연밥', 7],
+      ['연밥', 6],
       ['살랄', 1],
       ['대나무', 3],
       ['세로그라피카', 1],
     ],
-    // Figma 2845:25478 / 말하는 중 2845:24527
+    tuneTargets: { volume: '연밥' },
+    // 연밥 6 풀부케 (Figma 3835:5038)
     preview: { image: stillPreview, box: [234, 417, 10, 214], listen: [209, 372, 221] },
     results: [
       {
         key: 'still-vase',
         label: 'Vessel Preview',
         image: stillVase,
-        size: [679, 940],
-        pos: [-0.5, -85],
+        // 연밥 6 + 진주 + 화기 (Figma 3835:5109)
+        size: [702.5, 877.8],
+        pos: [0, -33.8],
         bg: '#aab08a',
         shade: null,
         fade: [294, 0, '155, 149, 140', 0.6, '66.876%'],
         demo: ['진주로', '꾸며서', '화기에', '꽂아줘'],
-        hero: { image: stillVase, size: [541, 749], top: -190 },
+        hero: { image: stillVase, size: [560, 699.6], top: -149.2 },
         heroShade: [220, '97, 88, 80', 0.52],
         card: stillVase,
       },
+      // 인상 다듬기 '더 풍성하게'(연밥 6 → 7) + 행잉: 최종본
       {
         key: 'still-hanging',
+        tune: { volume: 1 },
         label: 'Hanging Preview',
         image: stillHanging,
         size: [683, 911],
@@ -353,16 +360,38 @@ export const BOUQUETS = [
     water: '2~3일 교체',
     summary: '향 부담은 낮추고, 예산에 맞춰 싱그럽게 구성했어요.',
     desc: '아스플레니움의 물결치는 잎으로 구조를 세우고 호스타의 넓은 잎으로 볼륨을 채웠어요. 스틸그라스로 둥글게 감기는 선을 그리고 보스턴펀으로 가벼운 결을 더했어요.',
+    // 처음엔 Texture 냉이초까지 — 인상 다듬기 '더 가볍게'로 냉이초를 빼고 진주·레이스를 더하면 Figma 원래 최종본
     recipe: [
       ['아스플레니움', 2],
       ['호스타', 4],
       ['스틸그라스', 6],
       ['보스턴펀', 1],
+      ['냉이초', 1],
     ],
-    preview: { image: gladePreview, box: [196, 396, 0, 224], listen: [184, 372, 224], crop: [137.76, 102.02, -21.94, -0.76] },
+    tuneTargets: { volume: '냉이초' },
+    // 냉이초까지 든 풀부케 (Figma 3835:4845 · 3835:4778)
+    preview: { image: gladePreview, box: [196, 396, 0, 224], listen: [173.4, 350.8, 230] },
     results: [
+      // 마이크로 처음 요청한 결과: 장식 없이 화기 (Figma 3835:4957)
       {
         key: 'glade-vase',
+        label: 'Vessel Preview',
+        image: gladeResultFirst,
+        size: [675, 900],
+        pos: [0, -10],
+        bg: '#a0a096',
+        shade: [229, '98, 98, 89', 0.41],
+        fade: [220, 0, '98, 98, 89', 0.9, '95.981%'],
+        demo: ['단정하게', '화기에', '꽂아줘'],
+        hero: { image: gladeResultFirst, size: [372, 496], top: 4 },
+        heroShade: [274, '98, 98, 89', 0.6],
+        card: gladeCardFirst,
+        cutout: gladeCutout,
+      },
+      // 인상 다듬기 '더 가볍게'(냉이초 빼기) + 진주·레이스 장식: 최종본
+      {
+        key: 'glade-lace-vase',
+        tune: { volume: -1, decor: ['pearl', 'lace'] },
         label: 'Vessel Preview',
         image: gladeResult,
         size: [813, 1084],

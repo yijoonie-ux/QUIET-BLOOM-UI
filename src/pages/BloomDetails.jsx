@@ -81,6 +81,22 @@ function settled(bloom) {
 function withMade(bloom, made) {
   if (!made || made.bouquet !== bloom.id || !made.items?.length) return bloom
   const result = findResult(made.result)
+  // AI 프리뷰 없이 만들었으면: 연출 소재 없이, 사진은 꾸미지 않은 풀부케 (완성 화면과 같은 모습)
+  if (!made.result) {
+    const bouquet = findBouquet(bloom.id)
+    return {
+      ...bloom,
+      swaps: made.swaps ?? {},
+      store: made.store,
+      recipe: made.items.map(({ name, qty }) => [name, qty]),
+      plants: made.items.map(({ name }) => name),
+      result: null,
+      decor: undefined,
+      form: undefined,
+      hero: { image: bouquet.preview.image, size: [390, 234], top: 160, x: bouquet.preview.heroX ?? 0, plain: true, shade: true },
+      heroShade: null,
+    }
+  }
   return {
     ...bloom,
     swaps: made.swaps ?? {},
@@ -149,9 +165,9 @@ function BloomDetails({ variant = 'details' }) {
   const bloom = isComplete
     ? {
         ...base,
-        // AI 결과 없이 만들었으면 풀부케 사진 — 부케 전체가 보이게 제목 아래부터 사진 칸 끝까지 (높이 268)
+        // AI 결과 없이 만들었으면 풀부케 사진 — 부케 전체가 보이게 부제목 아래부터 사진 칸 끝 조금 위까지 (높이 234)
         // heroX: 부케 줄기(대)가 가운데 오게 옆으로 미는 값 (bouquets.js preview.heroX, 없으면 0)
-        hero: result?.hero ?? { image: active.preview.image, size: [390, 268], top: 124, x: active.preview.heroX ?? 0, plain: true },
+        hero: result?.hero ?? { image: active.preview.image, size: [390, 234], top: 160, x: active.preview.heroX ?? 0, plain: true },
       }
     : base
   // 바꾼 이름이 있으면 그 이름 (부케 유형마다 하나 — 완성 화면에서 바꾸면 저장한 부케에도 그대로)

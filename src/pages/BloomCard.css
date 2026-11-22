@@ -204,7 +204,11 @@
   object-fit: cover;
 }
 
+/* AI 프리뷰 없이 만든 부케: 풀부케 전체가 여유 있게 보이도록 위(이름)·아래·양옆에 여백 */
 .bc__face--front[data-plain='true'] .bc__image {
+  inset: 68px 32px 64px;
+  width: calc(100% - 64px);
+  height: calc(100% - 132px);
   object-fit: contain;
 }
 

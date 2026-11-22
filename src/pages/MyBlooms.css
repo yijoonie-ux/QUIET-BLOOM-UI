@@ -96,6 +96,18 @@
   pointer-events: none;
 }
 
+/* AI 프리뷰 없이 만든 부케: Bloom Card처럼 연두 그라데이션 위에 풀부케 전체 (이름 아래 · 아래 · 양옆 여백) */
+.mb-card[data-plain='true'] {
+  background: linear-gradient(to bottom, #b8c6a6, #dfe8d2);
+}
+
+.mb-card__image--plain {
+  inset: 64px 30px 36px;
+  width: calc(100% - 60px);
+  height: calc(100% - 100px);
+  object-fit: contain;
+}
+
 /* Still  저자극 · 저향 (카드 기준 x20, y16)
    밝은 사진에서도 윤곽만 잡히게 글자 바로 밑 아주 작은 그림자 (번짐 없이) */
 .mb-card__label {

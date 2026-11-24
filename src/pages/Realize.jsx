@@ -294,20 +294,7 @@ function Realize() {
             </ul>
           </section>
         )}
-
-        {/* 인상 다듬기에서 고른 높이·분위기 → 만드는 방법 */}
-        {appliedTune?.guides?.length > 0 && (
-          <section className="rz-group rz-guide">
-            <div className="rz-group__head">
-              <h2>How to Arrange</h2>
-            </div>
-            <ul className="rz-guide__list">
-              {appliedTune.guides.map((g) => (
-                <li key={g}>{g}</li>
-              ))}
-            </ul>
-          </section>
-        )}
+        {/* 인상 다듬기로 바뀐 내용은 앞 화면(인상 다듬기 · Final Preview)에서 이미 보여줘서 여기선 따로 안 보여줌 */}
       </div>
 
       <div className="rz__actions">

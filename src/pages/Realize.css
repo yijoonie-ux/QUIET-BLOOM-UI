@@ -227,8 +227,7 @@
   padding: 0 6px 10px;
 }
 
-.rz__list,
-.rz-guide__list {
+.rz__list {
   margin: 0;
   padding: 4px 0;
   list-style: none;
@@ -298,35 +297,6 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-/* 만드는 방법: 점 목록 */
-.rz-guide__list {
-  display: grid;
-  gap: 8px;
-  padding: 16px 20px;
-}
-
-.rz-guide__list li {
-  position: relative;
-  padding-left: 14px;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.5;
-  letter-spacing: -0.2px;
-  color: var(--qb-text-sub);
-  word-break: keep-all;
-}
-
-.rz-guide__list li::before {
-  position: absolute;
-  top: 0.62em;
-  left: 0;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #a8cf6a;
-  content: '';
 }
 
 /* 연출 소재 줄: 사진 없이 이름 · 설명 · 바깥 링크 */

@@ -80,6 +80,13 @@ function PlantDetail({ plant, selected, onToggle, onClose }) {
           )}
         </div>
 
+        {/* 닫기 (배경을 눌러도 닫힘) */}
+        <button type="button" className="plant-detail__close" aria-label="닫기" onClick={close}>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M1.5 1.5l11 11M12.5 1.5l-11 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        </button>
+
         <h2 className="plant-detail__name">{plant.name}</h2>
         <p className="plant-detail__desc">
           {detail.desc.map((line) => (

@@ -72,6 +72,23 @@
   max-width: none;
 }
 
+/* 닫기 X: 사진 칸 오른쪽 위 (누르는 영역 32×32) */
+.plant-detail__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--qb-text-strong);
+  cursor: pointer;
+}
+
 .plant-detail__name {
   position: absolute;
   top: 206px;

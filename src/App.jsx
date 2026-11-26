@@ -12,6 +12,7 @@ import BloomDetails from './pages/BloomDetails'
 import BloomCard from './pages/BloomCard'
 import BloomPrint from './pages/BloomPrint'
 import Realize from './pages/Realize'
+import RestartGesture from './components/RestartGesture'
 import { isOnboarded } from './data/onboarding'
 
 // 화면이 바뀌면 맨 위부터 (이전 화면의 스크롤 위치가 남지 않게)
@@ -32,6 +33,8 @@ function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
+      {/* 시연용: 두 손가락 길게 누르면 처음부터 다시 시작 */}
+      <RestartGesture />
       <Routes>
         <Route path="/" element={<StartGate />} />
         <Route path="/onboarding" element={<Onboarding />} />

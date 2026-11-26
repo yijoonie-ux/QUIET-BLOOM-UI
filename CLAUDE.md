@@ -53,6 +53,7 @@ Product decisions to keep:
 - Changing the store reverts substitutes made for the previous store; returning to a store re-applies the substitutes made there. Store order is fixed (ranked by the original recipe) and each store's count reflects the composition it would have if chosen.
 - Share buttons (Details, Complete) always toast "링크를 복사했어요".
 - The AI preview mic never uses real speech recognition: tapping it always types the preset demo sentence (`demo` in `src/data/bouquets.js`, e.g. "진주랑 큐빅으로 꾸며서…") so the demo is predictable.
+- Demo restart: holding two fingers on any screen for ~0.7s shows "처음부터 다시 시작할까요?" (취소 / 다시 시작); 다시 시작 reloads the page, which restarts at `/onboarding` (`src/components/RestartGesture.jsx`).
 - Refreshing any screen restarts at `/onboarding` (`src/data/onboarding.js`); opening a link fresh (e.g. a shared `/blooms/still`) keeps that screen.
 - Sway uses 베어그라스 (not 스틸그라스). Grove has 트리펀 2.
 - Bouquet styles (AI preview result): Still 화기→행잉, Lush 다발, Grove 화기, Sway 행잉, Hush 화기, Ramble 화기, Ember 다발, Glade 화기. Demo sentences mention only decorations actually visible in the photo (큐빅 only in Ember's final result; Grove has none: "잘 정돈해서 화기에 꽂아줘").
